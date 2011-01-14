@@ -1,0 +1,217 @@
+\item {\bf burstdet\_timeclust}\\
+{$[$}tt,chcnt,dtt{$]$} {$=$} BURSTDET\_TIMECLUST(spks, bin\_s, thr\_mean)
+\\
+Given a set of spikes SPKS loaded by LOADSPIKE or LOADSPIKE\_NOC, finds
+synchronized bursts (on 5 or more channels).
+\\
+This works by first finding bursts on individual channels using TIMECLUST,
+and then finding synchronized bursts by clustering the single-channel
+bursts, again using TIMECLUST.
+\\
+Both BIN\_S and THR\_MEAN are optional; default values are 0.1 s and 5x
+resp.
+
+\item {\bf cleanctxt}\\
+{$[$}ctxts, idx{$]$} {$=$} CLEANCTXT(contexts) returns cleaned up contexts:
+\\
+- The first and last 15 values are averaged and used to compute DC offset.
+\\
+- These two estimates are weighted according to their inverse variance.
+\\
+- The DC offset is subtracted.
+\\
+- If any sample in -1:-0.5 or 0.5:1.5 ms is more than half the peak at 0 ms,
+ ~the spike is rejected.
+\\
+- Use CLEANCTXT(contexts, testidx, relthresh) to modify this test:
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}TESTIDX are indices (1:74) of samples to test, 
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}RELTHRESH is a number between 0 and 1.
+\\
+- Additionally, the area immediately surrounding the peak is tested at
+ ~the 0.9 level: The spike is also rejected if any sample in -1:-0.16
+ ~or 0.16:1.5 ms has an absolute value more than 0.9 x the absolute peak
+ ~value. This test is modified on its outer edges by the edges of
+ ~testidx, but cannot be modified independently.
+\\
+Returns: ctxts: the accepted contexts, with DC subtracted
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}idx: the index of accepted spikes.
+\\
+Requirements: contexts must be as read from loadspike, i.e. 74xN (or
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}75xN).
+\\
+Acknowledgment: The algorithm implemented by this function is due 
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}to Partha P Mitra.
+
+\item {\bf cr2hw}\\
+hw {$=$} CR2HW(c,r) converts row and column to hardware channel number.
+c, r count from 1 to 8; hw counts from 0.
+\\
+hw {$=$} CR2HW(cr) converts combined row and column to hardware channel
+number. cr can be in the range 11..88.
+\\
+Illegal c, r values return -1.
+c, r or cr may be matrices, in which case the output is also a matrix.
+\\
+The dimensions of c, r must agree.
+
+\item {\bf heightscat88}\\
+HEIGHTSCAT88(spks) plots scatter plots of the (spontaneous activity) spikes
+in SPKS. It stacks thin horizontal raster plots for each channel. Within
+each plot, spikes are positioned based on their height (amplitude).
+\\
+SPKS must have been loaded using LOADSPIKE or LOADSPIKE\_NOC.
+\\
+Column-row numbers are computed from channel numbers using hw2cr.
+\\
+p {$=$} HEIGHTSCAT88(spks) returns the plot handle.
+
+\item {\bf hist2dar}\\
+mat{$=$}hist2dar(X,Y,nx,ny,flag) returns a matrix suitable for 
+pcolor containing the crosstab counts of X and Y in automatically
+selected bins: you pick the number of bins, the code determines the
+edges based on the min and max values in X and Y.
+\\
+If optional argument FLAG is present, the result is also plotted.
+
+\item {\bf hist2d}\\
+mat{$=$}hist2d(X,Y,x0,dx,x1,y0,dy,y1,flag) returns a matrix suitable for 
+pcolor containing the crosstab counts of X and Y in the bins edges defined by
+x0:dx:x1 resp y0:dy:y1.
+\\
+If optional argument FLAG is present, the result is also plotted.
+{$[$}mat,xx,yy{$]$}{$=$}hist2d(...) returns x and y arrays as well, so you can
+call pcolor(xx,yy,mat).
+
+\item {\bf hw2cr}\\
+{$[$}c,r{$]$} {$=$} HW2CR(hw) converts the hardware channel number hw (0..63) to
+column and row numbers (1..8).
+\\
+cr {$=$} HW2CR(hw) converts the hardware channel number hw (0..63) to
+a 1+row+10*col format (11..88).
+hw may be a matrix, in which case the result is also a matrix.
+\\
+Illegal hardware numbers result in c,r {$=$}{$=$} 0.
+
+\item {\bf loaddesc}\\
+d {$=$} LOADDESC(fn) reads the description file FN or FN.desc 
+and returns a structure with values for each line read. 
+\\
+The fields are named from the label in the description file.
+\\
+All values are converted to double. Original strings are stored in
+the field LABEL\_str.
+\\
+Repeated keys are stored in a cell array.
+
+\item {\bf loadraw}\\
+y{$=$}LOADRAW(fn) reads the raw MEA datafile fn and stores the result in y.
+\\
+y{$=$}LOADRAW(fn,range) reads the raw MEA datafile fn and converts the
+digital values to voltages by multiplying by range/2048. 
+\\
+Range values 0,1,2,3 are interpreted specially:
+\\
+range value ~ electrode range (uV) ~ ~auxillary range (mV)
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}0 ~ ~ ~ ~ ~ ~ ~ 3410 ~ ~ ~ ~ ~ ~ ~ ~ 4092
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}1 ~ ~ ~ ~ ~ ~ ~ 1205 ~ ~ ~ ~ ~ ~ ~ ~ 1446
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}2 ~ ~ ~ ~ ~ ~ ~ ~683 ~ ~ ~ ~ ~ ~ ~ ~ ~819.6
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}3 ~ ~ ~ ~ ~ ~ ~ ~341 ~ ~ ~ ~ ~ ~ ~ ~ ~409.2
+\\
+"electrode range" is applied to channels 0..59, auxillary range is
+applied to channels 60..63. Note that channel HW is stored in the
+(HW+1)-th row of the output.
+
+\item {\bf loadspike}\\
+y{$=$}LOADSPIKE(fn) loads spikes from given filename into structure y
+with members
+ ~time ~ ~(1xN) (in samples)
+ ~channel (1xN)
+ ~height ~(1xN)
+ ~width ~ (1xN)
+ ~context (75xN)
+ ~thresh ~(1xN)
+\\
+y{$=$}LOADSPIKE(fn,range,freq\_khz) converts times to seconds and width to
+milliseconds using the specified frequency, and the height and
+context data to microvolts by multiplying by RANGE/2048.
+\\
+As a special case, range{$=$}0..3 is interpreted as a MultiChannel Systems 
+gain setting:
+\\
+range value ~ electrode range (uV) ~ ~auxillary range (mV)
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}0 ~ ~ ~ ~ ~ ~ ~ 3410 ~ ~ ~ ~ ~ ~ ~ ~ 4092
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}1 ~ ~ ~ ~ ~ ~ ~ 1205 ~ ~ ~ ~ ~ ~ ~ ~ 1446
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}2 ~ ~ ~ ~ ~ ~ ~ ~683 ~ ~ ~ ~ ~ ~ ~ ~ ~819.6
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}3 ~ ~ ~ ~ ~ ~ ~ ~341 ~ ~ ~ ~ ~ ~ ~ ~ ~409.2
+\\
+"electrode range" is applied to channels 0..59, auxillary range is
+applied to channels 60..63.
+\\
+In this case, the frequency is set to 25 kHz unless specified.
+
+\item {\bf loadspike\_noc}\\
+y{$=$}LOADSPIKE\_NOC(fn) loads spikes from given filename into structure y
+with members
+ ~time ~ ~(1xN) (in samples)
+ ~channel (1xN)
+ ~height ~(1xN)
+ ~width ~ (1xN)
+ ~thresh ~(1xN)
+\\
+Context is not loaded.
+\\
+y{$=$}LOADSPIKE\_NOC(fn,range,freq\_khz) converts times to seconds and width to
+milliseconds using the specified frequency, and the height and
+context data to microvolts by multiplying by RANGE/2048.
+\\
+As a special case, range{$=$}0..3 is interpreted as a MultiChannel Systems
+gain setting:
+\\
+range value ~ electrode range (uV) ~ ~auxillary range (mV)
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}0 ~ ~ ~ ~ ~ ~ ~ 3410 ~ ~ ~ ~ ~ ~ ~ ~ 4092
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}1 ~ ~ ~ ~ ~ ~ ~ 1205 ~ ~ ~ ~ ~ ~ ~ ~ 1446
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}2 ~ ~ ~ ~ ~ ~ ~ ~683 ~ ~ ~ ~ ~ ~ ~ ~ ~819.6
+\\
+\mbox{~}\mbox{~}\mbox{~}\mbox{~}\mbox{~}3 ~ ~ ~ ~ ~ ~ ~ ~341 ~ ~ ~ ~ ~ ~ ~ ~ ~409.2
+\\
+"electrode range" is applied to channels 0..59, auxillary range is
+applied to channels 60..63.
+\\
+In this case, the frequency is set to 25 kHz unless specified.
+
+\item {\bf randscat88}\\
+RANDSCAT88(spks) plots scatter plots of the (spontaneous activity) spikes
+in SPKS. It stacks thin horizontal raster plots for each channel. Within
+each plot, spikes are randomly positioned vertically for clarity.
+\\
+SPKS must have been loaded using LOADSPIKE or LOADSPIKE\_NOC.
+\\
+Column-row numbers are computed from channel numbers using hw2cr.
+
+\item {\bf timeclust}\\
+{$[$}t0,cnt,dt{$]$} {$=$} TIMECLUST(tms\_s,bin\_s,thr\_mean,thr\_abs)
+\\
+Given a set of times TMS\_S and a bin size BIN\_S (both nominally in seconds),
+find the locations, volumes, and widths of peaks in the time distribution.
+\\
+A peak is (primitively) defined as a contiguous area of bins exceeding
+\\
+THR\_ABS {\bf and} exceeding THR\_MEAN times the mean bin count. Either THR\_MEAN
+or THR\_ABS may be left unspecified, in which case THR\_ABS defaults to {$>$}{$=$}2.
+

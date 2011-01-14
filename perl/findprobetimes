@@ -1,0 +1,139 @@
+#!/usr/bin/perl -w
+
+# perl/findprobetimes: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+use strict;
+use Description;
+use ChannelNrs;
+use POSIX;
+use IO::File;
+
+sub usage {
+  print STDERR <<"EOF";
+Usage: findprobetimes filenamebase
+
+Reads FILENAMEBASE.desc, FILENAMEBASE.trig and FILENAMEBASE.splitreport
+to generate FILENAMEBASE-CR.times files, containing the real time (in
+seconds past the unix epoch) of each probe in the corresponding 
+FILENAMEBASE-CR-N.raw files (which are supposed to be constructed from
+FILENAMEBASE.raw using resplitraw2CR). The .raw files are not actually
+accessed (or even statted).
+EOF
+  exit(1);
+}
+
+sub error {
+  print STDERR "findprobetimes: ",join(" ",@_),"\n";
+  exit(2);
+}
+
+sub warning {
+  print STDERR "findprobetimes: warning: ",join(" ",@_),"\n";
+}
+
+usage() unless scalar(@ARGV)==1;
+
+my $fnbase=shift @ARGV;
+
+open(TRIG, "<$fnbase.raw.trig") or error("Cannot open .raw.trig file");
+open (SPLITREPORT,"<$fnbase.splitreport") or error("Cannot open .splitreport file");
+
+my $end_s=0;
+my $length_s=0;
+if (-f "$fnbase.raw.desc") {
+  my $descs = Description::read("$fnbase.raw.desc");
+  if (exists($descs->{Date})) {
+    my $dt=$descs->{Date}; $dt =~ s/^ *//; $dt =~ s/ *$//;
+    my ($wkd,$mon,$mday,$tm,$yr) = split(" ",$dt);
+    my ($hr,$min,$sec) = split(":",$tm);
+    my @months = qw{Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec};
+    my %months = ();
+    for (0..11) {
+      $months{$months[$_]}=$_;
+    }
+    $mon=$months{$mon};
+    print join(" ",$sec,$min,$hr,$mday,$mon,$yr),"\n";
+    $end_s=POSIX::mktime($sec,$min,$hr,$mday,$mon,$yr-1900);
+    my $repo=localtime($end_s);
+    ($wkd,$mon,$mday,$tm,$yr) = split(" ",$repo);
+    my $hr1;
+    ($hr1,$min,$sec) = split(":",$tm);
+    if ($hr != $hr1) {
+      print STDERR "(Invoking DST correction)\n";
+      $end_s -= 3600;
+      $repo=localtime($end_s);
+    }
+    print STDERR "Date `$dt' from .desc parsed as $repo\n";
+  }
+  if (exists($descs->{"Run length"})) {
+    $descs->{"Run length"} =~ /^ *(.*) s/ and $length_s = $1;
+  }
+}
+if ($end_s==0) {
+  warning("Could not obtain time stamp from .desc file");
+  $end_s = (stat("$fnbase.raw.trig"))[9];
+}
+
+my @trigdt_s=();
+while (<TRIG>) {
+  chomp;
+  my ($n1,$t) = split(" ",$_);
+  next unless $n1>0;
+  $trigdt_s[$n1-1]=$t;
+}
+close(TRIG);
+
+if ($length_s==0) {
+  warning("Could not obtain run length from .desc file");
+  $length_s = $trigdt_s[scalar(@trigdt_s)-1];
+}
+
+my $start_s = $end_s - $length_s;
+
+my $repo = localtime($start_s);
+print STDERR "Run started at $repo, length is $length_s seconds\n";
+print STDERR "Run contains ",scalar(@trigdt_s)," triggers\n";
+
+system("echo $start_s $end_s > $fnbase.startend");
+
+my %hasseen=();
+my %files=();
+while (<SPLITREPORT>) {
+  chomp;
+  /^\d/ or next;
+  my ($n0,$hw) = split(" ",$_);
+  my ($c,$r) = ChannelNrs::hw2cr($hw);
+  my $cr = ($c+1) . ($r+1);
+  unless (exists($hasseen{$hw})) {
+    $files{$hw}=new IO::File;
+    $files{$hw}->open(">$fnbase-$cr.times") or error("Could not create file `$fnbase-$cr.times'");
+    $hasseen{$hw}=0;
+  }
+  my $nlocal = $hasseen{$hw};
+  $hasseen{$hw}++;
+  print {$files{$hw}} ($start_s+$trigdt_s[$n0], "\n");
+}
+for (values %files) {
+  $_->close();
+}
+
+close(SPLITREPORT);
+
+exit(0);

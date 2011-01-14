@@ -1,0 +1,32 @@
+# Makefile.moc: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2003  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+INCLUDES = -I$(top_srcdir) @QTINC@
+
+%.moc.C: %.H
+	@QTBIN@moc $< -o $@
+#%.moc.C: %.h
+#	@QTBIN@moc $< -o $@
+%D.H: %.ui
+	@QTBIN@uic -o $@ $<
+%D.C: %.ui %D.H
+	@QTBIN@uic -o $@ -impl $*D.H $*.ui
+%I.H: %.ui %D.H
+	@QTBIN@uic -o $@ -subdecl $*I $*D.H $*.ui
+%I.C: %.ui %I.H
+	@QTBIN@uic -o $@ -subimpl $*I $*I.H $*.ui

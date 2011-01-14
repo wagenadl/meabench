@@ -1,0 +1,7 @@
+/* MCCard.h.in */
+/* DO NOT EDIT "MCCard.h" - edit "MCCard.h.in" instead. "MCCard.h" will
+   be overwritten by "configure". */
+/* This file includes the appropriate version of MCCard.h depending on the
+   kernel version. */
+
+#include <MCCard-linux-@KERNEL_VSN@/MCCard.h>

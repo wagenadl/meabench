@@ -1,0 +1,102 @@
+Dear MEA-Users,
+
+We are pleased to announce the first public release of MeaBench, an
+open-source suite of programs for acquisition and analysis of
+multi-electrode array (MEA) recordings. MeaBench was developed by
+Daniel Wagenaar at Caltech, drawing on the excellent example set by
+MultiChannel Systems' MC_Rack suite (www.multichannelsystems.com).
+
+The software runs under Linux and other Unix variants, and is freely
+distributable under the terms of the GNU Public License (see
+http://www.gnu.org/copyleft/gpl.html). It offers the following
+functionality:
+
+  - Acquisition of raw electrode data from MultiChannel Systems' MCCard;
+  - Complete removal of mains (60 Hz) interference using template
+    filtering;
+  - Removal of stimulation artifacts using the SALPA algorithm [1];
+  - Online and offline detection of spikes;
+  - Online visualization of electrode data and spikes;
+  - Continuous or windowed [saving] of raw data and spikes;
+  - Saving of spike waveforms, for later spike sorting and analysis;
+  - Replaying of raw and spike files, at any speed;
+  - Instant-replay buffer for easy analysis of recent events;
+  - Online generation of raster plots;
+  - Continuous monitoring of varying noise levels;
+  - A variety of utilities for analysis and data format conversion,
+    including:
+
+      * Averaging of electrode recordings over trials;
+      * Conversion of binary spike files to ASCII representation;
+      * Filtering of spike files based on any mathematical expression
+        involving shape or timing parameters;
+      * Extraction of single channels from 64 channel streams;
+      * Splitting of long data files into trials;
+      * Splitting of long data files into channels;
+      * Computing spike rates;
+      * Detecting culture-wide bursts.
+
+  - A selection of Matlab functions to import MeaBench data is available
+    upon request. (Users may also be interested in Uli Egerts comprehensive 
+    set of matlab code for MEA data analysis, available for download from
+    http://www.brainworks.uni-freiburg.de/projects/mea/meatools/overview.htm.)
+  
+MeaBench is fully modular, and any user with some Unix programming
+experience can extend it to fit her or his needs. Since MeaBench can
+stream live data to your extension modules, it is well suited, for
+example, to drive real-time feedback systems. In fact, the ability to
+communicate with other software or hardware in real-time was one of
+the primary motives for the conception of MeaBench. It allowed a
+reliable, sub-100 ms feedback loop time in our Neurally Controlled
+Animat. [2]
+
+MeaBench was written primarily for use with the MultiChannel Systems
+MEA hardware, and a driver is included for their MCCard data
+acquisition card, written by Thomas B. DeMarse with advice from
+MultiChannelSystems. If you use different data acquisition hardware,
+you may still find MeaBench useful, because, due to its modular
+nature, it is possible to write plug-in modules to read data from your
+hardware. An experimental driver for one such board (manufactured by
+United Electronic Industries, but not endorsed by us at its current
+state of development) is included as well.
+
+MeaBench has been in constant use by my group in the Pine lab at
+Caltech for over two years, and now also by everyone in my group at
+Georgia Tech (http://www.its.caltech.edu/~pinelab/PotterGroup.htm). 
+Daniel has worked countless hours creating and improving this very
+functional set of tools. It remains a work in progress; we welcome
+suggestions for improvement (and bug reports). Please join in the
+development by submitting your code (patches and improvements) for
+inclusion in future releases.
+
+Daniel wishes to acknowledge much valuable input and support from Tom
+DeMarse, Jerry Pine, and myself. We are all grateful for financial
+support from the NIH-NINDS and The Burroughs-Wellcome Fund, and
+cooperation, technical support, and equipment from MultiChannel
+Systems.
+
+For more information and to download MeaBench, please visit:
+
+    http://www.its.caltech.edu/~wagenaar/meabench
+
+
+With much enthusiasm for the future of MEAs,
+
+Steve M. Potter, PhD
+Assistant Professor of Biomedical Engineering
+Neuroengineering Laboratory
+Coulter Department of Biomedical Engineering
+Georgia Institute of Technology and Emory University
+http://www.neuro.gatech.edu/potter.php
+steve.potter@bme.gatech.edu
+
+References:
+
+[1] D A Wagenaar, and S M Potter: Real-time multi-channel stimulus
+    artifact suppression by local curve fitting. J. Neurosci. Meth,
+    vol 120 issue 2, 2002 (in press). Preprint available at:
+    www.its.caltech.edu/~wagenaar/salpa-preprint.pdf
+
+[2] T B DeMarse, D A Wagenaar, A W Blau, and S M Potter: The neurally
+    controlled animat: biological brains acting with simulated bodies.
+    Autonomous Robots 11, 2001, pp 305-310.

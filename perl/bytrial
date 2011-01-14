@@ -1,0 +1,69 @@
+#!/usr/bin/perl -w
+
+# perl/bytrial: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+use strict;
+
+sub usage {
+print STDERR <<"EOF";
+Usage: bytrial -P pre_ms -p post_ms < in_text_spike > out_text
+EOF
+exit(1);
+}
+
+my $maxt=1e9;
+my $dt=0;
+
+while (scalar @ARGV) {
+  my $arg=shift @ARGV;
+  if ($arg =~ s/^-p//) {
+    if ($arg eq "") {
+      usage() unless scalar @ARGV;
+      $arg=shift @ARGV;
+    }
+    $maxt=$arg/1000;
+  } elsif ($arg =~ s/^-P//) {
+    if ($arg eq "") {
+      usage() unless scalar @ARGV;
+      $arg=shift @ARGV;
+    }
+    $dt=$arg/1000;
+  } else {
+    usage();
+  }
+}
+$dt+=$maxt;
+print STDERR "maxt=$maxt dt=$dt\n";
+
+my $t0=0;
+my $r=0;
+my $i=0;
+while (<>) {
+ /^\#/ and next;
+ chomp;
+ my ($t,$c,$h,$w) = split;
+ ($t0,$r)=($t,$r+1) if $c==60;
+ my $nr=$r;
+ my $pt=$t-$t0; 
+ if ($pt>$maxt) { $pt-=$dt; $nr++; }
+ print "$pt $c $h $w $nr $i\n" if $c<60 && ($t-$t0>.0005) && $r>0;
+ $i++;
+}
+

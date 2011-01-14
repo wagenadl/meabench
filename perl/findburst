@@ -1,0 +1,155 @@
+#!/usr/bin/perl -w
+
+# perl/findburst: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+use strict;
+use Getopt::Std;
+
+sub usage {
+  print STDERR <<'EOF';
+Usage: findburst -s -t thr+ -T thr- -f tau [infile]
+       findburst -s -x fac+ -X fac- -f tau infile
+
+where: thr+ is the burst entering threshold, in spikes per second.
+       thr- is the burst leaving threshold, in spikes per second.
+       tau is the 1/e integration time for a leaky integrater, in seconds (!).
+       fac+/fac- are burst entering/leaving firing rate increase factors:
+       a burst is detected whenever the firing rate is fac+ times larger
+       than average.
+
+Factor and rate style thresholding are mutually exclusive. For factor style
+thresholding, reading from stdin is not an option.
+
+Factor style thresholding is performed by measuring the input file length and
+the timespan covered by it according to the first and last recorded spikes.
+
+This program considers global bursts only, i.e. it pools together spikes
+from all channels.
+
+Output is always written to stdout, as lines with four fields:
+1. start time of burst (in seconds)
+2. duration (s)
+3. maxrate (count/s)
+4. maxratio (count/mean/s)
+
+With -s option, the interpretation of -x/-X (or -t/-T) changes: a burst is
+then defined as a continuous region of activity above thr-, with a peak above
+thr+.
+EOF
+  exit(1);
+}
+
+my $RECLEN = 164;
+my $RECPACK = "LLssss75";
+
+my %opts;
+getopts('t:T:f:o:x:X:s',\%opts) or usage();
+usage() unless (exists($opts{t}) && exists($opts{T})) || 
+               (exists($opts{x}) && exists($opts{X}));
+usage() if exists($opts{t}) && exists($opts{x});
+usage() unless exists($opts{f});
+
+my $infile = scalar(@ARGV) ? shift(@ARGV) : "-";
+
+usage() if exists($opts{x}) && $infile eq "-";
+usage() if scalar(@ARGV);
+
+my ($thr1, $thr0, $thrp);
+my $baserate=0;
+if (exists($opts{t})) {
+  $thr1 = $opts{t};
+  $thr0 = $opts{T};
+} else {
+  $thr1 = $opts{x};
+  $thr0 = $opts{X};
+  $baserate = getrate($infile);
+  $thr1 *= $baserate;
+  $thr0 *= $baserate;
+  print STDERR "Thresholds are $thr1 and $thr0 per second\n";
+}
+$thrp=$thr1;
+$thr1=$thr0 if exists($opts{s});
+
+my $tau = $opts{f};
+my $delta = 1/$tau;
+
+my $rate = 0;
+my $maxrate=0;
+my $t0 = 0;
+my $tin = 0;
+my $inburst = 0;
+my $realburst=0;
+open(INP,"<$infile") or die "Cannot open `$infile'";
+my $rec;
+while (read(INP,$rec,$RECLEN)==$RECLEN) {
+  my @t = unpack("LL",$rec);
+  my $t = $t[0]/25000 + $t[1]*171798.69184;
+  $rate *= exp(-($t-$t0)/$tau); $rate+=$delta;
+  $t0=$t;
+  if ($inburst) {
+    $realburst=1 if $rate>$thrp;
+    $maxrate = $rate if $rate>$maxrate;
+    if ($rate<$thr0) {
+      if ($realburst) {
+	printf("%9.3f %.3f %.1f",$tin,$t-$tin,$maxrate);
+	printf(" %.3f",$maxrate/$baserate) if $baserate;
+	print("\n");
+      }
+      $inburst=0;
+    }
+  } else {
+    if ($rate>$thr1) {
+      $tin=$t;
+      $maxrate=$rate;
+      $inburst=1;
+      $realburst = ($rate>$thrp)?1:0;
+    }
+  }
+}
+
+close(INP);
+
+exit(0);
+
+
+######################################################################
+sub getrate {
+  my $fn = shift;
+  my @st = stat $fn or die "Cannot stat `$fn'";
+  my $bytes = $st[7];
+  my $infos = $bytes / $RECLEN;
+
+  my ($rec0,$recn);
+  open(INP, $fn) or die "Cannot open `$fn'";
+  read(INP,$rec0,$RECLEN);
+  seek(INP, $bytes-$RECLEN, 0);
+  read(INP,$recn,$RECLEN);
+  close(INP);
+  my @t0 = unpack("LL",$rec0);
+  my @tn = unpack("LL",$recn);
+  my $t0 = $t0[0]/25000 + $t0[1]*171798.69184;
+  my $tn = $tn[0]/25000 + $tn[1]*171798.69184;
+
+  print STDERR "File length is $infos records\n";
+  print STDERR "Timestamps range from $t0 to $tn seconds\n";
+  my $avgrate = $infos / ($tn-$t0);
+  print STDERR "Average spike rate is $avgrate per second\n";
+  return $avgrate;
+}

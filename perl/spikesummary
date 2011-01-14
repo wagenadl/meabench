@@ -1,0 +1,73 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Description;
+
+sub usage {
+  print STDERR "Usage: spikesummary spikefilename\n";
+  exit(1);
+}
+
+sub error {
+  print STDERR join(" ",@_),"\n";
+  exit(2);
+}
+
+sub gettime {
+  my $si = shift;
+  my ($tl,$th,$c,$h,$w,@ctx) = unpack("LLssss*",$si);
+  my $thr=pop @ctx;
+  my $t = $tl + (1024*1024*1024*4*$th);
+  return $t;
+}
+
+sub atoi {
+  my $src = shift;
+  my @src = split(/ /,$src);
+  $src = shift(@src);
+  return 1*$src;
+}
+
+usage() unless scalar(@ARGV)==1;
+
+my $fn = shift @ARGV;
+
+my $nspikes = 0;
+my $first=0;
+my $last=0;
+my $date="";
+my @st = stat($fn);
+if (@st) {
+  my @mon = qw/Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/;
+  $nspikes = $st[7]/164;
+  my @date = localtime($st[9]);
+  $date = sprintf("(%i %s %02i:%02i)",$date[3],$mon[$date[4]],$date[2],$date[1]);
+  open SPIKE, "$fn";
+  read(SPIKE,$first,164)==164 or error("Cannot read from '$fn'");
+  $first = gettime($first);
+  seek(SPIKE,164*(int($nspikes)-1),0);
+  read(SPIKE,$last,164)==164 or error("Cannot read from '$fn'");
+  $last = gettime($last);
+  close(SPIKE);
+}
+
+my $desc=undef;
+eval { $desc = Description::read("$fn.desc") };
+my $mode = "";
+my $freq = 25000;
+if (defined($desc) && exists($desc->{Triggered})) {
+  $mode = " Continuous";
+  $mode = " Triggered" if $desc->{Triggered} =~ /Yes/;
+}
+if (defined($desc) && exists($desc->{"Raw sample freq"})) {
+  $freq = 1000*atoi($desc->{"Raw sample freq"});
+}
+if (defined($desc) && exists($desc->{Date})) {
+  my @date = split(/ /,$desc->{Date});
+  my @time = split(/:/,$date[3]);
+  $date = " (" . $date[2] . " " . $date[1] . " " . $time[0] . ":" . $time[1] . ")";
+}
+if (defined($desc) && exists($desc->{"Number of spikes"})) {
+  $nspikes = atoi($desc->{"Number of spikes"});
+}
+printf "%i spikes, %.1f-%.1f s.$mode$date\n",$nspikes,$first/$freq,$last/$freq;

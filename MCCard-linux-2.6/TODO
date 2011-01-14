@@ -1,0 +1,9 @@
+
+
+In no particular order...
+
+* Add spike detection as a bottom half interrupt handler that can be
+  opened as a minor device
+
+* Add support for Digital channels
+* Add direct DMA to user space

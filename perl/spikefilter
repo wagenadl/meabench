@@ -1,0 +1,119 @@
+#!/usr/bin/perl
+
+# perl/spikefilter: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+use ChannelNrs;
+use Description;
+
+sub usage {
+  print STDERR <<'EOF';
+Usage: spikefilter decision-code file
+
+Decision-code can be any piece of perl code that decides whether a
+given spike should be included in the output. It is evaluated inside a
+"do" block and should return true if the spike should be included.
+
+The following variables may be used to make that decision:
+
+$c   - channel number (hardware order)
+$h   - height (digital)
+$w   - width (samples)
+$t   - time (samples since start of file)
+$thr - threshold used for this spike (digital)
+@t0  - time of last spike on each of the channels, incl. analog, -1 if none.
+@ctx - context [0..73], 25=time of peak. Digital values.
+@sig - RMS noise on each of the 60 electrode channels.
+@h0  - previous height on each of the 64 channels, 0 if no previous.
+
+All local variables should start with x to prevent namespace pollution.
+
+Spikes are written to stdout.
+EOF
+  exit(1);
+}
+
+sub nextfile {
+  close FH;
+  open FH, "$fn-$fno" or return 0;
+  if ($^V ge v5.8.0) {
+    binmode FH, ":bytes";
+  }
+  print STDERR "Opened file $fn-$fno\n";
+  $fno++;
+  return 1;
+}
+
+$code = shift @ARGV or usage();
+$fn = shift @ARGV or usage();
+usage() if @ARGV;
+
+
+eval("sub decide { return do { $code; }; }");
+die "Error in decision code: $@" if $@;
+
+if ($^V ge v5.8.0) {
+  binmode STDOUT, ":bytes";
+}
+
+open FH, "$fn" or die $!;
+if ($^V ge v5.8.0) {
+  binmode FH, ":bytes";
+}
+
+$desc = Description::read("$fn.desc");
+if (defined $desc) {
+  @sig = (); for (1..60) { push @sig,-1; }
+  @presig = split(/\s+/,$desc->{"Threshold values"});
+  $sigmul = $desc->{"Threshold"};
+  $gain = $desc->{"Gain"} + 0;
+  for $r (0..7) {
+    for $c (0..7) {
+      next if ($c==0 || $c==7) && ($r==0 || $r==7);
+      $hw = ChannelNrs::cr2hw($c,$r);
+      ($cc,$rr) = ChannelNrs::hw2cr($hw);
+      $sig[$hw] = shift(@presig) / ($sigmul*$gain);
+    }
+  }
+} else {
+  print STDERR "Warning: Could not read description file - \@sig not available\n";
+}
+
+@t0 = (); for (0..63) { push @t0,-1; }
+@h0 = (); for (0..63) { push @h0,0; }
+
+$ni=0; $no=0;
+$fno=1;
+while (1) {
+  unless (read(FH,$si,164)==164) {
+    last unless nextfile();
+    redo;
+  }
+  ($tl,$th,$c,$h,$w,@ctx) = unpack("LLssss*",$si);
+  $thr=pop @ctx;
+  $t = $tl + (1024*1024*1024*4*$th);
+  (print $si), $no++ if decide();
+  $t0[$c]=$t;
+  $h0[$c]=$h;
+  $ni++;
+  print STDERR "Spikeinfos in: $ni - out: $no\r" if $ni%1000==0;
+};
+print STDERR "Spikeinfos in: $ni - out: $no\n";
+close(FH);
+exit(0);

@@ -1,0 +1,66 @@
+#!/usr/bin/perl -w
+
+# perl/mapprobetimes: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+use strict;
+
+sub usage {
+  print STDERR <<"EOF";
+Usage: mapprobetimes .times-file < bytrialfile > mptfile
+
+.TIMES-FILE must be an output file of meabench:findprobetimes
+BYTRIALFILE must be an output file of meabench:bytrial
+MPTFILE will contain 6 columns:
+1-5: as per bytrial
+  6: real time of trigger (seconds past unix epoch)
+EOF
+  exit(1);
+}
+
+
+sub error {
+  print STDERR "findprobetimes: ",join(" ",@_),"\n";
+  exit(2);
+}
+
+sub warning {
+  print STDERR "findprobetimes: warning: ",join(" ",@_),"\n";
+}
+
+usage() unless scalar(@ARGV)==1;
+
+my $timesfile=shift @ARGV;
+open TIMES,"<$timesfile" or error("Cannot open $timesfile");
+my @times=();
+while (<TIMES>) {
+  chomp;
+  push @times,$_;
+}
+close TIMES;
+
+while (<>) {
+  chomp;
+  my @cols=split;
+  my $r=$cols[4];
+  next if $r==0;
+  $cols[5] = $times[$r-1];
+  print join(" ",@cols),"\n";
+}
+

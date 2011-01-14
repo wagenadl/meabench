@@ -1,0 +1,414 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Coproc;
+#use Carp;
+use IO::File;
+use IO::Handle;
+
+# Command table (meabench style)
+my %commands = ( "new" =>     [ 1,100, "program[/id] [args]" ],
+		 "close" =>   [ 1,1,   "program|id" ],
+		 "intr" =>    [ 1,1,   "program|id" ],
+		 "kill" =>    [ 1,1,   "program|id" ],
+		 "wait" =>    [ 1,1,   "program|id" ],
+		 "tell" =>    [ 2,100, "program|id command [args]" ],
+		 "expect" =>  [ 3,100, "program|id timeout regexp" ],
+		 "dieif" =>   [ 2,100, "program|id regexp" ],
+		 "dieunless" => [ 2,100, "program|id regexp" ],
+		 "flush" =>   [ 1,1,   "program|id" ],
+		 "sleep" =>   [ 1,1,   "time_s" ],
+		 "log"   =>   [ 0,1,   "[logfile]" ],
+		 "comment" => [ 0,100, "comments" ],
+		 "quit" =>    [ 0,0,   "" ]
+	       );
+		
+my %coprocs;
+my $logfh;
+my %expects;
+my %zombies;
+
+my $prline_last = undef;
+
+my %logfun_codes = ( 1 => ">>>",
+		     2 => "<<<",
+		     3 => "err",
+		     4 => "inf",
+		     5 => "CMD",
+		     6 => "INF",
+		     7 => "ERR",
+		     8 => "TXT"
+		   );
+
+my %logfun_colors = ( ">>>" => 6,
+		      "<<<" => 3,
+		      "err" => 1,
+		      "inf" => 2,
+		      "CMD" => 5,
+		      "INF" => 2,
+		      "ERR" => 1,
+		      "TXT" => 2
+		    );
+
+my %logfun_add = ( ">>>" => ">",
+		   "<<<" => "<",
+		   "CMD" => ">"
+		 );
+
+sub logfun {
+  # Usage: logfun code source text
+  # Codes are: 
+  #   1: text to process
+  #   2: text from process
+  #   3: error in process control
+  #   4: informational message in process control
+  #   5: commander command echo
+  #   6: informational message
+  #   7: error message
+
+  my $code = shift; chomp $code;
+  my $source = shift; chomp $source;
+  my $text = shift; chomp $text;
+
+  $code = $logfun_codes{$code} if exists $logfun_codes{$code};
+
+  my $color = exists($logfun_colors{$code}) ? $logfun_colors{$code} : 7;
+  my $add =  exists($logfun_add{$code}) ? $logfun_add{$code} : ":";
+
+  my $splithere = (defined $source && defined $prline_last &&
+		   $source ne $prline_last);
+  $prline_last = $source if defined $source;
+
+  my $line = "\033[3${color}m$source$add \033[1m$text\033[0m";
+
+  print STDERR "\n" if $splithere;
+  print STDERR "$line\n";
+
+  $logfh->print("\n") if defined($logfh) && $splithere;
+  $logfh->print("$code $source $text\n") if defined $logfh;
+
+}
+
+sub logfun2 {
+  my $code = shift;
+  my $text = shift;
+  logfun($code,"commander",$text);
+}
+
+sub prerr {
+  my $line = shift;
+  logfun2(7, $line);
+}
+
+sub prline {
+  my $line = shift;
+  logfun2(8,$line);
+}
+
+sub prcmt {
+  my $line = shift;
+  logfun2(6,$line);
+}
+
+sub dead {
+  my $progid = shift;
+  my $retcode = shift;
+  if ($retcode) {
+    prerr("Process $progid exited with exit code $retcode");
+  } else {
+    prline("Process $progid exited OK");
+  }
+  delete $coprocs{$progid};
+  delete $zombies{$progid};
+}
+
+sub ensure_dead {
+  my $progid = shift;
+  ensure_exists($progid);
+  my $r = $coprocs{$progid}->wait(1);
+  die "Trouble waiting [1] for $progid\n" unless defined $r;
+  dead($progid,$r), return $r if $r>=0;
+  # OK, so not dead yet
+  sleep(1);
+  $r = $coprocs{$progid}->wait(1);
+  die "Trouble waiting [2] for $progid\n" unless defined $r;
+  dead($progid,$r), return $r if $r>=0;
+  prline("($progid still not ended, sending TERM signal.)\n");
+  $coprocs{$progid}->term();
+  $r = $coprocs{$progid}->wait(1);
+  die "Trouble waiting [3] for $progid\n" unless defined $r;
+  dead($progid,$r), return $r if $r>=0;
+  sleep(1);
+  $r = $coprocs{$progid}->wait(1);
+  die "Trouble waiting [4] for $progid\n" unless defined $r;
+  dead($progid,$r), return $r if $r>=0;
+  prline("($progid still not ended, sending KILL signal.)\n");
+  $coprocs{$progid}->hardkill();
+  $r = $coprocs{$progid}->wait(1);
+  die "Trouble waiting [5] for $progid\n" unless defined $r;
+  dead($progid,$r), return $r if $r>=0;
+  sleep(1);
+  $r = $coprocs{$progid}->wait(1);
+  die "Trouble waiting [6] for $progid\n" unless defined $r;
+  dead($progid,$r), return $r if $r>=0;
+  die "Unable to kill $progid\n";
+}
+
+
+sub ensure_exists {
+  my $progid = shift;
+  die "No process named $progid\n" unless exists($coprocs{$progid});
+}
+
+sub c_new {
+  my $progid = shift;
+  my @args = @_;
+  my $prog = $progid; $prog =~ s/\/.*$//;
+  my $id = $progid; $id =~ s/^.*\///;
+  die "A process named $id already exists\n" if exists($coprocs{$id});
+  $coprocs{$id} = Coproc->spawn("mea $prog " . join(" ",@args));
+  $coprocs{$id}->label($id);
+  $coprocs{$id}->log(\&logfun);
+  sleep(1);
+}
+
+sub c_close {
+  my $progid = shift;
+  ensure_exists($progid);
+  $coprocs{$progid}->close();
+  ensure_dead($progid);
+}
+
+sub c_intr {
+  my $progid = shift;
+  ensure_exists($progid);
+  $coprocs{$progid}->intr();
+}
+
+sub c_kill {
+  my $progid = shift;
+  ensure_exists($progid);
+  $coprocs{$progid}->term();
+  ensure_dead($progid);
+}
+
+sub c_wait {
+  my $progid = shift;
+  ensure_dead($progid);
+}
+
+sub c_tell {
+  my $progid = shift;
+  ensure_exists($progid);
+  my $cmd = join(" ",@_);
+  $coprocs{$progid}->send($cmd);
+  sleep(1);
+}
+
+sub c_comment {
+  logfun2(6,join(" ",@_));
+}
+
+sub c_flush {
+  my $progid = shift;
+  ensure_exists($progid);
+  my @xx = $coprocs{$progid}->flush();
+#  print STDERR "[flush $progid: ",join(";",@xx),"]\n";
+}
+
+sub c_dieif {
+  my $progid = shift;
+  my $regex = join(" ",@_);
+  die "No previous expect on $progid\n" unless exists $expects{$progid};
+  for (@{$expects{$progid}}) {
+    m{$regex} and die "Can't live with '$_' from $progid\n";
+  }
+}
+
+sub c_dieunless {
+  my $progid = shift;
+  my $regex = join(" ",@_);
+  die "No previous expect on $progid\n" unless exists $expects{$progid};
+  for (@{$expects{$progid}}) {
+    m{$regex} and return;
+  }
+  die "Can't live without '$_' from $progid\n";
+}
+
+sub c_expect {
+  my $progid = shift;
+  ensure_exists($progid);
+  my $timeout = shift;
+  my $regex = join(" ",@_);
+  my $t0 = time();
+  my $t1 = $t0;
+  while ($t1-$t0 <= $timeout) {
+#    print STDERR "(calling expect on $progid for $regex)\n";
+    my @r = $coprocs{$progid}->expect($regex,1);
+    if (@r) {
+      $expects{$progid} = \@r;
+      return;
+    }
+    poll();
+    $t1 = time();
+  }
+  die "Didn't get expected string $regex from $progid\n";
+}
+
+sub c_sleep {
+  my $secs = shift;
+  my $t0 = time();
+  my $t1 = $t0;
+  while ($t1-$t0 <= $secs) {
+    sleep(1);
+    poll();
+    $t1 = time();
+  }
+}
+
+sub c_log {
+  my $fn = shift;
+  if (defined $fn) {
+    $logfh->close() if defined $logfh;
+
+    my $old = -f $fn;
+
+    $logfh = new IO::File;
+    $logfh->open(">>$fn");
+    $logfh->autoflush(1);
+    my $date = `date`; chomp $date;
+    my $user = $ENV{USER};
+    prcmt("------------------------------------------------------") if $old;
+    prcmt("Commander log file $fn, started at $date by user $user");
+    if (scalar(keys(%coprocs))) {
+      prline("Current processes are:");
+      for (sort(keys(%coprocs))) {
+	prline("  $_");
+      }
+    }
+  } else {
+    $logfh->close() if defined $logfh;
+    $logfh = undef;
+  }
+}
+
+sub c_quit {
+  quit(1);
+}
+
+sub quit {
+  my $ok = shift;
+  my $bad = 0;
+  prline("Closing all processes...") if scalar(keys(%coprocs));
+  while (scalar(keys(%coprocs))) {
+    my @k = keys(%coprocs);
+    my $progid = $k[0];
+    prline("Closing $progid");
+    eval { c_close($progid); };
+    if ($@) {
+      logfun2(7,"Failed to terminate $progid: $@");
+      $bad = 1;
+    }
+    delete $coprocs{$progid};
+  }
+  my $date = `date`; chomp $date;
+  if ($ok) {
+    prline("Terminating OK at $date");
+  } else {
+    prerr("Terminating upon error at $date");
+  }
+
+  exit($ok?($bad?2:0):3);
+}
+
+sub poll {
+  for (keys %coprocs) {
+    unless (exists $zombies{$_}) {
+      eval {
+	if ($coprocs{$_}->poll()<0) {
+	  $zombies{$_}=1;
+	  logfun2(6,"EOF on $_ while polling, marking zombie");
+	}
+      };
+      if ($@) {
+	prerr("Error polling $_: $@"); 
+	quit(0);
+      }
+    }
+  }
+}
+
+sub usage {
+  my $cmd = shift;
+  if (defined $cmd) {
+    if (exists($commands{$cmd})) {
+      prerr("Usage: $cmd " . $commands{$cmd}->[2]);
+    } else {
+      prerr("Unknown command: $cmd");
+    }
+  } else {
+    prline("Commander understands the following commands:");
+    for (sort keys %commands) {
+      prline("  $_ " . $commands{$_}->[2]);
+    }
+  }
+  quit(0);
+}
+
+sub execute {
+  my $cmd = shift;
+  my @args = @_;
+  for (@args) { s/^(.*)$/"$1"/; }
+  my $args = join(",",@args);
+  if (exists($commands{$cmd})) {
+    if (scalar(@args)>=$commands{$cmd}[0] && 
+	scalar(@args)<=$commands{$cmd}[1]) {
+      my $cmdline = "c_$cmd($args);";
+      eval "$cmdline";
+      if ($@) {
+	prerr("Error from $cmd: $@");
+	quit(0);
+      }
+    } else {
+      usage($cmd);
+    }
+  } else {
+    prerr("Unknown command: $cmd");
+    quit(0);
+  }
+}
+
+sub intr {
+  $SIG{INT}='DEFAULT';
+  prerr("Interrupt");
+  quit(1);
+}
+
+######################################################################
+
+if (scalar(@ARGV) && $ARGV[0]=~/^-/) {
+  usage();
+}
+
+$SIG{INT}=\&intr;
+
+while (<>) {
+  chomp;
+  /^\s*\#/ and next;
+  /^\s*$/ and next;
+  logfun2(5,$_);
+  my ($cmd, @args) = split(/\s+/,$_);
+  if ($cmd eq "?") {
+    if (scalar(@args)) {
+      usage($args[0]);
+    } else {
+      usage();
+    }
+  } else {
+    execute($cmd,@args);
+  }
+  poll();
+}
+quit(1);
+return 0;
+

@@ -1,0 +1,12 @@
+Original Coding February 2000 
+
+	9-30-00: Added ability to set gain via iocontrol
+	       : Defined MIN_BUFFERS, exits if insufficient DMA memory
+	       : Change MAGIC from 'k' to 'x' to avoid conflict with sparc systems
+	10-7-00: Created v1.0 stable for Beta data acquisition card..
+	       : Begin v1.1 series to support new data acq cards...
+	       : Added NV RAM read utilities
+	       : Changed some values to reflect new card's registers (see notes in code)
+	       : Added DisableBusMastering to code to remove hangups
+
+	8/23/04: DW: Merging Ryan's changes

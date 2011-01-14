@@ -1,0 +1,98 @@
+#!/usr/bin/perl -w
+
+# perl/burststats: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+use strict;
+use Getopt::Std;
+
+sub usage {
+  print STDERR <<'EOF';
+Usage: burststats burstfile spikefile
+
+where: burstfile must be created by findburst from spikefile;
+       spikefile must be a time-sorted meabench spikefile.
+
+Outputs statistics about each burst, one burst per line: for each channel
+(in hardware order, 0..59 only), three columns are generated:
+
+  1. The number of spikes on that channel in the burst;
+  2. The peak time of that channel relative to start of burst, calculated
+     as t_c = (1/n_c) sum_i t_ci;
+  3. The RMS halfwidth of the burst on that channel, calculated as
+     s_c = sqrt( (1/n_c) sum_i t_ci^2 - t_c^2).
+EOF
+  exit(1);
+}
+
+my $RECLEN=164;
+
+usage() unless scalar(@ARGV)==2;
+
+my $burstfile = shift @ARGV;
+my $spikefile = shift @ARGV;
+
+open BURST, "<$burstfile" or die "Cannot open burstfile `$burstfile'";
+open SPIKE, "<$spikefile" or die "Cannot open spikefile `$spikefile'";
+
+my ($t0, $dt, $t1) = (0,0,0);
+
+my @sum1=();
+my @sumt=();
+my @sumtt=();
+for (0..59) {
+  push @sum1,0;
+  push @sumt,0;
+  push @sumtt,0;
+}
+
+my $n=0;
+my $spike;
+while (read(SPIKE,$spike,$RECLEN)==$RECLEN) {
+  my @t = unpack("LLs",$spike);
+  my $t = $t[0]/25000 + $t[1]*171798.69184;
+  next if $t<$t0; # not in burst yet
+  if ($t>$t1) {
+    if ($t1>0) {
+      # Time to output results
+      for (0..59) {
+	my $n = $sum1[$_];
+	my $tc = $n ? $sumt[$_]/$n : 0;
+	my $sc = $n ? sqrt($sumtt[$_]/$n - $tc*$tc) : 0;
+	print "$n $tc $sc ";
+	$sum1[$_] = $sumt[$_] = $sumtt[$_] = 0;
+      }
+      print "\n";
+    }
+    # Load next burst
+    my $burst = <BURST>;
+    last unless defined $burst;
+    chomp $burst; $burst =~ s/^ +//;
+    ($t0, $dt) = split(/ +/,$burst);
+    $t1=$t0+$dt;
+    print STDERR "Working on burst # ", ++$n, " at $t0...$t1 s...\n";
+  } else {
+    # Inside a burst - recall $t[2] is channel number
+    $sum1[$t[2]]++;
+    $sumt[$t[2]]+=$t-$t0;
+    $sumtt[$t[2]]+=($t-$t0)*($t-$t0);
+  }
+}
+close BURST;
+close SPIKE;

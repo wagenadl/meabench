@@ -1,0 +1,601 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>Monitor</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Monitor</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>605</width>
+            <height>253</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>130</width>
+            <height>130</height>
+        </size>
+    </property>
+    <property name="font">
+        <font>
+            <family>Helvetica [Urw]</family>
+            <pointsize>10</pointsize>
+        </font>
+    </property>
+    <property name="caption">
+        <string>Monitor</string>
+    </property>
+    <property name="layoutMargin" stdset="0">
+    </property>
+    <property name="layoutSpacing" stdset="0">
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>2</number>
+        </property>
+        <property name="spacing">
+            <number>2</number>
+        </property>
+        <widget class="QFrame">
+            <property name="name">
+                <cstring>Frame15</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Raised</enum>
+            </property>
+            <property name="layoutMargin" stdset="0">
+            </property>
+            <property name="layoutSpacing" stdset="0">
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>15</number>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>refresh</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>30</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>30</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string>Refresh</string>
+                    </property>
+                    <property name="autoResize">
+                        <bool>false</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Immediately refresh the entire display</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>autorefresh</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="text">
+                        <string>Auto</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Automatically refresh display periodically</string>
+                    </property>
+                </widget>
+                <widget class="QFrame">
+                    <property name="name">
+                        <cstring>Frame6_4</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="frameShape">
+                        <enum>NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Raised</enum>
+                    </property>
+                    <property name="layoutMargin" stdset="0">
+                    </property>
+                    <property name="layoutSpacing" stdset="0">
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>5</number>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>TextLabel2_5</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                            <property name="text">
+                                <string>Period:</string>
+                            </property>
+                        </widget>
+                        <widget class="QSpinBox">
+                            <property name="name">
+                                <cstring>window</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>true</bool>
+                            </property>
+                            <property name="prefix">
+                                <string></string>
+                            </property>
+                            <property name="maxValue">
+                                <number>100</number>
+                            </property>
+                            <property name="minValue">
+                                <number>1</number>
+                            </property>
+                            <property name="lineStep">
+                                <number>1</number>
+                            </property>
+                            <property name="value">
+                                <number>10</number>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>Auto refresh period, in tenths of seconds</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string></string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QFrame">
+                    <property name="name">
+                        <cstring>autolight</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>12</width>
+                            <height>12</height>
+                        </size>
+                    </property>
+                    <property name="palette">
+                        <palette>
+                            <active>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>192</red>
+                                    <green>192</green>
+                                    <blue>192</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>223</red>
+                                    <green>223</green>
+                                    <blue>223</blue>
+                                </color>
+                                <color>
+                                    <red>96</red>
+                                    <green>96</green>
+                                    <blue>96</blue>
+                                </color>
+                                <color>
+                                    <red>128</red>
+                                    <green>128</green>
+                                    <blue>128</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>85</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                            </active>
+                            <disabled>
+                                <color>
+                                    <red>128</red>
+                                    <green>128</green>
+                                    <blue>128</blue>
+                                </color>
+                                <color>
+                                    <red>192</red>
+                                    <green>192</green>
+                                    <blue>192</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>220</red>
+                                    <green>220</green>
+                                    <blue>220</blue>
+                                </color>
+                                <color>
+                                    <red>96</red>
+                                    <green>96</green>
+                                    <blue>96</blue>
+                                </color>
+                                <color>
+                                    <red>128</red>
+                                    <green>128</green>
+                                    <blue>128</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>128</red>
+                                    <green>128</green>
+                                    <blue>128</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>85</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                            </disabled>
+                            <inactive>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>192</red>
+                                    <green>192</green>
+                                    <blue>192</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>220</red>
+                                    <green>220</green>
+                                    <blue>220</blue>
+                                </color>
+                                <color>
+                                    <red>96</red>
+                                    <green>96</green>
+                                    <blue>96</blue>
+                                </color>
+                                <color>
+                                    <red>128</red>
+                                    <green>128</green>
+                                    <blue>128</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>85</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>255</red>
+                                    <green>255</green>
+                                    <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                            </inactive>
+                        </palette>
+                    </property>
+                    <property name="frameShape">
+                        <enum>StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="lineWidth">
+                        <number>2</number>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Blinkenlight for autorefresh </string>
+                    </property>
+                </widget>
+                <widget class="QFrame">
+                    <property name="name">
+                        <cstring>Frame7</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>NoFrame</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Plain</enum>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="Line">
+            <property name="name">
+                <cstring>Line1</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>0</width>
+                    <height>2</height>
+                </size>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="MonTable">
+            <property name="name">
+                <cstring>monitor</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>3</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>100</width>
+                    <height>50</height>
+                </size>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>MonTable</class>
+        <header location="local">MonTable.H</header>
+        <sizehint>
+            <width>100</width>
+            <height>100</height>
+        </sizehint>
+        <container>1</container>
+        <sizepolicy>
+            <hordata>3</hordata>
+            <verdata>3</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+        <slot access="public" specifier="">refresh()</slot>
+    </customwidget>
+</customwidgets>
+<images>
+    <image name="image0">
+        <data format="PNG" length="3155">89504e470d0a1a0a0000000d49484452000000300000003008060000005702f98700000c1a494441546881d59a71685b5796c67f5e5288a10311d410c11aa2650c917602b5d840a4ad215637b089da656b6d0263ed14d69a1988352d24560bad9596d44a968ee5403a568666ad0ce9faa5905af130b51c48b0bcc4f5f390e0e725193f97b858255eac50172b7883ed4d0b67ffb84f9665cb8e9da4b3ec0171b87a7ef77ee7fbce39f73e3d57e8baceff67fb8bff6b004f6bdb9e7682c623215902b6d3c9a5cb9515cf00d396eca91488bdd72ab1936172d3269d677234fc43a378bd5e7956e036634f1cc0eed3bba4e96741824d61d29792f8f705495fea44e685f8af3bff6c813c51008d474272a55e23f07a88d87b51fcf743243f8be33ee0c7fccf0ca95e8d1ead8b746fea070fa462ab5d287c24249e831e12e793300278500ad485e02ba01ecca10cae3a1f0c017510fb20ca89f74fa1ebfa33af912d29e019f448db995612e793681712f037600ca5f13786485d4f40bd1abbea7c184319a803632443f4bd18c3fd3d78c63ccf5c914d07106e0e49ba46c37f380843106c0a137b3f8afba11f7a53049ac218d7d3b8ebfc3008ee3a1fc6601ab7c70723e03d18c0dcab238f84d4a7dde279f06c82d954008d4742d27aac05ffe120c6a06236f54992e8e918c60e1dae67c87c9ec27dc08f3198564a0ca671d75b630f9823195c7bbdc4ff354abc2381f17c065910cc3143bcdec6270ee4b135d078242491634d845f8bc0976938e827f9519cd09b119805aa50fe4b484d26941216f8420d9823195c1e1fe9de14fedd015832a0d6bd7c3dd39bc2f762808abfb203a0eb57365d2b1b2ad0782424e1a38d848f47c8fc2905393f81570384de8c909fcd431545bf3b4fa0294cb839847bda62be4e29e1f2f8d0afa6f04f07301eea50ebc6bc95817d103f1dc3f75a80ec4303911c5d1f47e9faed16dab0aeebeb7e9cec141111d195ebbed825625a5e44e41b29f19d1ded22f32287f6d78bdc1619eeef5117fafb44e64506fafb4ae6ebd3bad5bc1f77aa2fee8e2b3f25228f44da4eb60a201b615cff023b44ce8a8cde1810119181fe1e693bd9265377a7ac60d4e273dfcc898848dba936111119bfd123f2a148eb89566939da2c039901910591aeb3edd6f58112d07d577a44e645a66e8f8a88c8cc949a7feede94b56e9fc83bb26e2065c1d7fea553e4914857a253e4a6c8707f9fc86d511f1191198bc12b8ad1ce44a7c83d8b39116979a3d9625464e6957a39f477f5220b2262584a262d050d11991319cdf42dffbd88a8b9567a4b91ee8bdd2219910d036838dc20a289f45d560cf75cee96c6571a64dc182f61bce0bbb56e693fd922e3ba02317ca5535a8eb52c5fef4c28a69bfea551613146971595054b011199b1d267b50233f7ca28b220d2fa4eab940d40ee16196e3fd12a724fa4bd43c92f73162385dc9fb1d8b9a9c08ff6772916af59f717ee3395eb3cdba9fede5242acb4295c5fae81d50accacf296d23b5ed8256b0268b77279615ea16d3eaad26120332072b6bd5481b3225386cae9f11b8ad1b613ad2222d295ec12d14446f5d192f9c6cd71555b56da4c99e3651558adc46adfded12e502600b9b682e147169356509211c5f037a272bad0650c05a6eb6c9bc83d91d19ba38a25abdb2ccfb760f93935f7722dacec3ee51458a544dfe56e819de553a850800b0b6ab5618bf94e2b1d86f5616939d62c3d17556ecfdd1d560a699d228f44a6a666a4e58d66a58088ccdc9bb1145828eb3badeeb49e02ab6b60fce67049475aab404644e655a43d5ab7c8cd157d7f6e952253560effa14bb167dd5700dff5b175dffc2a050adefabefb629762d97c8c1253e322d764e300dade51393cd0df276d6fb52c333f6531d2ad758b2c14991fedef12f95064fcb65abce5985270f4a60aaeef0f3da5cc2f2c941d0febc3d276b24d292e65ba9135e605366ea372c32a3cd3da6cfa4586adcd474c51796881974c8fc85d91560b74f3d11605dada1f0ab95f00b5dcc5562b51f033ea53d8f44af60111a9df5fbf66435b1340f3d166918e76e9b9d8a50aede34e69fa59a352a24364c654e0a76eaaae53482fe76ea734bc72481afeb141645e6454577f373767759f9ba322f322333333a54a58bed0300abeb0b3176aa347eb2ebb1baf0960a15f1478b1368d1ba272fc862c6f56851db927a9986a7ea359169253d27ab451e4ca9c1cdaef1191621a2d337ccf52a5d0f71fade32d1bb836a0d6bf26e279a9beec5162cd69f49ffe3d48e07e087d308d6f72026349835743e80f92b83c7ef2591df640e65282feff18237e264e621b5cf85623f6622dda7407bbaa1d186306eebd6ef2b91c54c2e27f2f4235e4b7e56108f4211d9e03be63adb7cc77c047fe2779fc67fc8c7c31b8f9d3a8f3c55a95af97ad53a2315c9a93b70744ee8ab47fd8a6ce32fdd6a9f26c9b8821d2fc8b26eb3e2955e051e9b8c73a8dae667eb5eddcb56bdd1369d9e781e4b94485f790170e87c94d1a50eb6531674235982329d8e3c3fc364de4ed28992f34dcfb8368e76204ff2b47f8b7412626b344df8dc04f209fcf4325b0b85864b852f9406390d4671a3c672954c6bcf57eae5cbab4ee03ceba0f34fa651dee64b0d7b8210b9576178ca571790230012e8f1fa60d7c7f1f24f96f51828e30d1ef217154e3d0011fb15fc449fc268e6dbbcd025d594c138a3e70380857d354fea8523dd9adb0c8f108b107adeb41dc3800e32bc574762c030e589ccd42ad9fdc581a9c909fd0a1da4df68f2942db6268d397889d4990f93a49645794786f9cf0f1085aafc5f04a0556da77c0413ffa6006aa20379d03203398a17f48a7f25cc5868f97eb3e137b3c1e611aa8a6f8ec3b09d40079c006dc01f600131970fa485d8813d81b21fc9b3089f389e5ebe698816bb71bbe077eb4019a3bc04e30ef9bd8be74e0ffc84fe2d7a7360ca0ac029ec961c9ded1a1da62be0a550335d6d88652620fe4277570fa30ae6b04becc1278db876dfb1291e361d8a31875d5bac9ddcfc2e790cd664b175ba9c81ec82de5f8e7a69ff3f2e9bf7d2cf87503d01e2ce1d8e385ac4e65950372560dcca2c69360aff543cec456e385a114eefd41c20f1f903a9e66c70e1bf1fa38e68489bdda0edf81dde18003e078c1012b3be273a56bdbabed2c2d2d913c97d8d42f13650308ee88b2386d80c30bf91cd88b4ae427f5a2127617e6500aea02e4bfca9038a7919e4d10792b4ef8eaaf70395d9813661164152c7e9f877a489e4f9405147c3dc4ce1f3b36831d2853032d6f8645bfdc050e7731d77326d85d90051cacad09ab06f83c092f8588b58789be9180078093d2ee03b0085442e28c2af465bb05deb77d749c7e7cea146cad02db00877b39d7172df0f9ac5eec4655909fcc400d646fa5c0e923732901b321b44f63b0dd4efc7731705a5d65559a14f685f0f10889734525fc1f04b055d9368bbd7c00fa88a1fa7e9543e5bcc5bccde18569537d3f96c656e3c31cd470ec0dc0d5243e4f9814718207a23876d989bc1b25f15142d54039abac0420dc1c26792189afde4bfe619ee8b1c8967ec12e09c0ebf54a7ec2eafb39b398f30e9402d52ef21319a8f5630c6ab8f605d17b93900d11fb5d98ecb74ba46e69045f0fa10f6508bf19465b27d7575ae8db10135fe7b6943a650300b0397dc5ae93457599acae14184a61fbb18ff42771dcfb82d097c0bb3b44f0ba8f96dd319c4e2781c620e69881b7ce07b310fc6518ed42724310e1fb11b4e7b5ad625f1b40d34f1b54f7b1af607e52078757e5fabe0099be04fec311529fc6614827f8be8fccef0779b9fd65fcaf06c84e98b86add2c167e33cde5083685d03e290f50fb44636ccca0f2fcc63bee7a56d285e6b286f81bc3c56e9355e0b99586bd7ef4de04de17c2c43e0f117d3549f4b320fe9ffeaa0254fa79763bd1274cd6ece0964ff7a6f0ef0fc0f3c07360de3179d0b444c547fff3c46f6e4a02f0783cb2386d5059ed263fa963abf1921b4b63aff5635c4de29ecc12fa628c9f1f8b965dd0ebf58a931d989227379dc55eed6071364f65958dfc6c0e5b959dd4672902d900c6019313efbec5e2f6ed9c7a7b6b85bb6e008520c81a6a1fb09430ae2771ef0b31f2a791c72ee4f57a6527901359ab44613c6162f7fd35b69d1e92e73a9eeabdd99a225639ef5eae81ecad14ee9742c4de0f6d6a425dd72baee87a85bbc601d590cb5afbc674563d91e572e074b1b46de753838727784bb9158bbdd72ae9eb99624de5003bd81d2eee7f3df14cde5afea0ff2b11fde05485ffa00f1c909b34c10ee94bda33030f3fb002056b38724872d379180377a38bc485e4337b5ffc6709a0609e5e8f8cbcf6f846b015fb5ff22980cd8c1fe3340000000049454e44ae426082</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>refresh</sender>
+        <signal>clicked()</signal>
+        <receiver>monitor</receiver>
+        <slot>refresh()</slot>
+    </connection>
+    <connection>
+        <sender>window</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>Monitor</receiver>
+        <slot>setAutoRefresh()</slot>
+    </connection>
+    <connection>
+        <sender>autorefresh</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>Monitor</receiver>
+        <slot>setAutoRefresh()</slot>
+    </connection>
+</connections>
+<slots>
+    <slot>setAutoRefresh()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>MonTable.H</includehint>
+</includehints>
+</UI>

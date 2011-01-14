@@ -1,0 +1,11 @@
+
+	This is kernel module code is for a Multichannel systems data acquisition card (www.multichannelsystems.com). The code is still very ALPHA and needs quite a bit of cleaning up. However, I've been using it for over a month now and its quite stable on a PIII multiprocessor platform (SGI 540 visual workstation running a linux kernal version 2.2.10).
+	The driver (module in this case) can be inserted or deleted from a running kernel on the fly. Compilation and installation instructions are located in INSTALL which should have accompanied this file. Since this driver initially attempts to allocate a fairly large chunk of contiguous memory for DMA purposes (about 300 msec of data) It should be inserted as a module into the kernel just after the system is up and running to allow it to grab free DMA memory pages. In the event the user process cannot keep up with the data flowing into the DMA buffers (ie you fall behind more than 300 msec worth), the module will begin to overwrite the data silently. It will however keep count of overruns. 
+
+Tom DeMarse
+
+California Institute of Technology
+
+Wed Jan 17 10:35:38 PST 2001
+
+

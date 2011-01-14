@@ -1,0 +1,60 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Description;
+
+sub usage {
+  print STDERR "Usage: rawsummary spikefilename\n";
+  exit(1);
+}
+
+sub error {
+  print STDERR join(" ",@_),"\n";
+  exit(2);
+}
+
+sub atoi {
+  my $src = shift;
+  my @src = split(/ /,$src);
+  $src = shift(@src);
+  return 1*$src;
+}
+
+usage() unless scalar(@ARGV)==1;
+
+my $fn = shift @ARGV;
+
+my $nscans = 0;
+my @st = stat($fn);
+$nscans = $st[7]/128 if @st;
+
+my $desc=undef;
+eval { $desc = Description::read("$fn.desc") };
+my $mode = "";
+my $freq = 25000;
+if (defined($desc) && exists($desc->{"Raw sample freq"})) {
+  $freq = 1000*atoi($desc->{"Raw sample freq"});
+}
+if (defined($desc) && exists($desc->{Triggered})) {
+  $mode = " Continuous";
+  if ($desc->{Triggered} =~ /Yes/) {
+    $mode = " Triggered";
+    my $pre = atoi($desc->{"Pre trigger time"}) * 1000 / $freq;
+    my $post = atoi($desc->{"Post trigger time"}) * 1000 / $freq;
+    $mode .= " [-$pre,+$post] ms";
+    my $ntrig = $desc->{"Number of triggers"};
+    $mode .= "; ${ntrig}x";
+  }
+}
+my $date = "";
+if (defined($desc) && exists($desc->{Date})) {
+  my @date = split(/ /,$desc->{Date});
+  my @time = split(/:/,$date[3]);
+  $date = " (" . $date[2] . " " . $date[1] . " " . $time[0] . ":" . $time[1] . ")";
+}
+my $runlength = $nscans/$freq;
+if (defined($desc) && exists($desc->{"Run length"})) {
+  $runlength = atoi($desc->{"Run length"});
+}
+    
+printf "%.3f s.$mode$date\n",$runlength;

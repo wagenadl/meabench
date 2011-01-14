@@ -1,0 +1,7 @@
+# Kbuild for MCCard
+# New version dd 12/12/06 by Daniel Wagenaar
+# This is for kbuild-enabled kernels, i.e. 2.6.x
+
+obj-m  := MCCard.o MCCardnodev.o
+MCCard-y := MCCard26.o
+MCCardnodev-y := MCCard26nodev.o

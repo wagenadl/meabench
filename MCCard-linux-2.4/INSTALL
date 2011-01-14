@@ -1,0 +1,40 @@
+Basic Installation
+==================
+
+  
+Compilation instructions
+========================
+
+You must have a copy of the linux kernal (version 2.2.10 or above) installed on your machine. It should be located in /usr/src/linux or you will need to change where gcc looks for the kernel header files (the -I include flag)  in the Makefile.
+
+1. cd to directory where you unpacked the files
+
+2. To Create the object module by typing make
+	
+
+To install the module
+=====================
+
+As Root
+
+1. Create a file device named MCCard with major # 250 and minor # 0:
+	mknod /dev/MCCard c 250 0 
+	chmod u+rw /dev/MCCard
+
+2. To activate the module type:
+	insmod MCCard.o
+
+3. When installed it should print out a bit of info to /var/log/messages about how much memory for DMA transfers it was able to allocate. The device should also appear in /proc/interupts and /proc/modules. To verify simply type "lsmod" and you should see MCCard listed.
+
+4. Access to the data acquistion card will now be through the file /dev/MCCard which to the user acts simply like a file that can be opened and read (see sample program read.c).
+
+To remove the module
+====================
+
+As root type:
+
+	Note:Make sure no one is accessing the device (with lsmod)
+	Then type rmmod MCCard
+
+Again, information will be printed about termination in /var/log/messages. You can verify termination by typing "lsmod" again if you wish.
+ 

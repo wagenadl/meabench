@@ -1,0 +1,106 @@
+#!/usr/bin/perl
+
+# perl/cleanctxt: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+use ChannelNrs;
+use Description;
+
+sub usage {
+  print STDERR <<'EOF';
+Usage: cleanctxt [relthresh] [testidx] [absidx] \
+                                   < in.spike > out.spike 2> out.idx
+
+This performs the function of cleanctxt.m, but works stand-alone.
+Default for testidx is 0..12,39..62. (tested at 50%)
+Default for absidx is 0..21,28..62. (absolute value tested at 90%)
+EOF
+  exit(1);
+}
+
+
+
+usage() if @ARGV && $ARGV[0] =~ /^-/;
+$relthresh = 0.50;
+@testidx = (4..12,39..49);
+@absidx = (4..21,28..49);
+$absthresh = 0.90;
+$relthresh = shift @ARGV if @ARGV;
+@testidx = eval(shift @ARGV) if @ARGV;
+@absidx = eval(shift @ARGV) if @ARGV;
+usage() if @ARGV;
+
+#print STDERR join(" ",@testidx),"\n";
+#print STDERR join(" ",@absidx),"\n";
+
+if ($^V ge v5.8.0) {
+  binmode STDIN, ":bytes";
+  binmode STDOUT, ":bytes";
+}
+
+
+$idx=-1;
+while (1) {
+  read(STDIN,$si,164)==164 or last;
+  ($tl,$th,$c,$h,$w,@ctx) = unpack("LLssss*",$si);
+  #print STDERR "$tl $th $c $h $w\n";
+  $thr=pop @ctx;
+  $idx++;
+
+  if ($c<60) {
+
+    $mfirst=0; $mfirst+=$ctx[$_] for (0..14);
+    $mlast=0; $mlast+=$ctx[$_] for (60..73);
+    $vfirst=0; $vfirst+=$ctx[$_]**2 for (0..14); 
+    $vlast=0; $vlast+=$ctx[$_]**2 for (60..73);
+    $vfirst-=$mfirst**2/15; 
+    $vlast-=$mlast**2/14;
+    $mfirst/=15.0;
+    $mlast/=14.0;
+    $vfirst/=14.0;
+    $vlast/=13.0;
+    next if $ctx[0]==0 && $ctx[1]==0 && $ctx[2]==0 && $ctx[3]==0 && $ctx[4]==0 && $ctx[5]==0 && $ctx[6]==0 && $ctx[7]==0;
+    $dc=($mfirst*$vlast+$mlast*$vfirst)/($vfirst+$vlast+1e-10);
+    $ctx[$_]-=$dc for (0..73);
+    $peak=($ctx[24]+$ctx[25])/2.0;
+    $apeak=abs($peak);
+    $bad=0;
+    $bad+=abs($ctx[$_]) >= $absthresh*$apeak for (@absidx);
+    next if $bad;
+    if ($peak<0) {
+      $bad+=$ctx[$_] <= $relthresh*$peak for (@testidx);
+    } else {
+      $bad+=$ctx[$_] >= $relthresh*$peak for (@testidx);
+    }
+    next if $bad;
+  } else {
+    $mx = -10000;
+    for (25..40) {
+      $mx = $ctx[$_] if $ctx[$_]>$mx;
+    }
+    $pmx = -10000;
+    for (0..23) {
+      $pmx = $ctx[$_] if $ctx[$_]>$pmx;
+    }
+    next if $pmx > $mx - 100;
+  }
+
+  print STDERR "$idx\n";
+  print $si;
+}

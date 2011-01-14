@@ -1,0 +1,107 @@
+#!/usr/bin/perl
+
+# perl/resplitbytrial: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+use IO::File;
+
+sub usage {
+  print STDERR <<'EOF';
+Usage: resplitbytrial inbase-%i chmap outbase-%i pre_ms post_ms
+
+inbase-%i must expand to a set of "bytrial" filenames upon replacement of %i
+by a positive integer. 
+chmap must be a stimulus channel map file as produced by meabench:resplit.
+The bytrial files will be split into files labeled by the stimulation channel
+number.
+Additionally, spikes beyond post_ms are recognized as being part of the next
+stimulus and treated as such.
+EOF
+  exit(1);
+}
+
+usage() unless $inbase=shift(@ARGV);
+usage() unless $chmap=shift(@ARGV);
+usage() unless $outbase=shift(@ARGV);
+usage() unless defined($prems=shift(@ARGV));
+usage() unless $postms=shift(@ARGV);
+usage() if @ARGV;
+
+print STDERR <<"EOF";
+inbase:  $inbase
+chmap:   $chmap
+outbase: $outbase
+pre_ms:  $prems
+post_ms: $postms
+EOF
+
+$pres=$prems/1000;
+$posts=$postms/1000;
+$dt=$pres+$posts;
+
+print STDERR "Reading channel map...\n";
+open CHMAP,"<$chmap";
+while (<CHMAP>) {
+  chomp;
+  ($f,$n,$hw)=split;
+  $chmap{$f}->{$n}=$hw;
+  $chs{$hw}=1;
+  $src{$f}=1;
+}
+close CHMAP;
+
+for $hw (keys %chs) {
+  my $fh=new IO::File;
+  $fh->open(">". sprintf($outbase,$hw)) or die "Cannot write to file no $hw";
+  $chios{$hw} = $fh;
+}
+
+$maxsrc=1;
+%maxtri=();
+for $src (keys %src) {
+  $maxsrc=$src if $src>$maxsrc;
+  for $tri (keys %{$chmap{$src}}) {
+    $maxtri{$src}=$tri if $tri>$maxtri;
+  }
+}
+
+$basetri=0;
+for $src (1..$maxsrc) {
+  print STDERR "Source $src...\n";
+  open SRC,("<".sprintf($inbase,$src)) or die "Cannot read source no $src";
+  while (<SRC>) {
+    chomp;
+    my ($t, $hw, $h, $w, $tri, $id) = split;
+    if ($t>=$posts) {
+      $tri++;
+      $t-=$dt;
+    }
+    $stimhw = $chmap{$src}->{$tri-1};
+    if (defined $stimhw) {
+      $tri+=$basetri;
+      print {$chios{$stimhw}} ("$t $hw $h $w $tri $id\n");
+    }
+  }
+  close SRC;
+  $basetri=$basetri+$maxtri{$src};
+}
+
+for (values %chios) {
+  $_->close();
+}

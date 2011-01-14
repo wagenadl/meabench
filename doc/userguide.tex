@@ -1,0 +1,1770 @@
+% doc/userguide.tex: part of meabench, an MEA recording and analysis tool
+% Copyright (C) 2000-2006  Daniel Wagenaar (dwagenaar@ucsd.edu)
+%
+% This program is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+\documentclass[12pt,oneside]{book}
+
+%%\usepackage{ifpdf}
+%%\ifpdf
+%%	\def\gfxextn{.png}
+%%\else
+%%	\def\gfxextn{.eps}
+%%\fi
+
+\def\gfxextn{}
+
+
+\usepackage[letterpaper,width=6.5in,height=9.5in]{geometry}
+
+\usepackage{url}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\usepackage{xspace}
+\usepackage{epsfig}
+\usepackage[perpage,multiple]{footmisc}
+\pagestyle{fancy}
+\raggedbottom
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.0pt}
+\fancyhf{}
+\fancyhead[L]{Wagenaar, {\it Meabench 12/12/'06}}
+\fancyhead[C]{{\bf{\rightmark}}}
+\fancyhead[R]{\thepage}
+\renewcommand{\chaptermark}[1]{\markright{#1}}
+\renewcommand{\sectionmark}[1]{}
+\def\Meabench{{MEABench}\xspace}
+\def\meabench{{MEABench}\xspace}
+\def\prog#1{{\bf #1}}
+\def\cmd#1{{\bf #1}}
+\def\arg#1{{\it #1}}
+\def\stream#1{{\it #1}\xspace}
+\def\streamtype#1{{\sc #1}\xspace}
+\def\raw{\streamtype{raw}}
+\def\spike{\streamtype{spike}}
+\def\rms{\streamtype{rms}}
+\def\intr{{\bf Ctrl-C}\xspace}
+\def\eoi{{\bf Ctrl-D}\xspace}
+\def\filename#1{{\sf #1}\xspace}
+\def\X#1{{$[\!\![$ \bf #1 $]\!\!]$}}
+\def\cfig#1#2{\begin{center}\epsfig{file=#1\gfxextn,width=#2}\end{center}}
+
+\begin{document}
+\thispagestyle{empty}
+\setcounter{page}{1}
+
+~\vspace{.5in}
+
+\begin{center}
+\noindent{\LARGE\sc{Meabench}}
+
+\vspace{10pt}
+
+\noindent{\large{Daniel Wagenaar}}
+
+\vspace{10pt}
+
+\noindent{\large Release 1.1.0, December 2006}
+
+\vspace{1in}
+
+\noindent\begin{minipage}{.7\textwidth}
+\noindent\bf
+\Meabench is a set of command line and GUI utilities to process data
+from the Multi Channel Systems MEA60 amplifier.  Adaptation for
+different hardware should be straightforward.  \Meabench was designed with
+extensibilitity in mind, and is fully modular. That means that filters
+can be inserted anywhere in the data processing stream. This document
+describes the basics of the toolset and the usage of the individual
+programs.
+\end{minipage}
+
+\end{center}
+
+\vfill%\vspace{2in}
+{\scriptsize\bf Copyright \copyright{} Daniel Wagenaar 1999-2006.
+
+{\Meabench} is free software. You can redistribute it 
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version. However, I encourage
+you to contact me if you wish to do so.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+    02111-1307 USA.
+
+You may redistribute and/or modify this documentation under the terms
+of the GNU Public Documentation License as published by the Free
+Software Foundation. However, as for the software, I encourage you to
+contact me if you wish to do so.
+
+The latest version of this document and of the software described in
+it, is available for public download from
+ \url{http://www.its.caltech.edu/~pinelab/wagenaar/meabench.html}.
+}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\chapter{Introduction}
+
+\Meabench is an open-source suite of programs for acquisition and
+analysis of multi-electrode array (MEA) recordings. \Meabench was
+developed by Daniel Wagenaar at Caltech, drawing on the excellent
+example set by MultiChannel Systems' MC\_Rack 
+suite\footnote{See \url{http://www.multichannelsystems.com}.}.
+
+The software runs under Linux and other Unix variants, and is freely
+distributable under the terms of the GNU Public License (see
+\url{http://www.gnu.org/copyleft/gpl.html}). It offers the following
+functionality:
+
+\begin{itemize}
+\item Acquisition of raw electrode data from MultiChannel Systems' MCCard;
+\item Complete removal of mains (60 Hz) interference using template
+    filtering;
+\item Removal of stimulation artifacts using the SALPA 
+  algorithm\footnote{D.\ A.\ Wagenaar, and S.\ M.\ Potter: Real-time
+  multi-channel stimulus artifact suppression by local curve fitting. 
+  \emph{J.\ Neurosci.\ Meth.} {\bf 120:2}, 2002, pp 113--120. This, and
+  most other publications mentioned here, may be obtained from my
+  website, \url{http://www.biology.ucsd.edu/~dwagenaa/pubs.html.}};
+\item Online and offline detection of spikes;
+\item Online visualization of electrode data and spikes;
+\item Online sonification of spikes;
+\item Continuous or windowed saving of raw data and spikes;
+\item Saving of spike waveforms, for later spike sorting and analysis;
+\item Replaying of raw and spike files, at any speed;
+\item Instant-replay buffer for easy analysis of recent events;
+\item Online generation of raster plots;
+\item Continuous monitoring of varying noise levels;
+\item A variety of utilities for analysis and data format conversion,
+    including:
+\begin{itemize}
+     \item Averaging of electrode recordings over trials;
+     \item Conversion of binary spike files to ASCII representation;
+     \item Filtering of spike files based on any mathematical expression
+        involving shape or timing parameters;
+     \item Extraction of single channels from 64 channel streams;
+     \item Splitting of long data files into trials;
+     \item Splitting of long data files into channels;
+     \item Computing spike rates;
+     \item Detecting culture-wide bursts.
+\end{itemize}
+\item Matlab functions to import \meabench data\footnote{Users may
+	also be interested in Uli Egert's
+    	comprehensive set of matlab code for MEA data
+    	analysis; freely available at
+    	\url{http://www.brainworks.uni-freiburg.de/projects/mea/meatools/overview.htm}.};
+\item A program to allow easy scripting of \meabench modules for
+offline processing.
+\end{itemize}
+  
+\Meabench is fully modular, and any user with some Unix programming
+experience can extend it to fit her or his needs. Since \meabench can
+stream live data to your extension modules, it is well suited, for
+example, to drive real-time feedback systems. In fact, the ability to
+communicate with other software or hardware in real-time was one of
+the primary motives for the conception of \meabench. It allowed a
+reliable, sub-100 ms feedback loop time in our Neurally Controlled
+Animat\footnote{T.\ B.\ DeMarse, D.\ A.\ Wagenaar, A.\ W.\ Blau, and
+S.\ M.\ Potter: The neurally controlled animat: Biological
+brains acting with simulated bodies. \emph{Autonomous Robots} {\bf 11},
+2001, pp 305--310.}\footnote{D.\ A.\ Wagenaar, and S.\ M.\ Potter: A
+versatile all-channel stimulator for electrode arrays, with real-time
+control. \emph{J. Neural Eng.} {\bf 1}, 2004, pp 39--44.}.
+
+\Meabench was written primarily for use with the MultiChannel Systems
+MEA hardware, and a driver is included for their MCCard data
+acquisition card, written by Thomas B.\ DeMarse with advice from
+MultiChannelSystems. If you use different data acquisition hardware,
+you may still find \meabench useful, because, due to its modular
+nature, it is possible to write plug-in modules to read data from your
+hardware. An experimental driver for one such board (manufactured by
+United Electronic Industries, but not endorsed by us at its
+state of development as of Nov 2002) is included as well.
+
+\Meabench has been in constant use in the Pine lab at
+Caltech for over four years, and at Steve Potter's group at Georgia
+Tech\footnote{Public website: \url{http://www.neuro.gatech.edu/groups/potter/index.html}} since its
+beginning. It is also used by several other research groups in the US,
+Europe and Asia.
+\Meabench remains a work in progress; we welcome
+suggestions for improvement (and bug reports). Please join in the
+development by submitting your code (patches and improvements) for
+inclusion in future releases.
+
+Another introductory article about \meabench was presented at the IEEE
+EMBS Conference on Neural Engineering\footnote{D.~A.~Wagenaar,
+T.~B.~DeMarse, and S.~M.~Potter: MEABench: A toolset for
+multi-electrode data acquisition and on-line analysis. \emph{2nd
+International IEEE EMBS Conference on Neural Engineering}, Arlington,
+VA, March 16--19, 2005.}.
+
+
+
+\section{Conventions}
+
+\def\Useri#1{{\tt #1}}
+\def\Compo#1{{\sf #1}}
+\def\Prompt#1{{\sf\bfseries #1}}
+\def\Uprompt{\Prompt{\$}}
+\def\Mprompt#1{\Prompt{#1$\mathbf >$}}
+\def\useri#1{\Useri{#1}~\par}
+\def\compo#1{\noindent\Compo{#1}~\par}
+\def\prompt#1{\noindent\Prompt{#1}~}
+\def\uprompt{\prompt{\$}}
+\def\mprompt#1{\prompt{#1$\mathbf >$}}
+
+Throughout this document, the names of \meabench programs are typeset
+\prog{Like this}. When running \meabench programs, the capitalization
+should be omitted. Commands defined within \meabench programs are set
+\cmd{like this}. The names of \meabench streams look \stream{like
+this}, and their types \streamtype{like this}. \intr means holding the
+Ctrl key while pressing `C'. 
+
+In examples, text you type is set
+\Useri{like this}. Text the computer produces is set \Compo{like
+this}, with prompts highlighted
+\Prompt{like this}. The unix prompt is represented as \Uprompt.
+
+In definitions of \meabench commands, parameter names are written \arg{like
+this}, optional paramaters are enclosed in brackets [\arg{like this}],
+and alternatives are separated by a vertical pipe: \arg{this}$|$\arg{that}.
+
+\section{Acknowledgments}
+
+I'd like to acknowledge valuable input and support from Steve Potter,
+Tom DeMarse and Jerry Pine. We are all grateful for financial support
+from the NIH-NINDS and the Burroughs-Wellcome Fund, and for cooperation,
+technical support, and equipment from MultiChannel Systems. Portions of
+\Meabench{} were written by Tom DeMarse, Ryan Haynes, John Rolston, and Brookes
+Poo.
+
+\chapter{Compilation and installation}\label{chap:install}
+
+\def\unixprompt#1{\begin{quotation}\Uprompt~\Useri{#1}\end{quotation}}
+
+If you intend to use \meabench with MultiChannel Systems hardware,
+installation is very straightforward. The following is a step by step
+guide.
+
+\begin{itemize}
+\item Make sure you have gcc 2.95 or later.
+\item Make sure you have Qt 3.0 or later. (Qt 4 or later will \emph{not} work. Most linux distributions allow you to install Qt~3 and Qt~4 side by side.)
+\item Make sure your kernel is 2.4.10 or later. (Kernel 2.6.x recommended.)
+\item Download the latest version of \meabench, and unpack it:
+  \unixprompt{tar xzf meabench-1.1.0.tar.gz}
+\item Enter the directory:
+  \unixprompt{cd meabench-1.1.0}
+\item Choose the directory were you want to install \meabench, e.g.
+  \filename{/opt/meabench}, and configure:
+  \unixprompt{./configure -{}-prefix=/opt/meabench -{}-with-hardware=mcs}
+(The \filename{-{}-with-hardware} chooses the particular DAQ hardware
+you are using. Currently defined values are \Useri{mcs} for MultiChannel
+Systems' MCCard, and \Useri{uei} for United Electronic Industries'
+PD2-MF64-14H cards. This second driver is currently ``experimental''.)
+\item Compile:
+  \unixprompt{make}
+This will take a while. You may see various compiler warnings, such
+as: 
+\begin{quotation}\Compo{SD\_BandFlt.C:97: warning: assignment to `short
+int' from `float'}\end{quotation}
+These can safely be ignored. Actual compiler {\it errors} are another story,
+of course: If you see something like:
+\begin{quotation}\Compo{
+SD\_BandFlt.C:52: `sqr' undeclared (first use this function)\\
+\mbox{}\kern\parindent make: *** [SD\_BandFlt.o] Error 1}\end{quotation}
+you have discovered a bug, which I would like to hear about (see
+\emph{Reporting bugs} in chapter~\ref{chap:help}.
+\item If compilation went well, you may now complete the installation
+by typing:
+  \unixprompt{make install}
+Depending on the installation location you have chosen using
+\Useri{-{}-prefix=\ldots}, you may have to become super user (root)
+before executing \Useri{make install}.
+\item If the installation location you chose is in your {\it path}
+already, you can run \meabench programs simply by typing their name. 
+If not, you can either modify your path variable, or copy the program
+\prog{mea} from the \meabench `bin' directory to a location in your
+path. That will allow you to run \meabench programs by typing, e.g.,
+\Useri{mea rawsrv}.
+\item If you are using kernel 2.6.x,  \Useri{make install} will also have 
+installed the MCCard driver in the \filename{/lib/modules} tree, so
+you can load the driver simply by typing \Useri{modprobe MCCard}. 
+(This probably requires super user privileges.)
+\item If you are using kernel 2.4.x, you should manually copy  
+\filename{MCCard-linux-2.4/MCCard.o} to an appropriate system location 
+so that \Useri{modprobe} can load it. Alternatively, you can use
+\Useri{insmod }.
+\end{itemize}
+
+You may have noticed that the installation procedure closely matches
+the standard GNU style. Generic information about GNU style
+installation is provided in the file \Compo{INSTALL} in the top
+directory of the \meabench source tree.
+
+
+\chapter{Examples}\label{chap:examples}
+
+In this chapter you will learn how to do most common tasks with
+\meabench; subsequent chapters will provide a reference guide to
+individual components. I will assume that you have already compiled
+\meabench and installed it in a place where your unix shell can find it.
+
+\section{Ensuring that the driver is loaded}
+
+[This assumes you are using the MultiChannel Systems driver; for other
+drivers, contact the author of that specific driver.] Start by
+checking that all hardware is connected properly. Then open a terminal
+window, and type \Useri{lsmod}. If `MCCard' is listed in the resulting
+output, you are good to go. Otherwise, try typing
+\Useri{modprobe MCCard}. (You will likely have to run that as super
+user; use \Useri{su} or \Useri{sudo} and be aware of the
+responsibility associated with super user privileges.) If that gives
+an error (e.g. the system cannot find the file), \Useri{cd} to the
+directory where you built \meabench, then type \Useri{insmod
+MCCard-linux-2.6/MCCard.ko} if you are using a 2.6.x kernel, or
+\Useri{insmod MCCard-linux-2.4/MCCard.o} if you are using a 2.4.x
+kernel. After all this, type \Useri{lsmod} again. This time, `MCCard'
+should be listed. If not, contact the author.
+
+\section{Displaying electrode traces on-line}
+
+This example shows how to display incoming data fom an MEA in
+real time. 
+
+Start by checking that all hardware is connected properly, with an MEA
+locked in the pre-amplifier. Then open two terminal windows.
+
+\begin{itemize}
+\item Run the visualization program, \prog{scope} from the first terminal:
+\begin{quotation}
+\uprompt~\useri{scope}
+\compo{Error from Sockclient: Constructor failed at connect [Connection refused]}
+\compo{Error from Sockclient: Constructor failed at connect [No such file or directory]}
+\end{quotation}
+The warnings are normal, and indicate that the scope is not yet
+`connected' to any input. We will fix that in a moment. Let's first
+take a look at the scope window:
+
+\cfig{scope}{.8\textwidth}
+
+The top area contains a lot of controls, which you will learn to use
+gradually. The main part of the window displays an 8 by 8 grid of
+rectangular panels, blank for now, which will show electrode traces in
+a moment. The panels are layed out in the same shape as the physical
+electrodes on an MCS MEA, with the corner positions occupying the
+auxiliary channels A1 through A3. The bottom right corner is not
+connected to anything on our data acquisition board. If you are using
+a `hex' MEA, you can click the `Hex' button in the second row of
+controls to change the layout appropriately.
+
+\item Start the core data acquisition program, \prog{rawsrv} in the
+second terminal:
+\begin{quotation}
+\uprompt~\useri{rawsrv}
+\compo{This is rawsrv, compiled for use with the following hardware:}
+\compo{}
+\compo{Pre-amp: MEA1060 by MultiChannel Systems}
+\compo{A/D:     MCCard by MultiChannel Systems}
+\compo{Driver:  MCCard.o by Thomas DeMarse}
+\compo{Plugin:  MCS by Daniel Wagenaar}
+\compo{}
+\mprompt{rawsrv}
+\end{quotation}
+The information printed by \prog{rawsrv} may be different if you configured
+\meabench for different hardware.
+\item Put the cursor in the `Raw source' box of \prog{scope}, and hit
+return, or re-select \stream{raw} from the pull-down menu. The label
+`Not found' should be replaced by `New/Ready', indicating that the
+scope and \prog{rawsrv} are now connected. You will also notice that
+the graphs now are adorned with a zero-line.
+\item Return input focus to the terminal with \prog{rawsrv}, and set
+the data acquisition running: 
+\begin{quotation}
+\mprompt{rawsrv}\useri{run}
+\compo{Gain setting is 2 (+/- 0.683 mV full range)}
+\compo{Trigger detection is disabled.}
+\compo{Stimulation blankout is disabled.}
+\compo{Stimulated channels: none}
+\compo{Running...}
+\end{quotation}
+Notice that the time displayed at the far right of the second row of
+controls in the scope runs.
+\item Click the `Center' button of the scope to remove DC offsets from
+the traces. Now may be the time to explore the other controls in the top
+row of the scope. Help balloons pop up when you hover the mouse cursor
+over any item.
+\item To stop data acquisition, bring input focus to \prog{rawsrv},
+and press \intr.
+\begin{quotation}
+\compo{(interrupt)}
+\mprompt{rawsrv}
+\end{quotation}
+\item The scope may be terminated using the `Close' button provided by
+your window manager. The \prog{rawsrv} should be terminated by
+pressing \eoi, or by typing `quit':
+\begin{quotation}
+\mprompt{rawsrv}\useri{quit}
+\uprompt
+\end{quotation}
+\end{itemize}
+
+\section{Online spike detection}
+
+The next example will extend the previous one, by adding a spike
+detector, and a recorder to save the data to hard disk.
+\begin{itemize}
+\item Open four terminal windows, and start \prog{scope} and
+\prog{rawsrv} as before. In the following, I will let you figure out
+in which window to type from the prompts shown. For example, I'll
+write
+\begin{quotation}
+\mprompt{rawsrv}\useri{run}
+\end{quotation}
+and leave it implicit that you need to bring keyboard focus to the
+terminal window in which you started \prog{rawsrv}, and then type `run'.
+\item Start the spike detector, and configure it:
+\begin{quotation}
+\uprompt\useri{spikedet}
+\mprompt{spikedet}\useri{source raw}
+\compo{Source is raw}
+\mprompt{spikedet}\useri{type 3}
+\compo{Type is BandFlt-25}
+\mprompt{spikedet}\useri{thresh 5}
+\compo{Threshold is 5}
+\mprompt{spikedet}
+\end{quotation}
+The threshold is specified in terms of an estimate of RMS noise. 
+The spike detector can only base this estimate on observing the noisy signal
+and guessing which part is noise. This is not an exact science, and
+\prog{spikedet} implements more than one algorithm. See section
+\ref{ss:spikedet} for details. If you can think of a better scheme,
+please contribute it!
+\item Set the \prog{rawsrv} running:
+\begin{quotation}
+\mprompt{rawsrv}\useri{run}
+\compo{Gain setting is 2 (+/- 0.683 mV full range)}
+\compo{Trigger detection is disabled.}
+\compo{Stimulation blankout is disabled.}
+\compo{Stimulated channels: none}
+\compo{Running...}
+\end{quotation}
+(Is the scope aware of the existence of \prog{rawsrv} and
+\prog{spikedet}? If not, use the `Raw source' and `Spike source'
+controls to remedy the situation.)
+\item The spike detector needs to be `trained' on the amount of noise
+in the source:
+\begin{quotation}
+\mprompt{spikedet}\useri{train}
+\compo{Type is BandFlt-25}
+\compo{Threshold is 5}
+\compo{Training...}
+\end{quotation}
+\item A few seconds will pass, and then the spike detector will
+return:
+\begin{quotation}
+\compo{Training complete}
+\mprompt{spikedet}
+\end{quotation}
+\item Interrupt the \prog{rawsrv} as before.
+\item Start and configure the recorder:
+\begin{quotation}
+\uprompt\useri{record}
+\mprompt{record}\useri{cd}
+\compo{Working directory: /home/wagenaar/tmp}
+\mprompt{record}\useri{source raw spike}
+\compo{Sources are:}
+\compo{~~raw [raw]}
+\compo{~~spike [spike]}
+\end{quotation}
+(The recorder tells you that it is about to record from \prog{rawsrv},
+which provides a stream called \stream{raw} of type \raw, and from
+\prog{spikesrv}, which provides a stream called \stream{spike} of type
+\spike.)
+\item Prepare the recording:
+\begin{quotation}
+\mprompt{record}\useri{record firstdata}
+\compo{Sources are:}
+\compo{~~raw [raw]}
+\compo{~~spike [spike]}
+\compo{Waiting for START from raw}
+\compo{Waiting for START from spike}
+\end{quotation}
+The recorder will output files called `firstdata.raw', and
+`firstdata.spike', but for now it's waiting for the data to arrive.
+\item Start the spike detector:
+\begin{quotation}
+\mprompt{spikedet}\useri{run}
+\compo{Source is raw}
+\compo{Type is BandFlt-25}
+\compo{Threshold is 5}
+\compo{Quick recording disabled}
+\compo{Excluded electrode channels are: none}
+\compo{Disabled analog channels are: None}
+\compo{Waiting for START from raw...}
+\end{quotation}
+As you can see, the spike detector is quite chatty, and tells you lots
+of things you already know. It helps to prevent surprises later...
+\item Let's record precisely 100 seconds:
+\begin{quotation}
+\mprompt{rawsrv}\useri{run 100}
+\compo{Gain setting is 2 (+/- 0.683 mV full range)}
+\compo{Trigger detection is disabled.}
+\compo{Stimulation blankout is disabled.}
+\compo{Stimulated channels: none}
+\compo{Running...}
+\end{quotation}
+\item The spike detector will confirm that the run started:
+\begin{quotation}
+\compo{Running...}
+\end{quotation}
+As will the recorder:
+\begin{quotation}
+\compo{Recording from raw into firstdata.raw without triggering}
+\compo{Recording from spike into firstdata.spike without triggering}
+\end{quotation}
+It is important to set the different programs in motion in the right
+order: downstream first. The programs will automatically wait for
+a START signal from their source, and they will wait forever if the
+source is already running when they open the communication channel.
+\item After 100 seconds, \prog{rawsrv} will stop, and the spike
+detector will issue an end-of-run report:
+\begin{quotation}
+\compo{STOP received - 1511 spikes detected}
+\compo{Buffer use percentages: 1}
+\mprompt{spikedet}
+\compo{(Client `record' lost)}
+\mprompt{spikedet}
+\end{quotation}
+\item The recorder will also report some statistics:
+\begin{quotation}
+\compo{Recording from raw ended}
+\compo{Buffer usage: 9}
+\compo{Recording from spike ended}
+\compo{Buffer usage: 1 4}
+\mprompt{record}
+\end{quotation}
+Those `buffer usage' numbers are shown for each of the communication
+channels between pairs of \meabench programs. If any number is above
+80 (percent), the recorder will warn of the risk of buffer overruns.
+\item Take a look at the `description' files that \prog{record}
+generated. They are called `firstdata.raw.desc' and
+`firstdata.spike.desc'. They contain more statistics about the run,
+which may be helpful for your or your computer to interpret the data
+later on.
+\end{itemize}
+
+\section{Triggered recording}
+
+This final fully worked example explains how to perform
+event-triggered recording. Let's assume that we have a stimulator
+connected to the MEA, which delivers current pulses on one of the
+channels once every few seconds. We want to record the responses.
+
+\begin{itemize}
+\item The
+first step is to connect a TTL trigger from the stimulator to channel
+A1 on the data acquisition card.
+\item Then, set up the \prog{rawsrv} for trigger detection:
+\begin{quotation}
+\uprompt\useri{rawsrv}
+\mprompt{rawsrv}\useri{trigchannel 1}
+\compo{Trigger detection is disabled}
+\mprompt{rawsrv}\useri{trigthresh 3000}
+\compo{Trigger detection is disabled}
+\mprompt{rawsrv}\useri{usetrig 1}
+\compo{Trigger detection is enabled on channel A1 - threshold is 3000}
+\end{quotation}
+If you are using MCS hardware, zero volts is represented as digital
+value 2048, and a TTL trigger will max out the amplifier at digital
+value 4095, so a threshold halfway is appropriate. If you are using
+different hardware, use the following trick: set the \prog{rawsrv}
+running, and open a \prog{scope} on it. Control-double-click on the
+panel displaying A1. In the controlling terminal, you will see a lot
+of numbers scrolling past. Those are the digital values read from
+channel A1. 50~ms of data is shown, one millisecond per line (if the
+terminal window is wide enough). If you catch a trigger pulse using
+the `Freeze' button, and display it in a 50~ms window, you can figure
+out both the baseline value and the peak value, and set a threshold
+based on those. Here's a part of the output I obtained doing this
+experiment:
+\begin{quotation}
+\scriptsize\compo{~~36.746 2383 2384 2383 2383 2383 2383 3534 4095 4095 4095 4095 4095 4095 4095 4095 4095 4095 4095}
+\compo{~~36.747 4095 4095 4095 4095 4095 4095 4095 4095 4095 4095 4095 4095 4095 4095 4095 2793 2446 2392}
+\compo{~~36.748 2378 2371 2370 2373 2376 2379 2380 2381 2381 2381 2382 2382 2382 2382 2382 2381 2383 2382}
+\end{quotation}
+The trigger pulse is clearly visible as a sequence of maxed-out values
+(4095).
+\item Set up the recorder for triggered recording:
+\begin{quotation}
+\uprompt\useri{record}
+\mprompt{record}\useri{source raw}
+\compo{Sources are:}
+\compo{~~raw [raw]}
+\mprompt{record}\useri{trecord secondfile 50 450}
+\compo{Sources are:}
+\compo{~~raw [raw]}
+\compo{Waiting for START from raw}
+\end{quotation}
+\item Start the data acquisition:
+\begin{quotation}
+\mprompt{rawsrv}\useri{run}
+\compo{Running...}
+\end{quotation}
+\item Now set the stimulator going, and watch the progress using
+\prog{scope}.
+\item After the stimulation program has ended, stop the recording by
+pressing \intr in \prog{rawsrv}'s terminal window. {\bf Do NOT
+terminate the recorder, instead, terminate the source.} That way you are
+guaranteed that the final trigger window is saved to disk properly.
+\end{itemize}
+
+\section{Using \prog{Commander}}
+
+Here is an example script for commander that reads a \raw file from
+`noisy.raw', filters 60~Hz noise out of it using a reference signal on
+channel A2, and detects spikes using BandFlt at five times RMS noise.
+The results are saved as `denoised.spike'.
+\begin{quotation}\sf\small
+\noindent  $\#$ Start programs
+\\  new replay so:noisy.raw
+\\  new filter60hz/60hz so:reraw lock:a2 nper:100
+\\  new spikedet so:60hz ty:3
+\\  new record so:spike
+\\
+\\  $\#$ Check whether they came up OK
+\\  expect replay 1 replay$>$
+\\  expect 60hz 1 60hz$>$
+\\  expect spikedet 1 spikedet$>$
+\\  expect replay 1 replay$>$
+\\
+\\  $\#$ Let's train the spike detector
+\\  tell filter60hz cont
+\\  tell replay run
+\\  sleep 5
+\\  tell spikedet train
+\\  flush spikedet
+\\  expect spikedet 20 spikedet$>$
+\\  dieif spikedet STOP received before training complete
+\\  flush replay
+\\  intr replay
+\\  expect replay 5 replay$>$
+\\
+\\  $\#$ Good, let's go.
+\\  tell spikedet run
+\\  tell record record denoised
+\\  expect record 1 Waiting
+\\  expect spikedet 1 Waiting
+\\  tell replay run
+\\  flush record
+\\  expect record 1000 record$>$
+\\
+\\  $\#$ All done.
+\\  quit
+\end{quotation}
+
+\chapter{Basics of the toolset}
+ 
+\Meabench consists of a number of independent linux command line
+programs. Some of these programs are \emph{servers}, that make the
+result of their computations available to others. Others are simply
+\emph{clients}, that read data from one (or several) of the servers,
+but do not make their results available. Many programs are both client
+and server. Such programs can be thought of as generic \emph{filters}.
+
+This section describes some of the internals of \meabench,  essential
+for potential developers, and hopefully helpful for users who want to
+understand how things work. When first reading of this document, you
+may wish to skip ahead to the next chapter, the list of components.
+
+The core of \meabench is a library of C++ classes that can be used to
+easily construct new components. This library is stored in the
+\filename{meabench/base} subdirectory. Presently, the only library
+documentation is contained in the source (header) files.
+
+Components of \meabench communicate with each other in a standardized
+way. Servers publish a \emph{shared memory stream}, from which clients
+can read asynchronously. Currently, two data types are supported:
+\raw, which contains raw digital data as read from the driver,
+and \spike, which contains information about spikes.
+Internally, \raw data is represented by C++ datatype
+\emph{Sample}, while \spike data is represented as \emph{Spikeinfo}.
+These datatypes are defined formally in \filename{meabench/common/Types.H}.
+
+Associated with each stream is some header information, from which
+clients can find out how much data is ready to be read from the stream.
+
+Servers never check whether clients are keeping up --- it is up to the
+individual clients to detect overruns. This philosophy was adopted
+because some clients may not care too much about overruns (e.g.
+display programs) whereas others do (filters and recorders). All
+current core clients detect buffer overruns and report buffer usage at
+the end of a data taking run.
+
+In addition to shared memory streams, servers publish a \emph{wakeup
+socket}, from which clients can receive wakeup calls whenever a given
+amount of data is available in the stream. The wakeup socket also
+notifies clients when a run starts or ends, and when triggers are
+detected.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\chapter{List of components}
+
+These are the programs that currently make up \meabench. Following
+sections detail each program.
+
+\begin{itemize}
+\item \prog{Rawsrv} --- The grandmother server. It reads data from the
+hardware using Tom DeMarse's driver and makes it available as a
+\raw stream. 
+
+\item \prog{Spikedet} --- Basic spike detection. It reads from a
+\raw stream, and publishes a \spike stream.
+
+\item \prog{60hz} --- Template filter to reduce 60 Hz pickup.
+
+\item \prog{Salpa} --- Stimulus artifact filter.
+
+\item \prog{Record} --- Records \raw or \spike data to
+disk.
+
+\item \prog{Replay} --- Replays files created by \prog{Record}.
+
+\item \prog{Scope} --- GUI program to display \raw and \spike data
+online.
+
+\item \prog{Spikesound} --- GUI program for online sonification of \spike data.
+
+\item \prog{Flexraster} --- GUI program to display raster plots of \spike 
+data online.
+
+\item \prog{Monitor} --- A debugging aid, it shows the status
+of all servers.
+
+\item \prog{Neurosock} and \prog{Nssrv} --- An alternative to
+\prog{Rawsrv} that allows one to dedicate one computer to data
+acquisition, and another for online analysis.
+\end{itemize}
+
+The following is a set of utility programs that can be used with
+\meabench or on their own right.
+
+\begin{itemize}
+\item \prog{Runmeab} --- Opens a set of xterms from which \meabench
+programs can be launched.
+
+\item \prog{Spikedump} --- Converts a \spike file into human readable form.
+
+\item \prog{Doublectxt} --- Takes a \spike stream and a \raw stream,
+and tags additional context on to the \spike information from the \raw
+channel at which the spike occurs. 
+
+\item \prog{Noisehisto} --- Takes a \raw stream and outputs a
+histogram of voltages observed in each channel.
+
+\item \prog{Noiseshape} --- Takes a \raw stream and outputs the first
+few central moments of the voltage distribution for each channel.
+
+\item \prog{Uniquespike} --- Output spikes found in one but not in
+another file.
+
+\item \prog{Trigvar} --- Computes the variance in a triggered \raw
+stream as a function of time post stimulus.
+
+\item A growing set of additional utilities needs to be documented.
+\end{itemize}
+
+Note that command names are usually capitalized in this
+manual, but must always be spelled all lowercase on the command line.
+
+
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+
+\chapter{Details of each component}
+
+This section explains the core \meabench components in more detail.
+Most of these components have a command line interface. Thus, the
+following entries focus mostly on the available commands. In
+addition to the commands listed in the individual descriptions below,
+the following commands are common across components:
+
+\begin{itemize}
+\item \cmd{?} --- Provide help in the form of a list of commands with
+brief descriptions.
+\item \cmd{quit} --- Terminates the program gracefully. The same can be
+effected by pressing \eoi at the prompt.
+\end{itemize}
+
+Servers that are capable of loading and saving data to disk  support:
+
+\begin{itemize}
+\item \cmd{cd} [\arg{directory}] --- Change or report current working
+directory.
+
+\item \cmd{ls} [\arg{arguments}] --- Directory listing as per /bin/ls.
+
+\item \cmd{mkdir} [\arg{directory}] --- Create a new directory.
+
+\item \cmd{!} \arg{command} [\arg{args}] --- Execute an arbitrary shell command.
+
+\end{itemize}
+
+Client programs support:
+
+\begin{itemize}
+\item \cmd{source} [\arg{stream-name}] --- Specify from which
+other \meabench program the data is to be taken by specifying its
+stream-name.
+\end{itemize}
+
+
+\section{Rawsrv}
+
+\prog{Rawsrv} reads \raw data from the hardware and publishes it as a
+shared memory stream called \stream{raw}. It is an extremely
+straightforward piece of software. Other than providing a nice large
+buffer to prevent overruns, it is able to detect trigger signals on
+any of the analog channels (A1, A2 or A3) and to blank out the
+electrode channels for some time during and after a trigger.
+
+These commands are supported:
+
+\begin{itemize}
+\item \cmd{run} [\arg{time-in-s}] --- Starts a run. Optional argument limits
+the duration of a run to the given time. Otherwise, press \intr to
+stop a run.
+
+\item \cmd{usetrig} [0/1] --- Enables (1) or disables (0) reporting
+trigger events on the wakeup socket and in the auxilliary data of the
+\raw stream. 
+
+\item \cmd{trigchannel} [1/2/3] --- Selects which of the three analog
+channels to monitor for triggers.
+
+\item \cmd{trigthreshold} [\arg{digivalue}] --- Specifies the (digital)
+value of the threshold above which a trigger is detected.
+
+\item \cmd{autothresh} [\arg{multiplier}] --- Sets the threshold for
+trigger detection at {\it multiplier} standard
+deviations above the channel mean value.
+
+\item \cmd{gain} [\arg{gain-step}] --- Sets the gain of the MCS amplifier.
+Type \cmd{gain ?} to list possible values. For our Multi Channel Systems
+card, the values are as follows:
+\begin{center}
+\begin{tabular}{ccc}
+\hline\vspace{-5pt}\\
+value & full range ($\mathrm{uV}$) & step ($\mu \mathrm{V}$) \medskip\\
+0 & 3.410 & 1.665 \\
+1 & 1.205 & 0.588 \\
+2 & 0.683 & 0.333 \\
+3 & 0.341 & 0.167 \medskip\\
+\hline
+\end{tabular}
+\end{center}
+
+\item \cmd{blankout} [\arg{period-in-ms} $|$ 0] --- Enables or disables
+blanking of electrode channels during a trigger. Blanking is performed by
+replacing the data by the average of four samples obtained just prior
+to the stimulus. Blanking only works if trigger detection is enabled.
+Signal blanking is largely outdated by \prog{Salpa}.
+
+\end{itemize}
+
+\section{Spikedet}\label{ss:spikedet}
+
+\prog{Spikedet} detects spikes on a \raw data stream and publishes
+them as a \spike stream called \stream{spike}. Several different types
+of spike detection may be supported by \prog{Spikedet}. 
+Currently, these are the fully supported spikedetectors:
+\begin{enumerate}
+\item{BandFlt} --- Straightforward threshold detector;
+\item{AdaFlt} --- Threshold detector with adaptive threshold;
+\item{LimAda} --- Better threshold detector with adaptive threshold;
+\item{SNEO} --- Detector based on instantaneous energy in signal.
+\end{enumerate}
+
+\noindent BandFlt is thoroughly tested and quite stable. AdaFlt 
+(7/12/01) seems to work well except that it's threshold varies during
+bursts; LimAda solves this problem. SNEO has never worked as well as I
+would hope. See below for details on each detector.
+
+These commands are supported:
+
+\begin{itemize}
+\item \cmd{source} --- See general description.
+\item \cmd{type} [\arg{detector-name}] --- Changes or reports the detector
+being used. Use \cmd{type ?} to query supported detectors.
+\item \cmd{run} --- Starts a single run. If the detector hasn't been
+trained yet, the first few seconds of the input data are used for training.
+\item \cmd{cont} --- Same as \cmd{run}, but restarts automatically after
+receiving a STOP command from the server.
+\item \cmd{train} --- Trains the detector on the current source.
+Unusually, this command does not wait for a START message from the
+source to begin operation. It is recommended to let the source run for
+a few seconds before commencing training, to ensure that any
+transients have died out.
+\item \cmd{info} --- Reports the result of training.
+\item \cmd{threshold} [\arg{value}] --- Sets or reports the threshold for
+spike detection, in units particular to each detector. Thresholds are
+automatically scaled for each channel.
+\item \cmd{disableanalog} [\arg{channel} \ldots $|$ --] --- Disables spike
+detection on the given set of analog channels. Typical use is to
+exclude the 60 Hz reference signal from being recorded in spike files.
+\item \cmd{excludechannels} [\arg{RC} \ldots $|$ --] --- Marks a set of
+electrode channels as `dead'. Useful to prevent spurious spike detection on
+clamped down or flaky channels.
+\item \cmd{outputfilt} [0/1] --- Enables or disables the creation of a
+shared memory stream called \stream{spraw}, on which the filtered raw data is
+reported.
+\item \cmd{savenoise} \arg{filenamebase} --- Saves the current training results
+as `{\it filenamebase}.noise'. This data consists of estimated RMS
+noise values, and can be used by \prog{Salpa} as well.
+\item \cmd{loadnoise} \arg{filenamebase} --- Loads a previous set of
+training results from `{\it filenamebase}.noise'. \prog{Salpa}
+generated noise files may be loaded as well.
+\item \cmd{alias} --- A fake command. Reminds the user of the
+existence of the `--alias' flag (see below).
+\end{itemize}
+
+In some circumstances it may be useful to run more than one spike
+detector simultaneously. To make that work, \prog{Spikedet} can be
+made to publish its results on a differently named stream, by starting
+it as `spikedet -alias \emph{streamname} $[$\emph{cmds}$]$'.
+
+
+\subsection{BandFlt}
+
+BandFlt passes the \raw data through a band pass filter. Currently a
+first order filter with cutoffs at 150 Hz and 2.5 kHz are used, but
+this may be changed in `spikedet/Filters.H'. It detects spikes if the
+filtered stream exceeds a given multiple of the estimated RMS noise in
+each individual channel. Useful threshold values are 4 to 6. It should
+be noted that noise in \raw data is far from Gaussian, so future
+versions may be changed to employ more relevant noise measures. In the
+current implementation, the noise is estimated by a slightly unusual
+method, which is intended to minimize the effect of spikes and
+stimulus artifacts on the estimate. Three hundred 10 ms windows of
+electrode data is read. For each of these windows the RMS value is
+calculated. The results are sorted, and the final estimate of RMS
+noise is taken to be the 25th percentile of the measurements. While I
+recognize that this method finds an underestimate of the RMS noise,
+this algorithm is much more useful than straightforward RMS
+measurement, for the stability reasons mentioned above.
+
+\subsection{AdaFlt}
+
+AdaFlt uses the same initial band pass filter and also collects 128
+windows of length 10~ms from the beginning of the recording.
+From then on, it proceeds differently: it measures the minimum and
+maximum values in each of those windows, and finds the 40th percentile
+of both collections of extrema. The initial thresholds for upward and
+downward spikes are based on the result. While running, it keeps
+collecting minima and maxima in 10 ms windows, although it uses only
+one in ten windows\footnote{In fact, for every window it collects
+extrema for only six out of 60 electrode channels, to spread the
+computational load.}. Whenever 128 windows have been collected, the
+thresholds for that channel are updated.
+
+For every detected spike, the ruling threshold at the time of
+detection is written into the \spike stream.
+
+Useful threshold values are 1.3 to 2 (multiples of the extrema).
+
+\subsection{LimAda}
+
+After band pass filtering as for BandFlt, LimAda splits the data
+stream into 10~ms windows, and determines the 2nd and 30th percentiles
+of the distribution of voltages found in each such window. Call these
+voltages $V_{.02}$ and $V_{.30}$. (Note that both are usually
+negative because of the filtering, which sets $V_{.50} \sim \left<V\right>
+\sim 0$.) It then
+performs two tests:
+\begin{itemize}
+\item Is the ratio of $V_{.02}$ over $V_{.30}$ less than 5?
+\item Is the absolute value of $V_{.30}$ (significantly) non-zero?
+\end{itemize}
+The first test makes sure that there was no actual spike in the
+window; the second test makes sure that the data in the window was not
+blanked out (e.g. by \prog{Rawsrv} or \prog{Salpa}). If both tests are
+passed, the windows is considered `clean', and $V_{.02}$ is used to
+update the current noise threshold estimate. Spikes are detected
+whenever the absolute value of the voltage exceeds the current
+threshold, which is the output of passing the absolute values of
+$V_{.02}$ from all `clean' windows through a low-pass filter with a
+time constant of 100 windows (1 second if all are clean). This
+algorithm adapts rapidly to changing noise situations, while not
+desensitizing during bursts.
+
+The threshold settings are normalized to estimated RMS noise, so
+values of 4 to 6 are reasonable. As of August 26, 2004, this is my
+favorite spike detector.
+
+\subsection{SNEO}
+
+SNEO also passes the \raw data through a
+band pass filter, but then computes the instantaneous energy in each
+electrode stream:
+\[  E_c(t) = V'_c(t)^2 - V_c(t) V''_c(t). \]
+This energy is smoothed over 5 samples and spikes are detected if it
+exceeds a given multiple of the RMS value of the energy. Although Kim
+and Kim (IEEE Biomed eng 47 (2000) 1406) report that SNEO works very
+well at S/N as low as unity, I am less convinced.
+
+Useful threshold values seem to be 5 to 20.
+
+\section{60hz}
+
+\prog{60hz} provides a template filter to reduce 60 Hz line pickup in
+raw data and publishes the results as \stream{60hz}. It works best if
+an external lock in signal is provided on one of the analog lines. If
+such a signal is not available, fast adaptation should be chosen to
+reduce the effects of gradual desynchronization. Templates are
+collected for each electrode channel independently.
+
+These commands are supported:
+
+\begin{itemize}
+\item \cmd{source} --- See general description.
+\item \cmd{run} --- Starts a single run. At the start of the run, a
+small amount of data is used to train the filter. During this period
+no output is generated.
+\item \cmd{cont} --- Same as \cmd{run}, but restarts automatically after
+receiving a STOP command from the server.
+\item \cmd{nperiods} [\arg{periods}] --- Sets the adaptation time of the
+filter. Old contents are decayed by a factor $1/e$ after the given
+number of periods. (A period is 16.67 ms\footnote{Note for non-US
+users or programmers: the period is specified in units of the sample
+period by the variable REALPERIOD in ``60hz/Defs\.H''. When changing
+this variable, please be aware that
+MCCard's sampling frequency, although very constant, is 
+not exactly 25.000~kHz.}.)
+\item \cmd{templsize} [\arg{size-of-template}] --- Number of data points to
+use for each template. This value is rounded internally to a power of
+two. Low values reduce the efficacy of the filter, but high values
+require longer training times and may make the system less stable. The
+default value, 128, should normally be adequate.
+\item \cmd{wait} [0/1] --- Enables (1) or disables (0) waiting for a
+START command from the server. Operation with waiting disabled is
+poorly tested and may result in desynchronized and useless recordings.
+Not recommended for normal use.
+\item \cmd{lockin} [-- $|$ A\arg{n}] --- Enables or disables the
+use of an external synchronization pulse on a given analog channel.
+Rising edge on the specified channel will be used to synchronize the
+filters to the physical 60 Hz signal.
+\item \cmd{limit} [\arg{adaptation-period-in-seconds} or 0 for unlimited]
+--- It may be desirable to stop adaptation altogether after a certain
+amount of time. For example, if very strong signals are expected
+occasionally on the electrode channels. Such signals might be picked
+up by the template and cause echos at 16.67 ms intervals. In practice,
+\cmd{blockonmark} provides a better solution for most cases.
+\item \cmd{blockonmark} [-- $|$ An [\arg{block\_ms} [\arg{thresh\_digi}
+[\arg{lookahead\_ms}]]]] --- If your data contains (stimulation) artifacts,
+the adaptive filter tends to create echoes of those artifacts. This
+command can be used to temporarily suspend the adaptation (but not the
+filtering) during artifacts. When enabled, \prog{filter60hz} will
+detect upward threshold crossings on the specified analog channel
+(\arg{An}), and disable adaptation on all electrode channels for the
+given period (\arg{block\_ms}). The threshold is specified in digital
+units (\arg{thresh\_digi}). The final argument (\arg{lookahead\_ms})
+can be used if the marker may occur (a fraction of) a millisecond
+after the start of an artifact\footnote{Even if the marker is timed to
+exactly coincide with the start of the artifact, \arg{lookahead\_ms} can be
+used to provide a safety margin of a few samples.}.
+\end{itemize}
+
+The current version of \prog{60hz} does not support \cmd{qrec}.
+
+For off-line usage, the command \prog{Posthoc60hz} will read from a file
+and output to a unix pipe. It has the additional benefit of skipping
+artifacts when training. (This requires some command line switches ---
+try `posthoc60hz --help'.)
+
+\section{Salpa}
+
+\prog{Salpa} is the artifact suppression algorithm described in
+Wagenaar and Potter, Real-time multi-channel stimulus artifact
+suppresion by local curve fitting, \emph{J.\ Neurosci.\ Meth.} {\bf
+120:2} (2002) pp 113--120\@. Please refer to that paper for functional
+details. You may pick up a preprint from
+\url{http://www.biology.ucsd.edu/~dwagenaa/pubs.html}.
+
+\prog{Salpa} supports the following commands:
+
+\begin{itemize}
+\item \cmd{run} --- Starts a single run. At the start of the run, a
+small amount of data is used to train the filter. During this period
+no output is generated.
+\item \cmd{cont} --- Same as \cmd{run}, but restarts automatically after
+receiving a STOP command from the server.
+\item \cmd{digithresh} [\arg{digital-threshold}] --- Sets the threshold for acceptable
+asymmetry in digital units, or reports the current value. In the
+paper, this `asymmetry' is referred to as the {\it deviation} 
+$\cal{D}$.
+\item \cmd{noisethresh} [\arg{threshold-in-units-of-RMS-noise}] ---  Sets the threshold for acceptable
+asymmetry in units of the estimated RMS noise, or reports the current
+value.
+\item \cmd{halfwidth} [\arg{halfwidth-in-ms}] --- Sets the {\sc salpa}
+filter halfwidth. Except for a factor $\tau_{\textrm\scriptsize
+sample}$, this is the number $N$ in the paper.
+\item \cmd{asymduration} [\arg{asymmetry-window-width-in-ms}] --- The window
+over which the asymmetry is measured.  Except for a factor $\tau_{\textrm\scriptsize
+sample}$, this is the number $\delta$ in the paper.
+\item \cmd{blankduration} [\arg{blanking-duration-in-ms}] --- Determines how
+much signal is blanked even after the asymmetry (deviation) test has
+been passed successfully. This is a bit of a hack, which was not used
+in the paper.
+\item \cmd{lookaheadwindow} [\arg{look-ahead-window-in-ms}] --- The last few
+samples before the signal pegs are probably not entirely
+artifact-free. This command allows you to blank a little bit of data
+just before the stimulus artifact onset.
+\item \cmd{digirails} [\arg{digi-rail1} [\arg{digi-rail2}]] --- Specifies which
+digital values constitute the rails of the ADC. Defaults 0 and 4095
+are for MultiChannel Systems hardware with \prog{Rawsrv}.
+\item \cmd{fixedperiod} [\arg{period-ms} \arg{delay-ms} [\arg{blank-ms}]] --- In some
+cases artifacts may occur that do not quite peg the channel. If this
+happens in a triggered recording, \prog{Salpa} can still work: just
+specify the length of the trigger window (\emph{period-ms}), the
+amount of time before the onset of the artifact in each window
+(\emph{delay-ms}), and the duration of the fast part of the artifact
+(\emph{blank-ms}). Typical values for \emph{blank-ms} would be one or
+two milliseconds. \prog{Salpa} will kick in after that and determine
+the end of the irrepairable part of the artifact using the asymmetry
+(deviation) test as usual.
+\item \cmd{pegontrigger} [-- $|$ A\arg{n} [\arg{blank-ms} [\arg{tresh-digi}]]] --- A more
+flexible solution to the problem explained above. \prog{Salpa} can treat
+a positive threshold crossing on one given channel (usually A1) as a
+signal to consider all channels pegged. \emph{blank-ms} has the same
+meaning as for \cmd{fixedperiod}, and \emph{thresh-digi} specifies the
+threshold (in digital units) for the detection of stimulation markers.
+\item \cmd{channels} [-- $|$ + $|$ \arg{CR} \ldots] --- Normally, \prog{salpa}
+operates on all electrode channels. Using this command you can
+restrict operation to any subset. This is useful when the artifacts on
+most channels reliably  last less than 1 or 2~ms, so the \prog{salpa}
+algorithm doesn't improve things. Say `channels CR1 CR2 \ldots' to limit
+operation to channels CR1, CR2, \ldots; or `channels --' to operate on
+all channels. Alternatively, say `channels + CR \ldots' to add
+channels to an existing list, or `channels -- CR \ldots' to remove
+channels from an existing list. `channels +' restores a list
+previously removed by `channels --'. Channels excluded from operation
+are still subject to blanking by \cmd{fixedperiod} or
+\cmd{pegontrigger}. This is usually desirable. If not, you can set the
+blanking period to zero, e.g. by `pegontrigger A1 0'.
+\item \cmd{source} --- See general description.
+\item \cmd{train} --- Estimate the RMS noise level of the input. This
+takes a few seconds. \cmd{train} must be executed while the source is
+already running, unlike \cmd{run} and \cmd{cont}, which wait for the
+source to start.
+\item \cmd{savenoise} --- See \prog{Spikedet}.
+\item \cmd{loadnoise} --- See \prog{Spikedet}.
+\item \cmd{info} --- See \prog{Spikedet}.
+\end{itemize}
+An off-line version of \prog{salpa} is available as well; it's called
+\prog{posthocartifilt}, and supports most options of the \meabench
+component through command line switches. The command is
+self-documenting: type \Useri{posthocartifilt
+-{}-help} for details.
+
+
+\section{Record}
+
+\prog{Record} is used to record \raw or \spike streams to disk.
+The program can record several streams in parallel. \prog{Record} can
+optionally respect the triggers on the associated wakeup socket. In
+this case, only the parts of the stream immediately surrounding the
+triggers are saved to disk, and an auxiliary file with trigger times
+is constructed.
+
+These commands are supported:
+
+\begin{itemize}
+\item \cmd{record} \arg{filename} [\arg{comments}] --- Starts recording to the
+specified file. The filename is augmented by the type of the data.
+Optional comments are saved to a description file, if enabled.
+\item \cmd{multirecord} \arg{base-filename} [\arg{comments}] --- Starts recording
+to many files one after the other. The filename is augmented by the
+start time of each recording, and by the type of the data.
+\item \cmd{trecord} \arg{filename pretrig-ms posttrig-ms} [\arg{comments}] --- As
+\cmd{record}, but respects trigger information. The window of
+recording is specified as time before the trigger and time after the
+trigger, both in ms.
+\item \cmd{multitrecord} \arg{base-filename pretrig-ms posttrig-ms}
+[\arg{comments}] --- \cmd{multitrecord} is to \cmd{trecord} as
+\cmd{multirecord} is to \cmd{record}.
+\item \cmd{source} [\arg{name}[/\arg{type}] \ldots] --- Specifies the sources for
+recording. \cmd{Record} knows the type of most core \meabench streams.
+If it doesn't know for the stream you name, the type can be specified
+by appending it to the stream name after a slash. (For example, if
+\stream{coolsort} is  a new stream of type \spike, you would say
+`source coolsort/spike'.) 
+\item \cmd{describe} [0/1] --- Enables (1) or disables (0) the
+generation of a description file (filename constructed by augmenting
+the data filename by `.desc'). Description files contain lots of
+useful information pertaining to a run and are in human readable form.
+\end{itemize}
+
+\noindent \prog{Record} can record from several sources simultaneously: just
+specify them all together as arguments to \cmd{source}. For example,
+`source raw 60hz spike' would prepare a recording from three sources.
+If more than one stream of the same type is recorded, the streamnames
+are incorporated in the filenames. Recording from several sources does
+have a few limitations:
+\begin{itemize}
+\item Recording ends immediately when the first stream terminates. A
+small amount of data from the end of the other streams may be lost.
+\item For triggered recording, only the first stream will yield a
+`.trig' file.
+\end{itemize}
+To avoid these limitations, it is possible to run several instances of
+\prog{Record}, and have each of them record from a single stream. 
+
+It is possible to terminate a recording session before the source ends
+by pressing \intr in the \prog{Record} terminal window. This is
+useful for recording a short segment of \raw data parallel to the
+beginning of a longer \spike data recording.
+
+\section{Replay}
+
+\prog{Replay} replays files recorded by \prog{Record}. Currently,
+\raw and \spike data are supported, and are published as
+\stream{reraw} and \stream{respike} respectively. Replaying a \spike
+file results in both a \raw and a \spike stream, the \raw stream
+reporting the contexts stored in the \spike stream.
+
+These commands are supported:
+
+\begin{itemize}
+\item \cmd{play} [\arg{filename} [\arg{type}]] --- Plays the given file. Normally,
+\prog{Replay} automatically detects the type of the data. If it
+doesn't, help it by specifying it explicitly. Without a filename,
+plays the last played file again.
+\item \cmd{slow} [\arg{slowdown-factor}] --- Slows down playback by a given
+(real valued) factor. Useful for output to \prog{Scope}. Arguments
+smaller than one cause speed up.
+\item \cmd{run} --- Alias for \cmd{play} without arguments.
+\item \cmd{source} [\arg{filename} [\arg{type}]] --- Specifies a filename (and
+optional type) for later playback.
+\item \cmd{blankout} [\arg{period-in-ms} or 0] --- Enables or disables
+blanking of electrode channels during a trigger. Blanking is performed by
+replacing the data by the average of four samples obtained just prior
+to the stimulus. Blankout works only for triggered files.
+\prog{Replay} does not detect stimuli itself.
+\item \cmd{cd} [\arg{directory name}] --- Changes the current working directory.
+\item \cmd{!} --- Shell escape. Useful, e.g. for `ls'.
+\item \cmd{selftrig} [0/1] --- Enables or disables spike detection
+from an analog channel in the stream. When disabled, triggers stored
+in the \filename{.desc} file of a file produced by \prog{Record}'s
+\cmd{trecord} command are still reported.
+\item \cmd{trigchannel} [1/2/3] --- Sets the analog channel on which
+triggers are detected (if \cmd{selftrig} is enabled).
+\item \cmd{trigthreshold} [\arg{digivalue}] --- Sets the threshold for such
+trigger detection.
+\end{itemize}
+
+\section{Scope}
+
+\prog{Scope} shows raw data and spikes in a similar format as the
+graphical parts of my older \prog{Qmeagraph} program, or Multi Channel
+Systems' \prog{MCRack}. It mostly explains itself. Here are some
+useful hints: 
+\begin{itemize}
+\item Double clicking on any of the small electrode traces opens a
+separate window showing that channel.
+\item Selecting window width, pre-trigger length, or voltage ranges in
+\prog{Scope} does not affect recording in any way.
+\item The scrollback buffer (enabled by clicking the `Freeze' button)
+is very useful to home in on some interesting event. Raw data in the
+scrollback buffer can be saved to disk using the `Save' button which
+appears whenever `Freeze' is enabled. Currently, the scrollback buffer
+is about 5 seconds long. This is a direct function of the length of
+the shared memory segments used to pass \raw data around.
+\item These known bugs exist in scope:
+\begin{itemize}
+\item Spike circles at the edges of the electrode traces leave
+semi-permanent smudges.
+\item When scrolling back, older spikes may lose their red marks if
+there are many detected spikes. This is the result of the \spike data
+shared memory segments being too short.
+\item When replaying a spike stream, red spike marks sometimes appear
+out of nowhere. These ghosts are easily recognized, because no context
+data is plotted around them. This bug has been a mystery so far.
+\end{itemize}
+\end{itemize}
+
+\section{Spikesound}
+
+\prog{Spikesound} makes spikes audible through a PC sound card. It can
+read of any \spike stream (e.g. straight from the spike detector, or
+from \prog{replay}). The GUI controls are minimal:
+\begin{itemize}
+\item Source --- Selects the \meabench stream to get spikes from. That
+usually is \stream{spike} to read from \prog{spikedet}, or
+\stream{respike} to read from \prog{replay}.
+
+\item Play --- Switch sound on or off
+
+\item Volume --- Master volume control.
+
+\item --ve only --- Limit sonification to downward spikes. The obvious
+counterpart can be implemented on request.
+
+\item Rethreshold --- It is often useful to set the spike detection
+threshold fairly low in \prog{spikedet} and use off-line spike sorting
+to clean up the data. However, hearing all the
+near-noise-level spikes is not very appealing. This control allows you
+to hear only strong spikes. For example, I like to set the
+\prog{spikedet} threshold to $4.5 \sigma$, and set the
+\prog{spikesound} rethreshold factor to $120\%$.
+
+\item A1, A2, A3 --- Enable or disable beeps when a spike is detected
+on one of the auxillary channels. For example, I like to use A1 and A3
+for triggers, and A2 as a 60~Hz lock-in signal. So I may want to hear
+a sound when a trigger happens, but I don't want to hear the 60~Hz
+signal.
+\end{itemize}
+
+{\bf Customization note:} The current version uses output buffers of
+about 25~ms to improve timing accuracy and reduce lag. If you prefer
+hearing longer noises, or your sound card / CPU do not allow you to
+use such short buffers, you may change the value of {\tt\small
+AUDIO\_LOG\_FRAG} in {\tt\small spikesound/Audio.H}. The length of the
+buffer is:
+\[
+	\tau = {2^{\,\textrm{\tt\scriptsize AUDIO\_LOG\_FRAG}}
+	 \over 	176.4} \; {\mathrm{ms}}.
+\]
+
+\section{Flexraster}
+
+\prog{Flexraster} displays raster plots of spike activity in triggered
+recordings. It currently relies on `trigger spikes' on channel A1. 
+There are six different ways to create rasters:
+\begin{itemize}
+\item Spont --- Spikes from all channels are combined as blue dots.
+Each line of the raster is \emph{Pre} plus \emph{Post} ms wide. The
+raster plot scrolls vertically, showing the most recent interval on
+top. A new raster line is generated whenever there is a trigger on A1,
+or every second if there has not been any trigger.
+\item 8x8Rec --- Spikes from each channel are displayed in separate
+panels. Within each panel, the display is as for Spont.
+\item 8x8Stim --- If the shape of the trigger pulse is used to encode
+a CR-position, each panel displays all spikes that occurred in
+response to stimulation on a certain channel. See figure for details.
+\item V Stim and H Stim --- Similar to 8x8Stim, but panels are
+generated only for those CRs that actually receive stimuli.
+\item Cont --- Arguably the most useful function, creates a scrollable
+and scalable raster plot with 60 electrodes stacked vertically and time running
+continuously left to right. Trigger pulses are indicated by red marks.
+\end{itemize}
+\prog{Flexraster} is under development. Suggestions for
+improvement are especially welcome.
+
+\section{Commander}
+
+\prog{Commander} allows you to start and control \meabench 
+programs from within a central shell-like language. This is mainly
+useful for off-line analysis. You may find an example of its use in
+chapter~\ref{chap:examples}. Commander logs all interaction with the
+programs it controls to the screen, as well as to an optional logfile.
+Creating logfiles is highly recommended, because it allows you to keep
+track of how exactly you processed the data, and to check whether
+\meabench behaved as you expected it to behave.
+
+\prog{Commander} supports the following commands:
+\begin{itemize}
+\item \cmd{new} \arg{program}[/\arg{id}] [\arg{args}] --- Start a new
+program. An optional \arg{id} may be assigned to the program to
+disambiguate references to two instances of the same program, or for
+ease of reference. \arg{Args} are passed to the program unchanged.
+\item \cmd{tell} \arg{program|id command} [\arg{args}] --- Send a
+command to the named program. \arg{Args} are passed unchanged.
+\item \cmd{expect} \arg{program$|$id timeout regexp} --- Wait until
+the named program produces output that matches \arg{regexp}. If this
+does not happen within \arg{timeout} seconds, report an error.
+\item \cmd{dieif} \arg{program$|$id regexp} --- Look back at the
+output captured by the last expect, and abort if any line matches
+\arg{regexp}. (This may be a line that was output long before the line
+that made \cmd{expect} happy.)
+\item \cmd{dieunless} \arg{program$|$id regexp} --- Look back at the
+output captured by the last expect, and abort unless some line matches
+\arg{regexp}. (This may be a line that was output long before the line
+that made \cmd{expect} happy.)
+\item \cmd{flush} \arg{program$|$id} --- Flush all output from the
+named program, so that future \cmd{expect} commands will not match any
+output prior to the \cmd{flush}.
+\item \cmd{intr} \arg{program$|$id} --- Send an Interrupt signal to
+the named program, i.e. simulate pressing \intr.
+\item \cmd{kill} \arg{program$|$id} --- Send a Term signal to the
+named program, terminating it. Normally, you'd use \cmd{close} to
+achieve the same result more gracefully.
+\item \cmd{close} \arg{program$|$id} --- Close a running program
+normally, as if \eoi was pressed. If closing normally fails, the
+program is terminated as per the \cmd{kill} command.
+\item \cmd{wait} \arg{program$|$id} --- Wait for the named program to
+terminate. Use this if you just sent it a \cmd{quit} command.
+Normally, \cmd{close} is an easier way to terminate subprocesses.
+\item \cmd{log} [\arg{logfile}] --- Write all future output to the
+named file, or stop logging if no argument is given.
+\item \cmd{comment} \arg{comments} --- Write the specified comments to
+the log file.
+\item \cmd{sleep} \arg{time\_s} --- Sleep for the given number of
+seconds. The subprocesses are not affected.
+\item \cmd{quit} --- Exit \prog{Commander} after closing all subprocesses.
+\end{itemize}
+Unlike other \meabench programs, commander does not present the user
+with a prompt. You are not really expected to type away at commander
+from a terminal (although you can). Instead, you'd normally prepare a
+script, and then run commander on it:
+\begin{quotation}
+\uprompt~\useri{mea commander $<$ myscript.cmdr}
+\end{quotation}
+Any error that happens during script execution (e.g. failure to start
+a subprocess or failure to read an \cmd{expect}-ed string) causes
+\prog{Commander} to terminate immediately with an error report written
+to the screen and the log file.
+
+An auxillary program, \prog{Cmdlog2html} exists to convert log files
+produced by \prog{Commander} to html format. Log files are human
+readable, but the html format looks nicer.
+
+\section{Monitor}
+
+\prog{Monitor} is mostly a debugging tool. It displays the status of
+each of the \meabench servers.
+
+\section{Neurosock and NSsrv}
+
+Run \prog{Neurosock} on the machine that contains the physical
+hardware, and \meabench on any other machine that can connect to the
+first machine through the internet. It can be run without any
+arguments for 64-channel MCCards, or as \Useri{neurosock -set MC128}
+for 128-channel MCCards. 
+
+\prog{NSsrv} is exactly like \prog{Rawsrv}, except that it doesn't 
+record directly from the MEA hardware. Instead, it connects to
+\prog{Neurosock} on the same or another computer. For 64-channel
+MCCards, run \prog{NSsrv} without arguments; to use the 2nd half of
+128-channel cards, run it like \Useri{nssrv -s raw2}. 
+
+\prog{NSsrv} has the same commands as \prog{Rawsrv}, with one
+addition:
+\begin{itemize}
+\item \cmd{ip} aa.bb.cc.dd --- Specify the IP address of the computer
+running \prog{Neurosock}.
+\end{itemize}
+Note: Only one instance of \prog{NSsrv} can read from a 64-channel
+\prog{Neurosock} or half a 128-channel \prog{Neurosock} at a time. It
+is not possible to specify gain separately for the two halves, and the
+\cmd{gain} command will fail if you try to set gain on one half while
+the other half is running.
+
+\section{Spikedump}
+
+\prog{Spikedump} converts \spike files to human readable form,
+dropping the context data. It can read from a specified file, or
+from stdin. It does not presently run of \meabench streams. Output are
+time (in seconds), channel (hardware order, counting from zero),
+height (digital value) and width (in samples).
+
+\section{Doublectxt}
+
+\prog{Doublectxt} combines a \raw stream with a \spike stream to
+construct a file with two context fields per spike.
+The resulting file can be read with
+the \emph{loaddblctxt.m} matlab function.
+
+\section{Other utilities}
+
+This documentation is presently incomplete regarding the utilities in
+the \filename{meabench/utils} and \filename{meabench/perl}
+subdirectories. These utilities will provide a brief Usage message if
+invoked with a `--\kern2pt--\kern2pt usage' argument.
+
+\section{Matlab functions}
+
+A number of matlab functions included with \meabench can be used to
+load \meabench data files into matlab, to perform channel numbering
+convention conversions and to perform some common visualization tasks.
+These functions are installed in /opt/meabench/matlab (if you follow
+the suggested installation procedure in chapter \ref{chap:install}).
+In order to use them, you need to tell matlab about that directory:
+\begin{quotation}
+\Prompt{$>\kern-2pt>$}~\Useri{addpath('/opt/meabench/matlab');}
+\end{quotation}
+
+The functions are the following:
+
+\begin{itemize}
+\input{matlab.tex}
+\end{itemize}
+
+\chapter{File formats}
+
+The current version of \meabench uses two binary file formats: \raw,
+and \spike. All other files are plain text.
+
+\section{Raw files}
+
+Raw files contain electrode voltage values in digitized form. The
+scaling factor between digital values and microvolts is not stored in
+the \Compo{.raw} file, but in an accompanying \Compo{.raw.desc} file.
+The number of channels in a raw file is currently fixed to 64, and not
+noted in the \Compo{.raw.desc} file. This will be changed in a future
+release. File format is: one 16-bit integer for every channel,
+64~channels per scan, repeated for the length of the file. Thus, in (almost) C
+notation, a raw file would be defined as:
+\begin{quotation}
+\compo{typedef short int scan[64];}
+\compo{typedef scan rawfile[];}
+\end{quotation}
+
+\section{Spike files}
+
+Spike files contain information about detected spikes. The time of
+detection (in samples) as well as the channel number, height (in
+digital units) and width (in samples) are stored in a structure that
+also contains a limited amount of `context', or sample values
+immediately surrounding the spike. The BandFlt and AdaFlt spike
+detectors also record the threshold used for detecting that particular
+spike in the structure. In (almost) C notation, a spike file would be
+defined as:
+\begin{quotation}
+\compo{typedef struct \{}
+\compo{ ~ long long time; // 64 bits of time (in sample periods from
+start o ~ f file)}
+\compo{ ~ short channel; // a channel number, 0--63}
+\compo{ ~ short height; // height from baseline, possibly negative (in digital units)}
+\compo{ ~ short width; // the width of the spike (in samples)}
+\compo{ ~ short context[74]; // 24 samples before and 49 samples after peak}
+\compo{ ~ short threshold; // detection threshold used for this spike}
+\compo{\} spike;}
+\compo{typedef spike spikefile[];}
+\end{quotation}
+As for raw files, conversion factors may be found in a description
+file (\Compo{.spike.desc}).
+
+%% \section{RMS files}
+%% 
+%% RMS files contain root-mean-square noise estimates from raw files. The
+%% file format is:
+%% \begin{quotation}\sf
+%% \compo{typedef float rmsscan[64];}
+%% \compo{typedef rmsscan rmsfile[];}
+%% \end{quotation}
+%% 
+%% The values in \Compo{rmsscan} are in digital units, but stored in a
+%% \Compo{float} rather than a \Compo{short int} for better precision.
+%% 
+
+\renewcommand{\sectionmark}[1]{}
+
+\chapter{Hints and tips}\label{chap:help}
+
+This section contains solutions to some common problems and provides
+some hopefully helpful hints.
+
+
+\section{Help! None of the programs will run.}
+
+You may find that none of the programs will run, and complain like
+this:
+\begin{quotation}
+\compo{/opt/meabench/bin/replay: error in loading shared libraries: libmea.so:
+cannot open shared object file: No such file or directory}
+\end{quotation}
+This means that they cannot find the common libraries \emph{libmea.so}
+or \emph{libmeagui.so}. This problem may be fixed by typing
+\begin{quotation}
+\noindent\verb+export LD_LIBRARY_PATH=/opt/meabench/lib:$LD_LIBRARY_PATH+ %$
+\end{quotation}
+before running the command. Similarly, if the perl programs complain about missing libraries, try:
+\begin{quotation}
+\noindent\verb+export PERL5LIB=/opt/meabench/libexec:$PERL5LIB+%$
+\end{quotation}
+(If you installed \meabench somewhere else, you'll know how to
+modify the above lines.)
+
+If you use \prog{mea}
+this problem is less likely to show.
+
+\section{Shared memory problems}
+
+You may find that a server program refuses to run, complaining like
+this:
+\begin{quotation}
+\compo{Error from ShmSrv: Segment exists, please delete using 
+`ipcrm shm 3417399'}
+\end{quotation}
+This normally means that the server crashed on a previous
+run, leaving behind
+the shared memory segment used for its output stream. Executing the
+suggested command often solves the problem, but you may be rewarded by
+this when you rerun the program:
+\begin{quotation}
+\compo{Error from ShmSrv: Segment exists, and cannot be accessed. Any
+lingering clients? Before deleting the segment using ipcrm (see
+manpage) these may have to be stopped.}
+\end{quotation}
+This means that some client is still connected to the (defunct)
+crashed server. Quitting and restarting such clients is a pretty sure
+way of solving the problem. If quitting the client is undesirable,
+most clients can be convinced to renegotiate the connection to their
+server using the command \cmd{source}. Once the clients have been
+cleared, the segment normally goes away spontaneously. If the problem
+persists, you may have to resort to \prog{ipcs} and \prog{ipcrm}. See
+the linux man pages for details.
+\begin{quotation}
+\compo{Error from ShmSrv: creat}
+\end{quotation}
+This exceedingly unhelpful error message may mean that you
+don't have a \filename{.meabench} subdirectory in your home directory. 
+This is where \meabench tries to link all its shared memory segments
+and wakeup sockets. To make this problem go away for ever, create the
+directory using \verb!mkdir ~/.meabench!.
+
+\section{Help! Client X keeps saying `waiting for START from Y' and won't
+run.}
+
+Most clients synchronize the start of their run with the start of a
+run of the server they are connected to. To make this work smoothly,
+start the client off (typically by typing \cmd{run}) \emph{before} starting
+the server. Some clients allow you to disable this synchronization
+behavior, e.g. through a \cmd{wait} command.
+
+\section{Abbreviating commands}
+
+All programs that provide the user with a command line accept
+non-ambiguous abbreviations for commands. For example, in most
+programs, \cmd{run} can be abbreviated to \cmd{r}.
+
+\section{Passing commands at run time}
+
+All programs that provide the user with a command line can also
+process commands passed at startup time. For example, instead of
+entering into the following dialog:
+\begin{quotation}
+\uprompt\useri{spikedet}
+\mprompt{spikedet}\useri{type 3}
+\compo{Type is BandFlt-25}
+\mprompt{spikedet}\useri{threshold 4}
+\compo{Threshold is 4}
+\mprompt{spikedet}\useri{source 60hz}
+\compo{Source is 60hz}
+\mprompt{spikedet}
+\end{quotation}
+you may also say:
+\begin{quotation}
+\uprompt\useri{spikedet ty:3 thr:4 so:60hz}
+\compo{Type is BandFlt-25}
+\compo{Threshold is 4}
+\compo{Source is 60hz}
+\mprompt{spikedet}
+\end{quotation}
+This is especially useful if you find yourself quitting and restarting
+a program frequently, since with the second scheme, the shell history
+facilities can be used.
+
+At start up time, commands are separated from their arguments by a
+colon rather than a space, and arguments are separated from each other
+by a comma rather than a space.
+
+\section{Interrupting long commands}
+
+All command line programs respond to \intr by returning to
+their prompt. If they don't respond immediately, press \intr
+again after a second or two. Pressing \intr twice in quick
+succession kills the program forcefully, quite possibly leaving a
+shared memory segment behind as explained above. Pressing \intr
+while the program is waiting for user input no longer exits the
+program. All programs support a
+\cmd{quit} command to exit cleanly, but \eoi (end of input) is
+also an acceptable way to exit them.
+
+\section{Debugging information}
+
+Most programs support two additional commands to aid debugging. These
+are: 
+
+\begin{itemize}
+\item \cmd{dbx} [0/1] --- Enables (1) or disables (0) debugging
+output. Debugging output varies wildly from component to component and
+from release to release. Mainly of use for developers, who can
+sprinkle their code with sdbx(\ldots) calls to track bugs down.
+
+\item \cmd{clients} --- Prints a list of all clients currently
+connected to this server program. Mainly intended for debugging, the
+output format is not very user friendly.
+\end{itemize}
+
+
+\section{Contacting the author}
+
+For further information, or to report bugs, please contact:
+
+\begin{quotation}
+\noindent Daniel Wagenaar\\
+UC San Diego, Neurobiology Section
+9500 Gilman Drive m/c 0357\\
+La Jolla, CA 92093\\
+{\bf dwagenaar@ucsd.edu}
+\end{quotation}
+
+\noindent Suggestion for improvement are always welcome, but I cannot
+guarantee I'll have time to implement them. You too can contribute
+by sending me your bug fixing and feature adding patches by e-mail.
+Please use `diff --\kern2pt C2' against the latest public release version.
+
+The latest versions of \meabench and this documentation can be found on
+
+\begin{center}\noindent\url{http://www.its.caltech.edu/~pinelab/wagenaar/meabench.html}\end{center}
+\section{Reporting bugs}
+
+When reporting bugs, please include the following information:
+\begin{itemize}
+\item The version of \meabench you are using.
+\item The version of g++ you are using (type \Useri{g++ -{}-version}
+to get this information).
+\item The version of Qt you are using (type \Useri{moc -v} to get this
+information).
+\item The output of the `configure' script.
+\item If compilation failed: the output of the `make' command (not
+just the lines containing the error).
+\item For runtime errors: Which programs you are running, which
+commands you have executed within those programs, and a description of
+what you are trying to do as well as any relevant screen output. A
+succinct set of conditions that reproducibly produces the error is
+very much appreciated.
+\end{itemize}
+
+
+\end{document}

@@ -1,0 +1,11 @@
+# Make MCCard accessible by all users:
+KERNEL=="MCCard", MODE="0666"
+
+# If global accessibility is not desirable, you could use, e.g.:
+#
+#   KERNEL=="MCCard", MODE="0660", GROUP="audio"
+#
+# or create a new group "mccard", and use:
+#
+#   KERNEL=="MCCard", MODE="0660", GROUP="mccard"
+

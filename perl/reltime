@@ -1,0 +1,134 @@
+#!/usr/bin/perl -w
+
+# perl/reltime: part of meabench, an MEA recording and analysis tool
+# Copyright (C) 2000-2002  Daniel Wagenaar (wagenaar@caltech.edu)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use strict;
+use ChannelNrs;
+
+my $post_ms = 1000;
+my $pre_ms = 100;
+my @buffer = ();
+my $lasttrig = 0;
+my $trigno = 0;
+my $prtrigno = 0;
+my $in = 0;
+my $sectrig = 0;
+my $sectrigch = undef;
+
+sub usage {
+  print STDERR <<"EOF";
+Usage: reltime An[:Am] [post-ms [pre-ms]] < in_text_spike > out_text
+
+Fed with the output of (timeordered!) spikedump, adds a 5th column with
+the time (in ms) since the last spike on An, and a 6th column with the
+trigger number. (The cumulative number of spikes on An so far.) Spikes
+that happen more than post-ms milliseconds after the most recent trigger
+are reported relative to the next trigger, if any. Spikes prior to the 
+first trigger by more than pre-ms, or after the last trigger by more
+than post-ms are assigned trigger number 0. Default values are $post_ms ms
+for post-ms and $pre_ms ms for pre-ms.
+
+If Am is specified, an 7th column is generated with cumulative counts of 
+spikes on Am.
+
+A final column is created with threshold values, if available.
+
+Summary:
+
+Input format:
+
+  Time Channel Height Width
+
+Output format:
+
+  Time Channel Height Width Latency Trial [SecTri] [Thresh]
+EOF
+  exit(1);
+}
+
+sub prline {
+  my ($t, $c, $h, $w, $s, $th) = @_;
+  printf "$t $c $h $w %.2f $prtrigno",1000*($t-$lasttrig);
+  print " $s" if defined $sectrigch;
+  print " $th" if defined $th;
+  print "\n";
+}
+
+sub dumpbuffer {
+  for (@buffer) {
+    my ($t, $c, $h, $w, $s, $th) = @{$_};
+    prline($t,$c,$h,$w, $s, $th);
+  }
+  @buffer = ();
+}
+
+sub partialdump {
+  return unless @buffer;
+  my $lastt = $buffer[$#buffer]->[0];
+  my $thresh = $lastt - $pre_ms/1000;
+  while (@buffer) {
+    my ($t, $c, $h, $w, $s, $th) = @{$buffer[0]};
+    last if $t >= $thresh;
+    prline($t,$c,$h,$w, $s, $th);
+    shift @buffer;
+  }
+}
+
+usage() unless @ARGV;
+my $chch = shift @ARGV;
+my ($ch1,$ch2) = split(/:/,$chch);
+my $channel = ChannelNrs::cr2hw($ch1);
+$sectrigch = ChannelNrs::cr2hw($ch2) if defined $ch2;
+usage() unless defined $channel;
+
+if (@ARGV) {
+  my $p = shift @ARGV;
+  usage() if !($p =~ /^[0-9]+$/);
+  $post_ms = $p;
+}
+if (@ARGV) {
+  my $p = shift @ARGV;
+  usage() if !($p =~ /^[0-9]+$/);
+  $pre_ms = $p;
+}
+usage() if @ARGV;
+
+while (<>) {
+  chomp;
+  /^#/ and next;
+  s/^\s+//;
+  my ($t, $c, $h, $w, $th) = split(/\s+/,$_);
+  #  print STDERR ">>> $t $c $h $w\n";
+  $sectrig++ if defined($sectrigch) && $c==$sectrigch;
+  if ($c==$channel) {
+    $in=1;
+    $trigno++; $prtrigno=$trigno;
+    $lasttrig=$t;
+    dumpbuffer();
+  } elsif ($t>=$lasttrig+$post_ms/1000) {
+    $in=0; $prtrigno=0;
+  }
+  if ($in) {
+    prline($t,$c,$h,$w,$sectrig, $th);
+  } else {
+    push @buffer, [$t,$c,$h,$w,$sectrig, $th];
+    partialdump();
+  }
+}
+dumpbuffer();
+exit(0);

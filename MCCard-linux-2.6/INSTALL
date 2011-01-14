@@ -1,0 +1,116 @@
+MCCard for 2.6.x kernels - Basic Installation
+=============================================
+
+[Notes by Thomas DeMarse and Daniel Wagenaar, November 2006]
+
+  
+Compilation instructions
+------------------------
+
+NOTE: You must have a copy of the linux kernel source tree installed
+on your machine. It should be located in /usr/src/linux. Unlike prior
+versions of the driver which could compile outside the kernel build
+tree, the new 2.6 kernels require that you configure your kernel to
+create the necessary Makefiles in /usr/src/linux and lib/modules. You
+can find documentation on the net for building your own kernel for a
+wide variety of distributions. The point here is that your
+configuration matches that of the running kernel as the Makefile
+distributed with MCCard driver builds using the kernel make system
+(new in linux 2.6). My platform is an Intel P4 running Ubuntu Linux
+v6.1.
+
+1. "cd" to directory where you unpacked the files.
+
+2. Create the object module by typing "make". This should create a
+   file named "MCCard.ko".
+	
+
+Installing the module
+---------------------
+
+You need root privileges to do this. (Use "su", or "sudo su", and be
+careful---it is easy to mess up a system while you are root.)
+
+First:
+
+Create a file device named MCCard with major #250 and minor #0:
+
+	mknod /dev/MCCard c 250 0 
+	chmod u+rw /dev/MCCard
+
+NOTE: On my Ubuntu system the /dev/ files are dynamically created on
+      boot. Thus you may need to add these lines to /etc/rc.local  
+      so that these files will be created upon boot.
+
+Second:
+
+You have three choices..
+
+1. One is to insert MCCard.ko into the running kernel manually whenever 
+   you reboot your machine (not recommended).
+
+   To do this, as root type "insmod MCCard.ko". You can verify the
+   module has loaded by listing the current modules with "lsmod". 
+   "MCCard" should be listed.
+
+2. Second strategy is to load the module during boot time by inserting
+   the insmod command into the file "/etc/rc.local" file.
+
+3. Third is to install the driver module into the system default modules
+   directory. To do this, type "make install" as root after the build 
+   completes. A copy of the modyle will be placed in
+   /usr/(yourkernel)/kernel/drivers/misc. To automatically load the driver
+   at boot time on Ubuntu 6.1, add a line to "/etc/modules" that contains 
+   MCCard. Similar techniques may work with other distributions.
+
+When loaded, MCCard should print out a bit of info to /var/log/messages
+or /var/log/system about how much memory for DMA transfers it was able
+to allocate. The device should also appear in /proc/interupts and
+/proc/modules. To verify simply type "lsmod" and you should see MCCard
+listed.
+
+Access to the data acquistion card will now be through the file
+/dev/MCCard which to the user acts simply like a file that can be
+opened and read (see sample program read.c).
+
+
+Removing (unloading) the module
+-------------------------------
+
+As root type:
+
+	rmmod MCCard
+
+Note: First make sure no one is accessing the device (with lsmod)!
+
+Again, information will be printed about termination in
+/var/log/messages. You can verify termination by typing "lsmod" again
+if you wish.
+
+ 
+Trouble shooting
+----------------
+
+- Cannot find module: 
+
+  Check to make sure the driver is loaded with "lsmod". Then check to 
+  make sure the file /dev/MCCard is listed.
+
+- Latency issues/dropped data:
+
+  On some machines I have had problems with the latency_wait on the
+  pci card. It seems the kernel's default is to allow a relatively
+  long wait before the interrupt is serviced. If you have this problem
+  run the command setpci as root with the following:
+
+	setpci -v -d 10e8:80e8  latency_timer=ff
+
+  This can be automated in /etc/rc.local, if you wish.
+
+
+Notes
+-----
+
+On other installations, the file "/etc/rc.local" may be called
+"/etc/rc.d/rc.local", or "/etc/init.d/local", or some other variation
+on this theme.
