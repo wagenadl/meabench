@@ -2842,7 +2842,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=meabench
- VERSION=1.2.4
+ VERSION=1.2.5
 
 
 cat >>confdefs.h <<_ACEOF
@@ -16088,7 +16088,7 @@ $as_echo "$POWERDAQ_INC" >&6; };
 
 
 	else
-        	as_fn_error $? "\"Unknown device \'$withval\'. Type 'configure --help' to view options\" " "$LINENO" 5
+        	as_fn_error $? "\"Unknown device '$withval'. Type 'configure --help' to view options\" " "$LINENO" 5
 	fi
 	cat >>confdefs.h <<_ACEOF
 #define MEAHARDWARE $withval
@@ -16096,12 +16096,7 @@ _ACEOF
 
 else
 
-	MEAHARDWARE=mcs
-	CAPSHARDWARE=MCS
-	$as_echo "#define MCSHARDWARE 1" >>confdefs.h
-
-	$as_echo "#define MEAHARDWARE mcs" >>confdefs.h
-
+					as_fn_error $? "\"Please specify what hardware you are using by way of the '--with-hardware' option. For instance: './configure --with-hardware=mcsE'. Please see the manual.\"" "$LINENO" 5
 	        warn_DEFAULT=yes
 
 fi

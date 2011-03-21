@@ -1,4 +1,4 @@
-% doc/userguide.tex: part of meabench, an MEA recording and analysis tool
+% doc/userguide.tex: part of MEABench, an MEA recording and analysis tool
 % Copyright (C) 2000-2006  Daniel Wagenaar (dwagenaar@ucsd.edu)
 %
 % This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.0pt}
 \fancyhf{}
-\fancyhead[L]{Wagenaar, {\it Meabench 12/12/'06}}
+\fancyhead[L]{Wagenaar, {\it MEABench}}
 \fancyhead[C]{{\bf{\rightmark}}}
 \fancyhead[R]{\thepage}
 \renewcommand{\chaptermark}[1]{\markright{#1}}
@@ -68,7 +68,7 @@
 ~\vspace{.5in}
 
 \begin{center}
-\noindent{\LARGE\sc{Meabench}}
+\noindent{\LARGE\sc{MEABench}}
 
 \vspace{10pt}
 
@@ -76,7 +76,7 @@
 
 \vspace{10pt}
 
-\noindent{\large Release 1.2.4, March 2011}
+\noindent{\large Release 1.2.5, March 2011}
 
 \vspace{1in}
 
@@ -276,16 +276,21 @@ guide.
 \item Make sure you have Qt 3.0 or later. (Qt 4 or later will \emph{not} work. Most linux distributions allow you to install Qt~3 and Qt~4 side by side.)
 \item Make sure your kernel is 2.4.10 or later. (Kernel 2.6.x recommended.)
 \item Download the latest version of \meabench, and unpack it:
-  \unixprompt{tar xzf meabench-1.1.0.tar.gz}
+  \unixprompt{tar xzf meabench-1.2.5.tar.gz}
 \item Enter the directory:
-  \unixprompt{cd meabench-1.1.0}
-\item Choose the directory were you want to install \meabench, e.g.
+  \unixprompt{cd meabench-1.2.5}
+\item Choose the directory were you want to install \meabench, e.g.,
   \filename{/opt/meabench}, and configure:
   \unixprompt{./configure -{}-prefix=/opt/meabench -{}-with-hardware=mcs}
 (The \filename{-{}-with-hardware} chooses the particular DAQ hardware
 you are using. Currently defined values are \Useri{mcs} for MultiChannel
-Systems' MCCard, \Useri{mcsE} for ``revision E'' of MCCard, and \Useri{uei} for United Electronic Industries'
-PD2-MF64-14H cards. This second driver is currently ``experimental''.)
+Systems' original MCCard, \Useri{mcsE} for ``revision E'' or later of
+MCCard\footnote{If you don't know which version you have, first try
+  \Useri{mcs}. If the data look good in \prog{scope}, you are set. If
+  not, try \Useri{mcsE} instead.}, \Useri{uei} for United Electronic Industries'
+PD2-MF64-14H cards, and \Useri{ni} for National Instruments
+cards. These last two drivers are currently ``experimental''. I would
+particularly like to hear your success stories or bug reports.)
 \item Compile:
   \unixprompt{make}
 This will take a while. You may see various compiler warnings, such

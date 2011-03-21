@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(rawsrv)
-AM_INIT_AUTOMAKE(meabench, 1.2.4)
+AM_INIT_AUTOMAKE(meabench, 1.2.5)
 dnl AM_PROG_LIBTOOL
 AC_PROG_LIBTOOL
 
@@ -392,13 +392,14 @@ AC_ARG_WITH(hardware,  [  --with-hardware=DEVICE  Select the device to build for
 		AC_SUBST(POWERDAQ_INC)
 
 	else
-        	AC_MSG_ERROR( "Unknown device \'$withval\'. Type 'configure --help' to view options" )
+        	AC_MSG_ERROR( "Unknown device '$withval'. Type 'configure --help' to view options" )
 	fi	
 	AC_DEFINE_UNQUOTED(MEAHARDWARE,$withval) ],[
-	MEAHARDWARE=mcs
-	CAPSHARDWARE=MCS
-	AC_DEFINE(MCSHARDWARE,1)
-	AC_DEFINE(MEAHARDWARE,mcs)
+	dnl MEAHARDWARE=mcs
+	dnl CAPSHARDWARE=MCS
+	dnl AC_DEFINE(MCSHARDWARE,1)
+	dnl AC_DEFINE(MEAHARDWARE,mcs)
+	AC_MSG_ERROR("Please specify what hardware you are using by way of the '--with-hardware' option. For instance: './configure --with-hardware=mcsE'. Please see the manual.")
 	dnl HWSUBDIR=MCCard
         warn_DEFAULT=yes
         ])
