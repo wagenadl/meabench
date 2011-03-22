@@ -134,83 +134,96 @@ void ForceFifo(int n) {
   //  unsigned int x;
   printk(KERN_INFO "MCCard: ForceFifo %i\n",n);
   //  for (i=0; i<n; i++) {
-    //    x = inl(AMCC_BASE+AMCC_OP_REG_MCSR);
+  //    x = inl(AMCC_BASE+AMCC_OP_REG_MCSR);
     //    x = inl(AMCC_BASE+AMCC_OP_REG_FIFO);
   //  }
   printk(KERN_INFO "MCCard: done ForceFifo %i\n",n);
 }
 
 u8 ReadNVRAM(u32 address) {
- u8 retval=0;
- u32 NVRAM_BUSY = 0x80000000;
- u32 MCSR_value=0,writeval=0;
- /*Not working yet...*/ 
- /* from p 8-9 in AMCC manual */
- MCSR_value=inl(AMCC_BASE+AMCC_OP_REG_MCSR);
- printk(KERN_INFO " mcsr= %d\n",MCSR_value);
-  
- while (inl(AMCC_BASE+AMCC_OP_REG_MCSR) & NVRAM_BUSY)
-   {
-     /* busy wait */
-   }
- 
- /* write low bytes of address */
- MCSR_value=inl(AMCC_BASE+AMCC_OP_REG_MCSR);
- writeval=MCSR_value;
- writeval |= ((address & 0xFF) << 8);
- writeval |= NVRAM_BUSY;
- outl(writeval, AMCC_BASE+AMCC_OP_REG_MCSR);
- 
- writeval=MCSR_value;
- writeval |=((address >> 8) & 0xFF);
- outl(writeval, AMCC_BASE + AMCC_OP_REG_MCSR); 
- 
- while (inl(AMCC_BASE+AMCC_OP_REG_MCSR) & NVRAM_BUSY) {
-   /* busy wait */
- }
- MCSR_value=inl(AMCC_BASE+AMCC_OP_REG_MCSR);
- printk(KERN_INFO " mcsr=%d\n", MCSR_value);
- writeval=(writeval & 0xFF0000) >> 16;
- retval=writeval;
- return 0;
-}
+  u32 readval=0,writeval=0;
+  int maxtries;
 
+  // wait for device ready
+  maxtries = 10000;
+  while (--maxtries>0) {
+    readval = inl_p(AMCC_BASE+AMCC_OP_REG_MCSR);
+    if (readval & 0x80000000) {
+      /* busy wait */
+    } else {
+      break;
+    }
+  }
+  
+  // write low byte of address
+  writeval = 0x80000000; // bit 31 set, 30, 29 clear
+  writeval |= (address & 0xFF) << 16;
+  outl_p(writeval, AMCC_BASE+AMCC_OP_REG_MCSR);
+  
+  // write high byte of address
+  writeval = 0xa0000000; // bit 31 set, 30 clear, 29 set
+  writeval |=((address >> 8) & 0xFF);
+  outl_p(writeval, AMCC_BASE + AMCC_OP_REG_MCSR); 
+  
+  // write "begin read"
+  writeval = 0xe0000000; // bit 31, 30, 29 set
+  outl_p(writeval, AMCC_BASE + AMCC_OP_REG_MCSR);
+
+  // wait for data availability and get data
+  maxtries = 1000;
+  while (--maxtries) {
+    readval = inl_p(AMCC_BASE + AMCC_OP_REG_MCSR);
+    if (readval & 0x80000000) {
+      // busy
+    } else {
+      // ready
+      break;
+    }
+  }
+  
+  if (maxtries==0) 
+    printk(KERN_INFO " mcsr remained busy. 0x%08x\n", readval);
+  if (readval & 0x10000000) 
+    printk(KERN_INFO " mcsr signaled XFER_FAIL. 0x%08x\n", readval);
+  return (readval>>16) & 0xff;
+}
+  
 void GetMCCardInfo() {
-  u8 tmp[9];
+  /* read NV RAM */
+  char expected[] = "MCS*MC_CARD";
   int i;
- /* read NV RAM */
- 
- /* Card Revision into Cardinfo.CardRevision */
-  for( tmp[8]='\0',i=0; i < 9; i++) {
-    tmp[i]=ReadNVRAM(0+i);
-  }
-  printk(KERN_INFO " nvram= %s\n",tmp);
-  return;
-#if 0
-  if (tmp[0] == 'M' && tmp[1] == 'C' && tmp[2] == '_' //
-      && tmp[3] == 'C' && tmp[4] == 'A' && tmp[5] == 'R' //
-      && tmp[6] == 'D') {
-    Cardinfo.CardRevision = tmp[7] - 'A';
-  } else {
-    Cardinfo.CardRevision = 0xFFFF;
-  }
-  printk(KERN_INFO "  Card Revision %d  : %s\n", Cardinfo.CardRevision,tmp); 
-#endif
+  char val;
+
+  Cardinfo.ok = 0;
   
-  /* PLD Version */
-  /* pci_read_config_word(pcidev,0x8C,&Cardinfo.PldRevision);*/
-  /* Serial No. */
-  /*  pci_read_config_word(pcidev,0x90,&Cardinfo.SerialNo);*/
-  /* Channel Number */
-  
-#if 0
-  tmp[4] = '\0';
-  for (i = 0; i<4; i++) {
-    tmp[i] = ReadNVRAM(0x94+i);
+  for (i=0; i<11; i++)
+    if (ReadNVRAM(128+i)!=expected[i])
+      return; // failure to read proper card information
+  val = ReadNVRAM(128+11);
+  Cardinfo.CardRevision = val;
+  val = ReadNVRAM(128+15);
+  Cardinfo.PldRevision = val;
+
+  Cardinfo.SerialNo = 0;
+  for (i=0; i<4; i++) {
+    val = ReadNVRAM(128+16+i);
+    Cardinfo.SerialNo *= 10;
+    Cardinfo.SerialNo += val-'0';
   }
-  /*Cardinfo.ChannelNumber= atoi((char*)tmp);*/
-  printk(KERN_INFO "  Card Revision %s\n",tmp); 
-#endif
+
+  Cardinfo.ChannelCount = 0;
+  for (i=0; i<4; i++) {
+    val = ReadNVRAM(128+16+i);
+    Cardinfo.ChannelCount *= 10;
+    Cardinfo.ChannelCount += val-'0';
+  }
+
+  Cardinfo.ok = 1;
+  printk(KERN_INFO "MCCard: rev %c. PLB rev %c. Serial: %04i. Channels: %i\n",
+	 Cardinfo.CardRevision,
+	 Cardinfo.PldRevision,
+	 Cardinfo.SerialNo,
+	 Cardinfo.ChannelCount);
 }
 
 void SetSamplingConfig(unsigned int iCHN, unsigned int iSF, unsigned int iGain, unsigned int iDigIf) { 
@@ -492,6 +505,13 @@ int mccard_ioctl (struct inode *inode, struct file *filp,
       return -EFAULT;
     } 
     break;
+
+  case MCCARD_IOQINFO: /* Get card info */
+    if (copy_to_user((u32 *) arg,&Cardinfo, sizeof(Cardinfo))) {
+      printk(KERN_WARNING "MCCard: Error copying card info to user space\n");
+      return -EFAULT;
+    } 
+    break;
     
   case MCCARD_IOCENDIGI:   /* Enable digital */
     Parameters.digi=1;
@@ -643,9 +663,6 @@ int init_module(void)
     return -ENXIO;
   }
   
-  
-  /*GetMCCardInfo();
-    return -ENXIO; */
   //iCHN is set to 6 for 64 channels and 7 for 128 channels
   Parameters.iCHN=6;
   printk(KERN_INFO "MCCard: Channels set to %i\n",Parameters.iCHN);
@@ -687,6 +704,8 @@ int init_module(void)
   /* set up initial state of card */
   outl(0, AMCC_BASE+AMCC_OP_REG_AIMB1); 
   outl(0, AMCC_BASE+AMCC_OP_REG_AIMB2); 
+
+  GetMCCardInfo();
   
   /* OK handler installed, now allocate DMA memory buffers */
   allocateDMABuffers();

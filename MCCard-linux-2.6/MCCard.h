@@ -58,6 +58,7 @@ enum {
 #define MCCARD_IOCENDIGI _IO(MCCARD_IOC_MAGIC,7)
 #define MCCARD_IOCFORCEFIFO _IOW(MCCARD_IOC_MAGIC,8,unsigned int)
 #define MCCARD_IOSETCHANNELS _IOW(MCCARD_IOC_MAGIC,9,unsigned int)
+#define MCCARD_IOQINFO _IOW(MCCARD_IOC_MAGIC,10, unsigned long *)
 
 #endif
 
@@ -65,12 +66,13 @@ enum {
 #define MC64 0
 #define MC128 1
 
-
 struct MCCard_info {
-  unsigned short CardRevision;
-  unsigned short PldRevision;
-  unsigned short SerialNo;
-  unsigned short ChannelNumber;  
+  unsigned int SerialNo;
+  unsigned int ChannelCount;
+  char CardRevision;
+  char PldRevision;
+  unsigned char ok;
+  char dummy;
 };
 
 struct MCCard_parameters {
