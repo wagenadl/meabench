@@ -450,6 +450,7 @@ int mccard_ioctl (struct inode *inode, struct file *filp,
     
     /* Send reset to addon hardware to generate 1st INT & begin data collection */
     AddonReset();
+    udelay(1000); // spin for 1 ms to avoid start up bug (thanks Kai Broeking!)
     break;
     
   case MCCARD_IOCFORCEFIFO: {

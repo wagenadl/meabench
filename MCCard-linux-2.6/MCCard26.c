@@ -111,7 +111,7 @@ struct cdev *mccard_cdev;
 int Running=0; /* +ve if running, -ve if stopping, 0 if not running. */
 int Opened=0; /* +ve if device in use */
 unsigned long  AMCC_BASE;
-DECLARE_WAIT_QUEUE_HEAD(wq);
+wait_queue_head_t wq;
 void *dma_buffer[MAX_BUFFERS];
 long final_buffer;
 
@@ -204,14 +204,15 @@ u8 ReadNVRAM(u32 address) {
 }
 
 void GetMCCardInfo(void) {
-  u8 tmp[9];
+  u8 tmp[10];
   int i;
   /* read NV RAM */
  
   /* Card Revision into Cardinfo.CardRevision */
-  for( tmp[8]='\0',i=0; i < 9; i++) {
+  for (i=0; i<9; i++) {
     tmp[i]=ReadNVRAM(0+i);
   }
+  tmp[9]=0;
   printk(KERN_INFO " nvram= %s\n",tmp);
   return;
 #if 0
@@ -493,6 +494,8 @@ static int mccard_ioctl (struct inode *inode, struct file *filp,
     /* Send reset to addon hardware to generate 1st INT & begin data 
        collection */
     AddonReset();
+
+    udelay(1000); // spin for 1 ms to avoid start up bug (thanks Kai Broeking!)
     break;
     
   case MCCARD_IOCFORCEFIFO: {
@@ -579,13 +582,9 @@ static ssize_t mccard_read(struct file *filp, char *buf, size_t nbytes, loff_t *
    * advanced after each read.
    */
   
-  /* prepare for read op */  
-  if (writeptr==next_read) { 
-    interruptible_sleep_on(&wq);
-    
-    if (writeptr==next_read)
+  /* prepare for read op */
+  if (wait_event_interruptible(wq, writeptr==next_read))
       return -EINTR;
-  }
   
   /* do the read, return the current buffer to user space */ 
   if (__copy_to_user(buf, dma_buffer[next_read], nbytes)) {
@@ -685,6 +684,8 @@ static int __init mccard_init_module(void)
 #else
   printk(KERN_INFO "MCCard Linux device driver - normal version\n");
 #endif
+
+  init_waitqueue_head(&wq);
   
   /* Look for the multichannel systems data acquisition card */
 #if MCC_NEWDEVCLS

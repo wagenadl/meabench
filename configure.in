@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(rawsrv)
-AM_INIT_AUTOMAKE(meabench, 1.2.5)
+AM_INIT_AUTOMAKE(meabench, 1.2.6)
 dnl AM_PROG_LIBTOOL
 AC_PROG_LIBTOOL
 
