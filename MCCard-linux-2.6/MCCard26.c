@@ -216,7 +216,7 @@ u8 ReadNVRAM(u32 address) {
   return (readval>>16) & 0xff;
 }
   
-void GetMCCardInfo() {
+void GetMCCardInfo(void) {
   /* read NV RAM */
   char expected[] = "MCS*MC_CARD";
   int i;
@@ -594,17 +594,27 @@ static int mccard_ioctl (struct inode *inode, struct file *filp,
   return 0;
 }
 
-static ssize_t mccard_read(struct file *filp, char *buf, size_t nbytes, loff_t *ppos) {
+static ssize_t mccard_read(struct file *filp, char *buf, size_t nbytes,
+			   loff_t *ppos) {
 
-  /*
-   * Each data buffer is set to hold 32768 bytes worth of data, ie just over 10 msec worth.
-   * The user must read an entire buffer at once or lose whats left as the buffer pointer is 
-   * advanced after each read.
+  /* Each data buffer is set to hold 32768 bytes worth of data, ie just
+     over 10 msec worth. The user must read an entire buffer at once or
+     lose what's left: the buffer pointer is advanced after each read.
    */
+
+  if (nbytes > (4096<<DMA_BUFF_SIZE[chn_set]))
+    nbytes = 4096<<DMA_BUFF_SIZE[chn_set];
   
   /* prepare for read op */
   if (wait_event_interruptible(wq, writeptr==next_read))
       return -EINTR;
+
+  if (Cardinfo.ok && Cardinfo.CardRevision>='E') {
+    unsigned short *ptr = dma_buffer[next_read];
+    unsigned int n = nbytes;
+    while (n--) 
+      *ptr++ >>= 2;
+  }
   
   /* do the read, return the current buffer to user space */ 
   if (__copy_to_user(buf, dma_buffer[next_read], nbytes)) {
