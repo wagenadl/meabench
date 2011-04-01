@@ -611,7 +611,7 @@ static ssize_t mccard_read(struct file *filp, char *buf, size_t nbytes,
 
   if (Cardinfo.ok && Cardinfo.CardRevision>='E') {
     unsigned short *ptr = dma_buffer[next_read];
-    unsigned int n = nbytes;
+    unsigned int n = nbytes/2;
     while (n--) 
       *ptr++ >>= 2;
   }

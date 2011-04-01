@@ -80,14 +80,6 @@ unsigned int RS_MCS::read(Sample *dst, unsigned int amount)
     if (len!=MCC_FILLBYTES)
       throw Error("RawSource","Got less than expected");
 
-#ifdef MCSSCALE
-    {
-      unsigned short *ptr = (unsigned short*)(dst);
-      for (int k=0; k<len/2; k++)
-	ptr[k] = ptr[k] >> 2;
-    }
-#endif
-
     amount -= MCC_FILLSAMS;
     dst += MCC_FILLSAMS;
   }

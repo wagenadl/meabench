@@ -104,6 +104,6 @@ utils/trialdump
 utils/trigvar
 utils/typesizes
 utils/uniquespike
-
+Makefile.in
 autom4te.cache
 *.tar.gz

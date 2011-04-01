@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(rawsrv)
-AM_INIT_AUTOMAKE(meabench, 1.2.6)
+AM_INIT_AUTOMAKE(meabench, 1.2.7)
 dnl AM_PROG_LIBTOOL
 AC_PROG_LIBTOOL
 
@@ -337,8 +337,6 @@ AC_ARG_WITH(hardware,  [  --with-hardware=DEVICE  Select the device to build for
                           choices are:
                           mcs - MultiChannel Systems hardware with 
                                 Thomas DeMarse's driver
-			  mcsE - MultiChannel Systems hardware rev. E with
-                                Thomas DeMarse's driver
                           uei - United Electronic Industries PowerDAQ with
                                 Daniel Wagenaar's driver
                           ni  - National Instruments PCI6259 DAQ (2) with
@@ -347,12 +345,6 @@ AC_ARG_WITH(hardware,  [  --with-hardware=DEVICE  Select the device to build for
 		MEAHARDWARE=mcs
 		CAPSHARDWARE=MCS
 		AC_DEFINE(MCSHARDWARE,1)
-		dnl HWSUBDIR=MCCard
-	elif eval "test x$withval = xmcsE"; then
-		MEAHARDWARE=mcs
-		CAPSHARDWARE=MCS
-		AC_DEFINE(MCSHARDWARE,1)
-		AC_DEFINE(MCSSCALE,1)
 		dnl HWSUBDIR=MCCard
 	elif eval "test x$withval = xni"; then
 		MEAHARDWARE=ni
@@ -399,7 +391,7 @@ AC_ARG_WITH(hardware,  [  --with-hardware=DEVICE  Select the device to build for
 	dnl CAPSHARDWARE=MCS
 	dnl AC_DEFINE(MCSHARDWARE,1)
 	dnl AC_DEFINE(MEAHARDWARE,mcs)
-	AC_MSG_ERROR("Please specify what hardware you are using by way of the '--with-hardware' option. For instance: './configure --with-hardware=mcsE'. Please see the manual.")
+	AC_MSG_ERROR("Please specify what hardware you are using by way of the '--with-hardware' option. For instance: './configure --with-hardware=mcs'. Please see the manual.")
 	dnl HWSUBDIR=MCCard
         warn_DEFAULT=yes
         ])
