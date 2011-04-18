@@ -121,7 +121,6 @@ public:
     }
     for (int c=NCHANS; c<TOTALCHANS; c++)
       dst[c] = src[c];
-    dst[61] = now * 32; // DBG!
   }
   void noadapt(Sample &dst, Sample const &src) {
     /*:N It is OK for dst=src. */
@@ -137,7 +136,6 @@ public:
     }
     for (int c=NCHANS; c<TOTALCHANS; c++)
       dst[c] = src[c];
-    dst[61] = now * 32; // DBG!
   }
   void last(Sample &dst, Sample const &src) {
     /*:N It is OK for dst=src. */

@@ -308,10 +308,8 @@ void dorun() {
 	    if (last < adaptend) {
 	      // lockin, adapt
 	      while (last<chunklimit) {
-		bool flat=0; // DBG!
 		Sample const &s(MEAB::rawin->sfcli[last]);
 		if ((*lockin)(s[lockin_channel])) {
-		  flat=1; // DBG!
 		  filter->reset();
 		}
 		if (blockontrig) {
@@ -322,14 +320,11 @@ void dorun() {
 		  }
 		  if (blocked) {
 		    filter->noadapt(MEAB::rawout->sfsrv[dest++],s);
-		    MEAB::rawout->sfsrv[dest-1][63]=0; // DBG!
 		    if (last>=blockuntil)
 		      blocked = false;
 		  } else {
 		    filter->adapt(MEAB::rawout->sfsrv[dest++],s);
 		  }
-		  if (flat) // DBG!
-		    MEAB::rawout->sfsrv[dest-1][63]=4095; // DBG!
 		} else {
 		  filter->adapt(MEAB::rawout->sfsrv[dest++],s);
 		}
