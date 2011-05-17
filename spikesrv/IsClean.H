@@ -6,7 +6,7 @@
 
 class IsClean {
 public:
-    static const int DT_90_1s = -12;
+  static const int DT_90_1s = -12;
   static const int DT_90_1e = -3;
   static const int DT_90_2s = 3;
   static const int DT_90_2e = 14;

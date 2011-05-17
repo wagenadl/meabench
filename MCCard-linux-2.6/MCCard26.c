@@ -558,7 +558,9 @@ static int mccard_ioctl (struct inode *inode, struct file *filp,
     } 
     break;
     
-  case MCCARD_IOCENDIGI:   /* Enable digital */
+  case MCCARD_IOCENDIGI:   /* Enable digital. */
+    /* This is supposed to put some magic on A4, but it has never
+       actually worked for me. (DW). */
     Parameters.digi=1;
     break;	
     
@@ -683,7 +685,11 @@ static int mccard_release (struct inode *inode, struct file *filp) { // i.e. "cl
 static struct file_operations mccard_fops = {
   .owner=THIS_MODULE,
   .read=mccard_read,
+#if MCC_USEUNLOCKEDIOCTL
+  .unlocked_ioctl=mccard_ioctl,
+#else
   .ioctl=mccard_ioctl,
+#endif
   .open=mccard_open,
   .release=mccard_release,
 };

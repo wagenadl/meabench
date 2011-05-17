@@ -949,6 +949,12 @@ exclude the 60 Hz reference signal from being recorded in spike files.
 \item \cmd{excludechannels} [\arg{RC} \ldots $|$ --] --- Marks a set of
 electrode channels as `dead'. Useful to prevent spurious spike detection on
 clamped down or flaky channels.
+\item \cmd{clean} [0/1] --- Enables or disables suppression of
+  nonclean spikes. What constitutes a ``clean'' spike is up to the
+  individual detectors. For BandFlt, AdaPerc, and LimAda, ``clean''
+  means that the spike shape resembles a typical spike from cortical
+  cultures, see Wagenaar et al. (2005), ``MEABench: A toolset for
+  multi-electrode data acquisition and on-line analysis.''
 \item \cmd{outputfilt} [0/1] --- Enables or disables the creation of a
 shared memory stream called \stream{spraw}, on which the filtered raw data is
 reported.
@@ -959,13 +965,13 @@ noise values, and can be used by \prog{Salpa} as well.
 training results from `{\it filenamebase}.noise'. \prog{Salpa}
 generated noise files may be loaded as well.
 \item \cmd{alias} --- A fake command. Reminds the user of the
-existence of the `--alias' flag (see below).
+  existence of the `--alias' flag: In some circumstances it may be
+  useful to run more than one spike detector simultaneously. To make
+  that work, \prog{Spikedet} can be made to publish its results on a
+  differently named stream, by starting it as `spikedet -alias
+  \emph{streamname} $[$\emph{cmds}$]$'.
 \end{itemize}
 
-In some circumstances it may be useful to run more than one spike
-detector simultaneously. To make that work, \prog{Spikedet} can be
-made to publish its results on a differently named stream, by starting
-it as `spikedet -alias \emph{streamname} $[$\emph{cmds}$]$'.
 
 
 \subsection{BandFlt}

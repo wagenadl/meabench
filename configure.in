@@ -316,6 +316,12 @@ elif eval "test x$KERNEL_VSN = x2.6"; then
         else
 	  KERNEL_USEDRVDATA=0
         fi
+	if eval "echo $KERNEL_SUB_VSN 27|tr ' ' '\n' | sort|head -n 1|grep -q 27"; then
+	  dnl Starting in kernel 2.6.36, file_operations defined unlocked_ioctl
+	  KERNEL_USEUNLOCKEDIOCTL=1
+        else
+	  KERNEL_USEUNLOCKEDIOCTL=0
+        fi
 else
 	AC_MSG_RESULT([not found])
 	AC_MSG_ERROR("Unknown kernel version ($KERNEL_VSN). Please specify 2.4 or 2.6 with --with-kernel-version.")
@@ -323,6 +329,7 @@ fi
 AC_SUBST(KERNEL_VSN)
 AC_SUBST(KERNEL_NEWDEVICE)
 AC_SUBST(KERNEL_USEDRVDATA)
+AC_SUBST(KERNEL_USEUNLOCKEDIOCTL)
 
 dnl Check for superfast
 dnl AC_MSG_CHECKING([ Using ultrafast ])

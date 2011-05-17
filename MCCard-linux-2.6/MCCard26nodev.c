@@ -660,7 +660,11 @@ static int mccard_release (struct inode *inode, struct file *filp) { // i.e. "cl
 static struct file_operations mccard_fops = {
   .owner=THIS_MODULE,
   .read=mccard_read,
+#if MCC_USEUNLOCKEDIOCTL
+  .unlocked_ioctl=mccard_ioctl,
+#else
   .ioctl=mccard_ioctl,
+#endif
   .open=mccard_open,
   .release=mccard_release,
 };
