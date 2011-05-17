@@ -116,3 +116,4 @@ missing
 ./INSTALL
 ltmain.sh
 m4/ltversion.m4
+utils/context64

@@ -40,6 +40,8 @@ void SD_BandFlt::detectrows(timeref_t start, timeref_t end) {
     Sample const &s = src[t];
 #if SHOW
     Sample &rdst = (*rawdest)[t_dest++];
+    for (int c=NCHANS; c<TOTALCHANS; c++)
+      rdst[c] = s[c];
 #endif
     detect_analog(t,s);
     for (int c=0; c<NCHANS; c++) {

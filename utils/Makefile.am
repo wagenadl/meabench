@@ -23,7 +23,7 @@ bin_PROGRAMS =  avgtrial channelmean detectclamped doublectxt eta \
 	spikerate spikexcor stream2pipe sxcl-filter sxcl-group sxcl-invert \
 	sxclog sxcl-table trigvar uniquespike ctxt2ascii rms-rethresh \
 	trialdump idstim rejoin spikeinfo resplitspike spikesplit \
-	typesizes streamstat
+	typesizes streamstat context64
 noinst_HEADERS = DoubleCtxt.H
 avgtrial_SOURCES = avgtrial.C
 channelmean_SOURCES = channelmean.C
@@ -62,6 +62,7 @@ sxcl_table_SOURCES = sxcl-table.C
 trigvar_SOURCES = trigvar.C
 uniquespike_SOURCES = uniquespike.C
 typesizes_SOURCES = typesizes.C
+context64_SOURCES = context64.C
 
 include $(top_srcdir)/Makefile.tools
 

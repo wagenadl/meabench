@@ -17,7 +17,7 @@
 
 
 lib_LTLIBRARIES = libmeatools.la
-noinst_HEADERS = BareSpike.H Cumulate.H ETA.H MultiTimeQueue.H SortingQueue.H SpikeQueue.H SpikeXCorrel.H SXCLog.H 
-libmeatools_la_SOURCES = SpikeXCorrel.C ETA.C SXCLog.C
+noinst_HEADERS = BareSpike.H Cumulate.H ETA.H MultiTimeQueue.H SortingQueue.H SpikeQueue.H SpikeXCorrel.H SXCLog.H Argh.H
+libmeatools_la_SOURCES = SpikeXCorrel.C ETA.C SXCLog.C Argh.C
 libmeatools_la_LDFLAGS = -release @VERSION@
 include $(top_srcdir)/Makefile.base

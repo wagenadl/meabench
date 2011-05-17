@@ -44,11 +44,17 @@ void SD_AdaFlt::detectrows(timeref_t start, timeref_t end) {
 #endif
   for (timeref_t t=start; t<end; t++) {
     Sample const &s = src[t];
+#if SHOW
     Sample &rdst = (*rawdest)[t_dest++];
+    for (int c=NCHANS; c<TOTALCHANS; c++)
+      rdst[c] = s[c];
+#endif
     detect_analog(t,s);
     for (int c=0; c<NCHANS; c++) {
       float y = bandpass[c](s[c]);
+#if SHOW
       rdst[c] = /*(inspike[c] ? (negvspike[c]?-100:100):0)*/ + raw_t(y);
+#endif
       if (inspike[c]) { // in a spike
 	if (negvspike[c]) { // it's a downward spike
 	  if (y<spikeheight[c]) {

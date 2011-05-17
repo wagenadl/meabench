@@ -195,12 +195,16 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
   StreamClient(string const &fn) throw(Error) { //:c
     /*:D StreamClient(fn) constructs a StreamClient that reads from a file.
      *:A fn: filename to open, including suffixes.
+     *:N If the file is of typical meabench construction, then continuation
+         files ("foo.raw-1", etc.) are automatically loaded too.
      */
     ec=0;
     fi = fopen(fn.c_str(),"rb");
     if (!fi)
       throw SysErr("StreamClient","Cannot open file");
     own=true;
+    filebase = fn;
+    fileno = 0;
   }
   ~StreamClient() {
     if (ec)
@@ -241,15 +245,22 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
       return r;
     } else {
       int r=fread(dest,sizeof(Data),length,fi);
-      lastlen=length;
+      lastlen=r;
       if (r==length)
 	return true;
-      if (r<0)
+      if (!feof(fi))
 	throw SysErr("StreamClient","Cannot read file");
-      if (feof(fi))
+      fclose(fi);
+      fileno++;
+      fi = fopen((filebase + "-" + Sprintf("%i",fileno)).c_str(), "rb");
+      if (!fi)
 	return false;
+      int dr=fread(dest+r,sizeof(Data),length-r,fi);
+      lastlen += dr;
+      if (r+dr==length)
+	return true;
       else
-	throw Error("StreamClient","Got less data than I wanted from file");
+	throw SysErr("StreamClient","Cannot read file");
     }
   }
   int readn(Data *dest, int length) { //:f readn
@@ -262,6 +273,7 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
      *:E This fn will transfer rubbish if length exceeds (or comes near) the
          fifo buffer size, so don't transfer unreasonably large chunks.
      */
+    lastlen = 0;
     if (ec) {
       length = ec->readn(dest,t,length);
       t+=length;
@@ -273,15 +285,23 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
 	int r = fread(dstptr, disksize, 1, fi);
 	if (r==1) {
 	  dstptr++;
-	} else if (r<0)
+	  lastlen++;
+	} else if (!feof(fi)) {
 	  throw SysErr("StreamClient","Cannot read file");
-	else if (feof(fi)) {
-	  lastlen = i;
-	  return i;
-	} else
-	  throw Error("StreamClient","Got less data than I wanted from file");
+	} else {
+	  fclose(fi);
+	  fileno++;
+	  fi = fopen((filebase + "-" + Sprintf("%i",fileno)).c_str(), "rb");
+	  if (!fi)
+	    return lastlen;
+	  int r = fread(dstptr, disksize, 1, fi);
+	  if (r==1) {
+	    dstptr++;
+	    lastlen++;
+	  } else 
+	    throw SysErr("StreamClient","Cannot read file");
+	}
       }
-      lastlen = length;
       return lastlen;
     }
   }
@@ -294,6 +314,8 @@ private:
   timeref_t t;
   int lastlen;
   int disksize;
+  string filebase; // only defined if own.
+  int fileno;
 protected:
   void setdisksize(int n) { disksize=n; }
 };
