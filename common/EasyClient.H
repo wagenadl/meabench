@@ -225,7 +225,10 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
   /*:D lastlength() returns the amount of data returned in the last read()
        call. This is useful when read() returns false.
   */
-  void seek(timeref_t lof) {
+  void seek(timeref_t lof) { //:f seek
+    /*:D Like fseek.
+     *:N Only works for file sources; not for stream sources (exception thrown).
+     */
     if (ec)
       throw Error("StreamClient", "Cannot seek on stream");
     mf->seek(lof);
