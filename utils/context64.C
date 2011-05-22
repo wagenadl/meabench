@@ -95,10 +95,7 @@ int main(int argc, char **argv) {
     Sample buffer[ctxt];
     int bufidx=0;
     Spikeinfo spk;
-    timeref_t rawtime = ctxt;
-    if (!rawstream->read(buffer, ctxt))
-      return 2;
-
+    timeref_t rawtime = 0;
 
     if (istext) {
       raw_t obuf[64*ctxt];
@@ -114,11 +111,12 @@ int main(int argc, char **argv) {
 	  } else {
 	    rawtime = nexttime - prectxt;
 	  }
-	  rawstream->seek(rawtime*sizeof(Sample));
+	  rawstream->seek(rawtime);
 	}
 	while (nexttime+postctxt > rawtime) { // skip to next spike
-	  if (!rawstream->read(buffer+bufidx, 1))
-	    return 2;
+	  if (!rawstream->read(buffer+bufidx, 1)) {
+	    // ignore eof
+	  }
 	  rawtime++;
 	  if (++bufidx>=ctxt)
 	    bufidx=0;

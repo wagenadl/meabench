@@ -49,12 +49,15 @@ public:
    *:D Like fread, but works across file boundaries.
    *:N Returns less than nrecs at eof; error conditions throw exception.
    */
+    if (!fh)
+      return 0;
     size_t r = fread(dest, reclen, nrecs, fh);
     while (r<nrecs) {
       if (ferror(fh)) 
 	throw Error("MultiFile", "Read error");
       offset_at_start_of_file += ftell(fh);
       fclose(fh);
+      fh = 0;
       if (fileno<0)
 	return r;
       fileno++;

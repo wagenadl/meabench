@@ -226,12 +226,12 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
        call. This is useful when read() returns false.
   */
   void seek(timeref_t lof) { //:f seek
-    /*:D Like fseek.
+    /*:D Like fseek, but specified in units of records, not bytes.
      *:N Only works for file sources; not for stream sources (exception thrown).
      */
     if (ec)
       throw Error("StreamClient", "Cannot seek on stream");
-    mf->seek(lof);
+    mf->seek(lof*sizeof(Data));
   }
     
   bool read(Data *dest, int length) { //:f read
