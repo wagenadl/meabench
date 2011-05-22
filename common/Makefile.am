@@ -17,4 +17,5 @@
 
 noinst_HEADERS = AutoType.H ChannelNrs.H CommonPath.H Config.H \
 	directory.H EasyClient.H MEAB.H MedianVariance.H NoiseLevels.H \
-	SFAux.H Types.H BufUseBackReport.H MEABDefs.H EventStream.H
+	SFAux.H Types.H BufUseBackReport.H MEABDefs.H EventStream.H \
+	MultiFile.H

@@ -32,6 +32,7 @@
 #include <rawsrv/Defs.H>
 #include <spikesrv/Defs.H>
 #include <stdio.h>
+#include <common/MultiFile.H>
 
 template <class Data, class Aux> class EasyClient: //:C EasyClient
 /*:D EasyClient provides access to meabench streams through a simplified
@@ -190,7 +191,7 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
     } else {
       t=ec->latest();
     }
-    fi = 0;
+    mf = 0;
   }
   StreamClient(string const &fn) throw(Error) { //:c
     /*:D StreamClient(fn) constructs a StreamClient that reads from a file.
@@ -199,18 +200,14 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
          files ("foo.raw-1", etc.) are automatically loaded too.
      */
     ec=0;
-    fi = fopen(fn.c_str(),"rb");
-    if (!fi)
-      throw SysErr("StreamClient","Cannot open file");
-    own=true;
-    filebase = fn;
-    fileno = 0;
+    mf = new MultiFile(fn);
+    disksize=sizeof(Data);
   }
   ~StreamClient() {
     if (ec)
       delete ec;
-    if (fi && own)
-      fclose(fi);
+    if (mf)
+      delete mf;
   }
   StreamClient(FILE *fh) throw(Error) { //:c
     /*:D StreamClient(fh) constructs a StreamClient that reads from an already
@@ -220,15 +217,20 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
      */
     if (!fh)
       throw Error("StreamClient","Bad file handle");
+    mf = new MultiFile(fh);
     ec=0;
-    fi=fh;
-    own=false;
     disksize=sizeof(Data);
   }
   int lastlength() const { return lastlen; } //:f lastlength
   /*:D lastlength() returns the amount of data returned in the last read()
        call. This is useful when read() returns false.
   */
+  void seek(timeref_t lof) {
+    if (ec)
+      throw Error("StreamClient", "Cannot seek on stream");
+    mf->seek(lof);
+  }
+    
   bool read(Data *dest, int length) { //:f read
     /*:D read(dst,l) reads l records from the stream or file into dst.
       .  Unlike EasyClient's read() function, this is always sequential.
@@ -244,23 +246,9 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
       lastlen=length;
       return r;
     } else {
-      int r=fread(dest,sizeof(Data),length,fi);
+      int r=mf->read(dest,sizeof(Data),length);
       lastlen=r;
-      if (r==length)
-	return true;
-      if (!feof(fi))
-	throw SysErr("StreamClient","Cannot read file");
-      fclose(fi);
-      fileno++;
-      fi = fopen((filebase + "-" + Sprintf("%i",fileno)).c_str(), "rb");
-      if (!fi)
-	return false;
-      int dr=fread(dest+r,sizeof(Data),length-r,fi);
-      lastlen += dr;
-      if (r+dr==length)
-	return true;
-      else
-	throw SysErr("StreamClient","Cannot read file");
+      return r==length;
     }
   }
   int readn(Data *dest, int length) { //:f readn
@@ -282,25 +270,12 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
     } else {
       Data *dstptr = dest;
       for (int i=0; i<length; i++) {
-	int r = fread(dstptr, disksize, 1, fi);
+	int r = mf->read(dstptr, disksize, 1);
 	if (r==1) {
 	  dstptr++;
 	  lastlen++;
-	} else if (!feof(fi)) {
-	  throw SysErr("StreamClient","Cannot read file");
-	} else {
-	  fclose(fi);
-	  fileno++;
-	  fi = fopen((filebase + "-" + Sprintf("%i",fileno)).c_str(), "rb");
-	  if (!fi)
-	    return lastlen;
-	  int r = fread(dstptr, disksize, 1, fi);
-	  if (r==1) {
-	    dstptr++;
-	    lastlen++;
-	  } else 
-	    throw SysErr("StreamClient","Cannot read file");
-	}
+	} else
+	  break;
       }
       return lastlen;
     }
@@ -309,13 +284,10 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
   // Other helpful stuff *may* be implemented by reading .desc files.
 private:
   EasyClient<Data,Aux> *ec;
-  FILE *fi;
-  bool own;
+  MultiFile *mf;
   timeref_t t;
   int lastlen;
   int disksize;
-  string filebase; // only defined if own.
-  int fileno;
 protected:
   void setdisksize(int n) { disksize=n; }
 };
