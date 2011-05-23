@@ -5,7 +5,7 @@ function y=loadspike(fn,range,freq)
 %   channel (1xN)
 %   height  (1xN)
 %   width   (1xN)
-%   context (75xN)
+%   context (74xN)
 %   thresh  (1xN)
 % y=LOADSPIKE(fn,range,freq_khz) converts times to seconds and width to
 % milliseconds using the specified frequency, and the height and
