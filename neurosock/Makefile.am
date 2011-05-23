@@ -18,12 +18,12 @@
 
 bin_PROGRAMS = neurosock
 noinst_HEADERS = Error.H MedianFlt.H Neurosock.H Defs.H srvMCMeata.H srvMeata.H srvPdMeata.H FrameBuffer.H Mutex.H
-EXTRA_neurosock_SOURCES = neurosock.C Neurosock.C srvPdMeata.C srvMCMeata.C 
+EXTRA_neurosock_SOURCES = neurosockmain.C Neurosock.C srvPdMeata.C srvMCMeata.C 
 if UEIHARDWARE
-neurosock_SOURCES = neurosock.C Neurosock.C FrameBuffer.C srvPdMeata.C
+neurosock_SOURCES = neurosockmain.C Neurosock.C FrameBuffer.C srvPdMeata.C
 endif
 if MCSHARDWARE
-neurosock_SOURCES = neurosock.C Neurosock.C FrameBuffer.C srvMCMeata.C
+neurosock_SOURCES = neurosockmain.C Neurosock.C FrameBuffer.C srvMCMeata.C
 endif
 
 INCLUDES=-I$(top_srcdir)

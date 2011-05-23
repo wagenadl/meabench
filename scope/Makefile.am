@@ -19,7 +19,7 @@
 bin_PROGRAMS=scope
 noinst_HEADERS = Defs.H FreezeInfo.H QMultiScope.H QScope.H Scope.H \
 	scrolltest.H Scope.ui Scope.ui.h
-scope_SOURCES = scope.C FreezeInfo.C Scope.C QScope.C QMultiScope.C
+scope_SOURCES = scopemain.C FreezeInfo.C Scope.C QScope.C QMultiScope.C
 nodist_scope_SOURCES =	$(BUILT_SOURCES)
 BUILT_SOURCES = ScopeD.C ScopeD.H ScopeD.moc.C Scope.moc.C \
 	FreezeInfo.moc.C QScope.moc.C QMultiScope.moc.C

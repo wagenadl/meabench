@@ -18,8 +18,8 @@
 
 bin_PROGRAMS=monitor meamon climon
 noinst_HEADERS = Monitor.H MonTable.H Progs.H Monitor.ui tern.H MeaMon.H
-monitor_SOURCES = monitor.C MonTable.C Monitor.C Progs.C 
-meamon_SOURCES = meamon.C MeaMon.C tern.C
+monitor_SOURCES = monitormain.C MonTable.C Monitor.C Progs.C 
+meamon_SOURCES = meamonmain.C MeaMon.C tern.C
 climon_SOURCES = climon.C tern.C
 nodist_meamon_SOURCES = MeaMon.moc.C
 nodist_monitor_SOURCES = MonitorD.C MonitorD.moc.C Monitor.moc.C \

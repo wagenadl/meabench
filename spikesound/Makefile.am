@@ -19,7 +19,7 @@
 bin_PROGRAMS=spikesound spk2wav spk2raw
 noinst_HEADERS = Spikesound.H Spikesound.ui Spikesound.ui.h Audio.H \
 	FrqStSound.H
-spikesound_SOURCES = spikesound.C Spikesound.C Audio.C 
+spikesound_SOURCES = spikesoundmain.C Spikesound.C Audio.C 
 nodist_spikesound_SOURCES = 	$(BUILT_SOURCES)
 spk2wav_SOURCES = spk2wav.C FrqStSound.C
 spk2raw_SOURCES = spk2raw.C FrqStSound.C

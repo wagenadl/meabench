@@ -21,16 +21,16 @@ noinst_HEADERS = QMultiRaster.H QRaster.H \
 	Raster.H AutoRaster.H OneRaster.H SpikeBuffer.H \
 	QRDispInfo.H Raster.ui QSingleRaster.H MultiRasterBase.H QAutoRaster.H \
 	AutoRaster.ui.h AutoRaster.ui OneRaster.ui
-raster_SOURCES = raster.C Raster.C SpikeBuffer.C \
+raster_SOURCES = rastermain.C Raster.C SpikeBuffer.C \
 	QRaster.C QMultiRaster.C MultiRasterBase.C
 nodist_raster_SOURCES = MultiRasterBase.moc.C \
 	RasterD.C RasterD.moc.C Raster.moc.C QRaster.moc.C QMultiRaster.moc.C 
-oneraster_SOURCES = oneraster.C OneRaster.C SpikeBuffer.C \
+oneraster_SOURCES = onerastermain.C OneRaster.C SpikeBuffer.C \
 	QRaster.C QSingleRaster.C MultiRasterBase.C  QMultiRaster.C
 nodist_oneraster_SOURCES = MultiRasterBase.moc.C \
 	OneRasterD.C OneRaster.moc.C OneRasterD.moc.C QRaster.moc.C \
 	QSingleRaster.moc.C QMultiRaster.moc.C 
-autoraster_SOURCES = autoraster.C AutoRaster.C SpikeBuffer.C \
+autoraster_SOURCES = autorastermain.C AutoRaster.C SpikeBuffer.C \
 	QRaster.C QAutoRaster.C MultiRasterBase.C QMultiRaster.C 
 nodist_autoraster_SOURCES = MultiRasterBase.moc.C \
 	AutoRasterD.C AutoRaster.moc.C AutoRasterD.moc.C QRaster.moc.C \
