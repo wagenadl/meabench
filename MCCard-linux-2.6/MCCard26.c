@@ -241,13 +241,13 @@ void GetMCCardInfo(void) {
 
   Cardinfo.ChannelCount = 0;
   for (i=0; i<4; i++) {
-    val = ReadNVRAM(128+16+i);
+    val = ReadNVRAM(128+20+i);
     Cardinfo.ChannelCount *= 10;
     Cardinfo.ChannelCount += val-'0';
   }
 
   Cardinfo.ok = 1;
-  printk(KERN_INFO "MCCard: rev %c. PLB rev %c. Serial#: %04i. Channels: %i\n",
+  printk(KERN_INFO "MCCard %s: Card rev %c. PLB rev %c. Serial#: %04i. Channels: %i\n", MEABENCH_VERSION,
 	 Cardinfo.CardRevision,
 	 Cardinfo.PldRevision,
 	 Cardinfo.SerialNo,
