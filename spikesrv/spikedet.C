@@ -115,9 +115,9 @@ void exclude_channels(int argc=0, char **args=0) {
 void digithresh(int argc=0, char **args=0) {
   if (argc) {
     float thr=atof(args[0]);
-    float std=argc>=2 ? atof(args[0]) : 500;
+    float std=argc>=2 ? atof(args[1]) : 500;
     for (int c=0; c<ANALOG_N; c++)
-      noise.force(ANALOG_BASE+c, thr, std);
+      noise.force(ANALOG_BASE+c, thr, std*std);
   }
   fprintf(stderr,"Digital thresholds are:\n");
   for (int c=0; c<ANALOG_N; c++)
