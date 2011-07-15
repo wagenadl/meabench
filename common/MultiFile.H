@@ -28,7 +28,7 @@ public:
     if (!fh)
       throw Error("MultiFile", "File not found");
   }
-  MultiFile(FILE *fh) {
+  MultiFile(FILE *fh): fh(fh) {
   /*:F constructor
    *:D Works on an existing file handle. (For convenience; this does not
        offer true multi-file support.)
@@ -100,7 +100,9 @@ public:
 	if (off == offset_at_start_of_file)
 	  return;
 	else {
-	  fprintf(stderr, "mf: offset=%Li flen=%Li fileno=%i offset_at_start=%i\n",off, flen, fileno, offset_at_start_of_file);	  
+	  fprintf(stderr,
+		  "mf: offset=%Li flen=%Li fileno=%i offset_at_start=%Li\n",
+		  off, flen, fileno, offset_at_start_of_file);	  
 	  throw Error("MultiFile", "Seek past eof");
 	}
       }

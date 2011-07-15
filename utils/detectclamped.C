@@ -34,7 +34,7 @@ void usage() {
 	  "Outputs a list of suspectedly clamped channels given a raw data file and\n"
 	  "the recording window size. This works by measuring the pre-stimulus\n"
 	  "variance on all channels, averaging these and reporting any channel that\n"
-	  "is 16% or more below average.\n"
+	  "is 16%% or more below average.\n"
 	  "This program does not auto-detect the stimulated channel.\n"
 	  "Output channels are CR format.\n"
 	  "PRE_MS and POST_MS set window size.\n"

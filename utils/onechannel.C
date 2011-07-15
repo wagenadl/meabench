@@ -24,7 +24,7 @@
 #include <math.h>
 
 void usage() {
-  throw Usage("onechannel","CR-channel [raw stream]\nReads from stdin if no arg given");
+  throw Usage("onechannel","CR-channel [stream|file]\nReads from stdin if no arg given");
 }
   
 int main(int argc, char **argv) {
@@ -34,12 +34,19 @@ int main(int argc, char **argv) {
   try {
     if (argc<2 || argc>3)
       usage();
-    if (argc==3)
-      sr = new StreamRaw(argv[2],false);
-    else
-      sr = new StreamRaw(stdin);
+    if (argc==3) {
+      if (strchr(argv[2],'.'))
+	sr = new StreamRaw(argv[2]); // read from file
+      else
+	sr = new StreamRaw(argv[2],false); // read from stream
+    } else {
+      sr = new StreamRaw(stdin); // read from stdin
+    }
 
-    int hw = cr2hw(argv[1][0]-'1', argv[1][1]-'1');
+    int hw = argv[1][0]=='A'
+      ? 60+argv[1][1]-'1'
+      : cr2hw(argv[1][0]-'1', argv[1][1]-'1');
+    fprintf(stderr,"Reading hardware channel %i\n",hw);
 
     int l;
     do {

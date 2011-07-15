@@ -16,8 +16,7 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-/* context64 - extracts 64 channels worth of context from spike files
-
+/* context64 - extracts 64 channels worth of context from raw files
  */
 
 #include <tools/Argh.H>
