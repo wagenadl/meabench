@@ -105,11 +105,13 @@ int main(int argc, char **argv) {
       char *timeptr = strtok(line, " ");
       timeref_t nexttime = atoll(timeptr);
       if (nexttime<prectxt) {
-	nexttime = 0;
-	fprintf(stderr, "Warning: cannot seek before start of file\n");
+	fprintf(stderr, "Warning: cannot seek before start of file (%Li)\n", 
+		nexttime);
+	nexttime = ~0;
       } else if (nexttime>t_end-postctxt) {
-	nexttime = t_end-ctxt;
-	fprintf(stderr, "Warning: cannot seek past end of file\n");
+	fprintf(stderr, "Warning: cannot seek past end of file (%Li)\n",
+		nexttime);
+	nexttime = ~0;
       } else {
 	nexttime -= prectxt;
       }
@@ -145,16 +147,27 @@ int main(int argc, char **argv) {
 	fprintf(stderr, "Done %i/%lu events\r", k, times.size());
       timeref_t t = times[k];
       std::vector<char> const &hww = channels[k];
-      for (int c=0; c<hww.size(); c++) {
-	int hw = hww[c];
-	timeref_t off = (t + hw*t_end)*sizeof(short);
-	//fprintf(stderr, "Seeking for %Li:%i=%Li   \n", t, hw, off);
-	if (fseek(bin, off, SEEK_SET)<0)
-	  throw SysErr("fseek");
-	if (fread(buffer, sizeof(short), ctxt, bin)<ctxt)
-	  throw SysErr("fread");
-	if (fwrite(buffer, sizeof(short), ctxt, out)<ctxt)
-	  throw SysErr("fwrite");
+      if (t==~0) {
+         for (int i=0; i<ctxt; i++)
+           buffer[i]=0;
+         for (int c=0; c<hww.size(); c++) 
+	   if (fwrite(buffer, sizeof(short), ctxt, out)<ctxt)
+             throw SysErr("fwrite");
+      } else {
+        for (int c=0; c<hww.size(); c++) {
+    	  int hw = hww[c];
+	  timeref_t off = (t + hw*t_end)*sizeof(short);
+	  //fprintf(stderr, "Seeking for %Li:%i=%Li   \n", t, hw, off);
+	  if (fseek(bin, off, SEEK_SET)<0)
+	    throw SysErr("fseek");
+          long n;
+	  if ((n=fread(buffer, sizeof(short), ctxt, bin))<ctxt) {
+ 	    fprintf(stderr, "off=%Li ctxt=%i n=%li\n",off,ctxt,n);
+	    throw SysErr("fread");
+          }
+  	  if (fwrite(buffer, sizeof(short), ctxt, out)<ctxt)
+	    throw SysErr("fwrite");
+        }
       }
     }
     fprintf(stderr,"Done %lu/%lu events\n", times.size(), times.size());
