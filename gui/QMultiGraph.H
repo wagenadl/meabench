@@ -22,8 +22,8 @@
 
 #define QMULTIGRAPH_H
 
-#include <qframe.h>
-#include <qlayout.h>
+#include <QFrame>
+#include <QLayout>
 
 #include <vector>
 
@@ -36,7 +36,7 @@ class QMultiGraph: public QFrame { //:C Qmultigraph
        The corner traces are used to represent the analog channels. */
   Q_OBJECT
 public:
-  QMultiGraph(QWidget *parent=0, char const *name=0, WFlags f=0); //:c
+  QMultiGraph(QWidget *parent=0); //:c
   ~QMultiGraph(); //:~
   void postConstruct(); //:f postConstruct
   /*:D This must be called just after construction to do most of the real
@@ -91,21 +91,21 @@ protected:
    *:R -
    */
   template <class D> void forall(void (D::*foo)()) {
-    foreach(graphptrs.begin(),graphptrs.end(),foo);
+    mforeach(graphptrs.begin(),graphptrs.end(),foo);
   }
 ////  template <class D, class A>
 ////    void forall(void (D::*foo)(A const &),A const &a0) {
-////    foreach(graphptrs.begin(),graphptrs.end(),foo,a0);
+////    mforeach(graphptrs.begin(),graphptrs.end(),foo,a0);
 ////  }
   template <class D, class A>
     void forall(void (D::*foo)(A const *),A const *a0) {
-    foreach(graphptrs.begin(),graphptrs.end(),foo,a0);
+    mforeach(graphptrs.begin(),graphptrs.end(),foo,a0);
   }
   template <class D, class A> void forall(void (D::*foo)(A &),A &a0) {
-    foreach(graphptrs.begin(),graphptrs.end(),foo,a0);
+    mforeach(graphptrs.begin(),graphptrs.end(),foo,a0);
   }
   template <class D, class A> void forall(void (D::*foo)(A),A a0) {
-    foreach(graphptrs.begin(),graphptrs.end(),foo,a0);
+    mforeach(graphptrs.begin(),graphptrs.end(),foo,a0);
   }
   void dumpme(); // dump a frame
   void dumpNext(); // increments the "set" for dumping

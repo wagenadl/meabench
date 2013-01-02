@@ -1,8 +1,8 @@
 // SimpleRaster.C
 
 #include "SimpleRaster.H"
-#include <qpointarray.h>
-#include <qpainter.h>
+#include <QPolygon>
+#include <QPainter>
 #include "ControlInfo.H"
 #include "RasterData.H"
 
@@ -10,16 +10,19 @@
 #include <base/Sprintf.H>
 
 
-QPointArray SimpleRaster::ptar;
+QPolygon SimpleRaster::ptar;
 
-SimpleRaster::SimpleRaster(QWidget *parent, class RasterData const *src_, class ControlInfo const *info_):
+SimpleRaster::SimpleRaster(QWidget *parent, class RasterData const *src_,
+			   class ControlInfo const *info_):
   QWidget(parent), src(src_), info(info_) {
   if (ptar.size()<MAXPTS+2)
     ptar.resize(MAXPTS+2);
   if (src)
     connect(src,SIGNAL(updated()),SLOT(update()));
-  setPaletteBackgroundColor(QColor("white"));
-  setPaletteForegroundColor(QColor("blue"));
+  QPalette p = palette();
+  p.setColor(QPalette::Window, QColor("white"));
+  p.setColor(QPalette::WindowText, QColor("blue"));
+  setPalette(p);
   label="";
 }
 
@@ -74,9 +77,9 @@ void SimpleRaster::paintEvent(QPaintEvent *) {
 
   p.setPen(QColor(0,0,255));
   if (dy)
-    p.drawLineSegments(ptar,0,n/2);
+    p.drawLines(ptar);
   else
-    p.drawPoints(ptar,0,n);
+    p.drawPoints(ptar);
 
   p.setPen(QColor(50,50,50));
   p.drawText(4,12,label);

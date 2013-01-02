@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   try {
     Storage storage;
     QApplication qapp(argc,argv);
-    ControlPanel ctrlp(&storage,&qapp);
+    ControlPanel ctrlp(&storage);
     ctrlp.update_source("spike");
     qapp.exec();
     return 0;

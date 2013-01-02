@@ -48,8 +48,9 @@ inline void LocalFit::calc_alpha0() {
 // Other LocalFit methods
 //
 LocalFit::LocalFit(LF_Source const &source0, LF_Dest &dest0, timeref_t t_start,
-		   raw_t threshold0, int tau0,
-		   int t_blankdepeg0, int t_ahead0, int t_chi20):
+		   raw_t threshold0, timeref_t tau0,
+		   timeref_t t_blankdepeg0, timeref_t t_ahead0,
+		   timeref_t t_chi20):
   source(source0), dest(dest0), y_threshold(threshold0), tau(tau0),
   t_blankdepeg(t_blankdepeg0), t_ahead(t_ahead0), t_chi2(t_chi20), reporter(0) {
   state = PEGGED;

@@ -416,14 +416,14 @@ void dorun() {
   sdbx("closed raw");
 }
 
-void run(int argc, char **args) {
+void run(int, char **) {
   delfilt();
   dellockin();
   am_i_ok("run");
   dorun();
 }
 
-void cont(int argc, char **args) {
+void cont(int, char **) {
   while (1) {
     delfilt();
     dellockin();
@@ -432,7 +432,7 @@ void cont(int argc, char **args) {
   }
 }
 
-void report(int argc, char **args) {
+void report(int, char **) {
   if (MEAB::rawout)
     MEAB::rawout->waker.report();
 }
@@ -450,7 +450,7 @@ Cmdr::Cmap cmds[] = {
   { setlimit, "limit", 0,1,"[adaptation period in seconds or 0 for unlimited]", },
   { setdbx, "dbx", 0, 1, "[0/1]", },
   { report, "clients", 0, 0, "", },
-  0,
+  {0, "", 0, 0, "" },
 };
 
 void deletem() {

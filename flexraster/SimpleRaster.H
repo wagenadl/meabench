@@ -4,14 +4,16 @@
 
 #define SIMPLERASTER_H
 
-#include <qwidget.h>
+#include <QWidget>
+#include <QPolygon>
 
 const int MAXPTS = 1000000;
 
 class SimpleRaster: public QWidget {
   Q_OBJECT;
 public:
-  SimpleRaster(QWidget *parent, class RasterData const *src, class ControlInfo const *info);
+  SimpleRaster(QWidget *parent, class RasterData const *src,
+	       class ControlInfo const *info);
   virtual ~SimpleRaster();
   void setLabel(QString const &s);
 protected:
@@ -19,7 +21,7 @@ protected:
 protected:
   class RasterData const *src;
   class ControlInfo const *info;
-  static QPointArray ptar;
+  static QPolygon ptar;
   QString label;
 };
 

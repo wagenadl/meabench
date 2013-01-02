@@ -74,17 +74,17 @@ public:
   */
   static const raw_t RAIL1=0;
   static const raw_t RAIL2=4095;
-  static const int TCHI2=15; // samples
-  static const int BLANKDEP=5; // samples
-  static const int AHEAD=5; // samples
-  static const int TOOPOORCNT=5;
+  static const timeref_t TCHI2=15; // samples
+  static const timeref_t BLANKDEP=5; // samples
+  static const timeref_t AHEAD=5; // samples
+  static const timeref_t TOOPOORCNT=5;
   typedef long long int_t;
   typedef double real_t;
 public: 
   LocalFit(LF_Source const &source, LF_Dest &dest,
-	   timeref_t t_start, raw_t threshold, int tau,
-	   int t_blankdepeg=BLANKDEP, int t_ahead=AHEAD,
-	   int t_chi2=TCHI2);
+	   timeref_t t_start, raw_t threshold, timeref_t tau,
+	   timeref_t t_blankdepeg=BLANKDEP, timeref_t t_ahead=AHEAD,
+	   timeref_t t_chi2=TCHI2);
   void reset(timeref_t t_start);
   void setrail(raw_t r1, raw_t r2) { rail1=r1; rail2=r2; }
   timeref_t process(timeref_t t_limit);

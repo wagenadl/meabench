@@ -44,13 +44,13 @@ int thresh_digi=0;
 float thresh_std=3;
 double thresh[NCHANS];
 raw_t basesub[TOTALCHANS];
-int length_sams=75;
-int asym_sams = 10;
-int blank_sams=20;
-int ahead_sams=5;
-int period_sams=0;
-int delay_sams=0;
-int forcepeg_sams=0;
+timeref_t length_sams=75;
+timeref_t asym_sams = 10;
+timeref_t blank_sams=20;
+timeref_t ahead_sams=5;
+timeref_t period_sams=0;
+timeref_t delay_sams=0;
+timeref_t forcepeg_sams=0;
 
 raw_t rail1_digi=0;
 raw_t rail2_digi=4095;
@@ -642,11 +642,11 @@ void dorun() {
   }
 }
 
-void train(int argc, char **args) {
+void train(int, char **) {
   MEAB::trainnoise(TRAINLENGTH);
 }
 
-void run(int argc, char **args) {
+void run(int, char **) {
   delfilt();
   am_i_ok("run");
   sdbx("run: dest+0 = %p",MEAB::rawout->sfsrv.wheretowrite());
@@ -655,7 +655,7 @@ void run(int argc, char **args) {
   dorun();
 }
 
-void cont(int argc, char **args) {
+void cont(int, char **) {
   while (1) {
     delfilt();
     am_i_ok("cont");

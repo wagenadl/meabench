@@ -34,7 +34,8 @@ const int LOG2BLOCKSIZE4=13; // 13 = log_2(8192)
 
 void usage() {
   fprintf(stderr,
-	  "Usage: solosalpa -t threshold_digi -x threshold_std -n noisefilename\n"
+	  "Usage: posthocartifilt -t threshold_digi -x threshold_std\n"
+	  "                 -n noisefilename\n"
 	  "                 -l halflength_ms -a asymtime_ms -b blanktime_ms\n"
 	  "                 -A Ahead_ms -rrail1_digi[,rail2_digi]\n"
 	  "                 -p period_ms -d delay_ms -f forcepeg_ms\n"
@@ -62,10 +63,10 @@ int main(int argc, char **argv) {
   int thresh_digi=0;
   float thresh_std=3;
   char *noisefn=0;
-  int length_sams=FREQKHZ*3;
-  int asym_sams = 10;
-  int blank_sams = 20;
-  int ahead_sams = 5;
+  timeref_t length_sams=FREQKHZ*3;
+  timeref_t asym_sams = 10;
+  timeref_t blank_sams = 20;
+  timeref_t ahead_sams = 5;
   raw_t rail1_digi=0;
   raw_t rail2_digi=4095;
   int period_sams=0; // meaning: don't use

@@ -2,28 +2,28 @@
 
 #include "ControlPanel.H"
 
-#include "controlpanelD.H"
+#include ".ui/ui_controlpanel.h"
 #include "Storage.H"
 #include "OnePanel.H"
 #include "GridPanel.H"
 #include "LinePanel.H"
 #include "ContPanel.H"
 
-#include <qapplication.h>
-#include <qpushbutton.h>
-#include <qspinbox.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qapplication.h>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLabel>
 
 #include <spikesrv/Defs.H>
 #include <common/CommonPath.H>
 #include <base/dbx.H>
 
-ControlPanel::ControlPanel(Storage *strg, QApplication *qap) {
+ControlPanel::ControlPanel(Storage *strg) {
   storage = strg;
-  ctrlp = new controlpanel();
+  ctrlp = new Ui_controlpanel();
+  ctrlp->setupUi(this);
+  
   spksrc=0; sleeper=0; socknotif=0; isnew=false;
 
   info.presams = ctrlp->t_pre->value()*FREQKHZ;
@@ -49,10 +49,6 @@ ControlPanel::ControlPanel(Storage *strg, QApplication *qap) {
   
   connect(storage,SIGNAL(update()),SLOT(update_time()));
   
-  ctrlp->show();
-
-  if (qap)
-    qap->setMainWidget(ctrlp);
 };
 
 ControlPanel::~ControlPanel() {
@@ -77,14 +73,14 @@ void ControlPanel::closesrc() {
 void ControlPanel::create_spont() {
   sdbx("create_spont");
   OnePanel *p = new OnePanel(0,storage,this);
-  p->setCaption("Flex raster - spontaneous");
+  p->setWindowTitle("Flex raster - spontaneous");
   p->show();
 }
 
 void ControlPanel::create_8x8rec() {
   sdbx("create_8x8rec");
   GridPanel *p = new GridPanel(0,storage,this,true);
-  p->setCaption("Flex raster - by recording channel");
+  p->setWindowTitle("Flex raster - by recording channel");
   p->resize(800,600);
   p->show();
 }
@@ -92,7 +88,7 @@ void ControlPanel::create_8x8rec() {
 void ControlPanel::create_8x8stim() {
   sdbx("create_8x8stim");
   GridPanel *p = new GridPanel(0,storage,this,false);
-  p->setCaption("Flex raster - by stimulation channel");
+  p->setWindowTitle("Flex raster - by stimulation channel");
   p->resize(800,600);
   p->show();
 }
@@ -100,7 +96,7 @@ void ControlPanel::create_8x8stim() {
 void ControlPanel::create_vstim() {
   sdbx("create_vstim");
   LinePanel *p = new LinePanel(0,storage,this,false);
-  p->setCaption("Flex raster - by stimulation channel");
+  p->setWindowTitle("Flex raster - by stimulation channel");
   p->resize(800,600);
   p->show();
 }
@@ -108,7 +104,7 @@ void ControlPanel::create_vstim() {
 void ControlPanel::create_hstim() {
   sdbx("create_hstim");
   LinePanel *p = new LinePanel(0,storage,this,true);
-  p->setCaption("Flex raster - by stimulation channel");
+  p->setWindowTitle("Flex raster - by stimulation channel");
   p->resize(800,600);
   p->show();
 }
@@ -117,7 +113,7 @@ void ControlPanel::create_cont() {
   sdbx("create_cont");
   ContPanel *p = new ContPanel(0,storage,this);
   sdbx("cc: %p",p);
-  p->setCaption("Flex raster - continuous");
+  p->setWindowTitle("Flex raster - continuous");
   p->resize(1000,400);
   p->show();
 }
@@ -156,11 +152,11 @@ void ControlPanel::update_source(QString const &s) {
   } else {
     try {
       sleeper = new WakeupCli("flexraster",
-			      CommonPath(s.ascii(),WAKESUFFIX).c_str());
+			      CommonPath(s.toAscii().constData(),WAKESUFFIX).c_str());
       sleeper->setival(100); // hmm...
-      spksrc = new SpikeSFCli(CommonPath(s.ascii(),SFSUFFIX).c_str());
+      spksrc = new SpikeSFCli(CommonPath(s.toAscii().constData(),SFSUFFIX).c_str());
       latestspk = spksrc->latest();
-      socknotif = new QSocketNotifier(sleeper->fd(),QSocketNotifier::Read,this,0);
+      socknotif = new QSocketNotifier(sleeper->fd(),QSocketNotifier::Read,this);
       connect(socknotif,SIGNAL(activated(int)),this,SLOT(wakeup()));
       ctrlp->source_status->setText("Connected");
       isnew=true;

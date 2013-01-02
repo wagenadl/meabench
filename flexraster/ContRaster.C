@@ -71,7 +71,7 @@ void ContRaster::paintEvent(QPaintEvent *) {
     }
   }
   p.setPen(QColor(255,0,0));
-  p.drawLineSegments(ptar,0,n/2);
+  p.drawLines(ptar);
 
   // -- Draw spikes
   n=0;
@@ -94,9 +94,9 @@ void ContRaster::paintEvent(QPaintEvent *) {
 
   p.setPen(QColor(0,0,255));
   if (placernd)
-    p.drawPoints(ptar,0,n);
+    p.drawPoints(ptar);
   else
-    p.drawLineSegments(ptar,0,n/2);
+    p.drawLines(ptar);
 
   // -- Draw tick marks
   

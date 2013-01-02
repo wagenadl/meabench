@@ -22,7 +22,7 @@
 
 #define FOREACH_H
 
-template <class I, class D> void foreach(I const &b, I const &e,
+template <class I, class D> void mforeach(I const &b, I const &e,
 					 void (D::*foo)()) {
   for (I i=b; i!=e; ++i) {
     D *d=dynamic_cast<D*>(*i);
@@ -41,9 +41,9 @@ template <class I, class D> void foreach(I const &b, I const &e,
 ////  }
 ////}
 
-template <class I, class D, class A> void foreach(I const &b, I const &e,
-						  void (D::*foo)(A &),
-						  A &a0) {
+template <class I, class D, class A> void mforeach(I const &b, I const &e,
+						   void (D::*foo)(A &),
+						   A &a0) {
   for (I i=b; i!=e; ++i) {
     D *d=dynamic_cast<D*>(*i);
     if (d)
@@ -51,7 +51,7 @@ template <class I, class D, class A> void foreach(I const &b, I const &e,
   }
 }
 
-template <class I, class D, class A> void foreach(I const &b, I const &e,
+template <class I, class D, class A> void mforeach(I const &b, I const &e,
 						  void (D::*foo)(A),
 						  A a0) {
   for (I i=b; i!=e; ++i) {

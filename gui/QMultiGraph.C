@@ -21,15 +21,16 @@
 #include <stdio.h>
 #include <base/dbx.H>
 #include <base/Sprintf.H>
-#include <qpixmap.h>
+#include <QPixmap>
+#include <QResizeEvent>
 
 #include "QMultiGraph.H"
 #include "HexMEA.H"
 #include "JNMEA.H"
 
 
-QMultiGraph::QMultiGraph(QWidget *parent, char const *name, WFlags f):
-  QFrame(parent, name, f),
+QMultiGraph::QMultiGraph(QWidget *parent):
+  QFrame(parent),
   graphptrs(TOTALCHANS,(QGraph*)0) {
   layout = LAYOUT_8x8;
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -138,27 +139,26 @@ void QMultiGraph::recolor_children() {
 void QMultiGraph::resize_children(int wid, int hei) {
   float w = wid;
   float h = hei;
-  float dx;
-  float dy;
-  int multiplx;
-  int multiply;
+  float dx = 1;
+  float dy = 1;
+  int multiplx = 1;
+  int multiply = 1;
   sdbx("layout=%i JN=%i",layout,LAYOUT_JN);
   switch (layout) {
   case LAYOUT_8x8:
     dx=w/8.0;
     dy=h/8.0;
-    multiplx=multiply=1;
     break;
   case LAYOUT_HEX:
     dx=w/44.0;
     dy=h/36.0;
-    multiplx=multiply=4;
+    multiplx = multiply = 4;
     break;
   case LAYOUT_JN:
     dx=w/18.0;
     dy=h/9.0;
-    multiplx=2;
-    multiply=1;
+    multiplx = 2;
+    multiply = 1;
     break;
   }
     

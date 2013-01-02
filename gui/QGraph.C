@@ -35,7 +35,7 @@ QGraph::QGraph(QWidget *parent, QGraph *ctrlr):
   setAuxPen(QPen(QColor(255,0,0)));
   setFrameStyle(Panel | Raised);
   setLineWidth(1);
-  setMargin(0);
+  //  setMargin(0);
 }
 
 QGraph::~QGraph() {
@@ -54,7 +54,7 @@ QGraph::~QGraph() {
 void QGraph::setNameAndId(QString const &name, QString const &id) {
   myname = name;
   myid = id;
-  setCaption(myname);
+  setWindowTitle(myname);
 }
   
 void QGraph::setTracePen(QPen const &pen) {
@@ -82,7 +82,9 @@ void QGraph::setZeroPen(QPen const &pen) {
 }
 
 void QGraph::setBackgroundColor(const QColor &col) {
-  QFrame::setBackgroundColor(col);
+  QPalette p = palette();
+  p.setColor(QPalette::Window, col);
+  setPalette(p);
   forall(&QGraph::setBackgroundColor,col);
   update();
 }
@@ -124,7 +126,7 @@ void QGraph::init_satellite(QGraph *sat) {
   sat->setNameAndId(myname,myid);
 }
 
-void QGraph::mouseDoubleClickEvent(QMouseEvent *qme) {
+void QGraph::mouseDoubleClickEvent(QMouseEvent *) {
   /* create a new satellite. If I am myself a satellite, the new satellite
      will be hosted by my controller, otherwise I'll host it. I'll manually
      insert the satellite into my controller's list. */

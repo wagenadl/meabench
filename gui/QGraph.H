@@ -123,17 +123,17 @@ protected:
    */
 protected:
   template <class D> void forall(void (D::*foo)()) {
-    foreach(satellites.begin(),satellites.end(),foo);
+    mforeach(satellites.begin(),satellites.end(),foo);
   }
 ////  template <class D, class A>
 ////    void forall(void (D::*foo)(A const &),A const &a0) {
-////    foreach(satellites.begin(),satellites.end(),foo,a0);
+////    mforeach(satellites.begin(),satellites.end(),foo,a0);
 ////  }
   template <class D, class A> void forall(void (D::*foo)(A &),A &a0) {
-    foreach(satellites.begin(),satellites.end(),foo,a0);
+    mforeach(satellites.begin(),satellites.end(),foo,a0);
   }
   template <class D, class A> void forall(void (D::*foo)(A),A a0) {
-    foreach(satellites.begin(),satellites.end(),foo,a0);
+    mforeach(satellites.begin(),satellites.end(),foo,a0);
   }
 private:
   void satellitedying(QGraph *satellite);

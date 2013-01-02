@@ -9,6 +9,7 @@
 #include "RD_Stim.H"
 #include "SimpleRaster.H"
 #include <common/ChannelNrs.H>
+#include <QResizeEvent>
 
 GridPanel::GridPanel(QWidget *parent, Storage *src, ControlPanel *ctrlp,
 		     bool rec_not_stim):
@@ -33,7 +34,9 @@ GridPanel::GridPanel(QWidget *parent, Storage *src, ControlPanel *ctrlp,
       }
     }
   }
-  setPaletteBackgroundColor(QColor("black"));
+  QPalette p = palette();
+  p.setColor(QPalette::Window, QColor("black"));
+  setPalette(p);
   setMinimumSize(100,100);
   for (int c=0; c<8; c++) 
     for (int r=0; r<8; r++) 

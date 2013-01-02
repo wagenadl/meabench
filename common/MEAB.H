@@ -48,11 +48,11 @@ namespace MEAB {
       progname=progn;
 #ifdef MEA_ULTRAFAST
     fprintf(stderr,
-	    "This is %s, part of meabench " VERSION "-ll, (C) Daniel Wagenaar 2000-2009\n\n",
+	    "This is %s, part of meabench " VERSION "-ll, (C) Daniel Wagenaar 2000-2013\n\n",
 	    progname.c_str());
 #else
     fprintf(stderr,
-	    "This is %s, part of meabench " VERSION ", (C) Daniel Wagenaar 2000-2009\n\n",
+	    "This is %s, part of meabench " VERSION ", (C) Daniel Wagenaar 2000-2013\n\n",
 	    progname.c_str());
 #endif
     char *term = getenv("TERM");
@@ -72,7 +72,7 @@ namespace MEAB {
   }
 
   const int BLOCK_DELAY_MS = 100; // Allow 100ms for clients to catch up
-  const int BLOCK_THRESH = int(.7*(1<<LOGRAWFIFOLENGTH));
+  const unsigned int BLOCK_THRESH = int(.7*(1<<LOGRAWFIFOLENGTH));
   const int BLOCK_THRESH_SPK = int(.7*(1<<LOGSPIKEFIFOLENGTH));
   void blockuntil(WakeupSrv *waker, timeref_t worst_acceptable) {
     while (!Sigint::isset()) {

@@ -56,8 +56,8 @@ public:
   class SourceInfo {
   public:
     SourceInfo(): uvperdigi(341./2048), aux_mvperdigi(341.*1.2/2048),
-		  freqhz(FREQKHZ*1000),
-		  digimin(0x8000), digimax(0x7fff), digizero(0) { }
+		  digimin(0x8000), digimax(0x7fff), digizero(0),
+		  freqhz(FREQKHZ*1000) { }
     real_t uvperdigi;
     real_t aux_mvperdigi;
     raw_t digimin, digimax, digizero; // db had raw_i_t

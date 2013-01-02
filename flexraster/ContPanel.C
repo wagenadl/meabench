@@ -5,8 +5,9 @@
 #include "Storage.H"
 #include "ContRaster.H"
 #include "Scrollbar.H"
-#include <qslider.h>
-#include <qlabel.h>
+#include <QSlider>
+#include <QLabel>
+#include <QResizeEvent>
 #include <base/dbx.H>
 #include <base/Sprintf.H>
 
@@ -27,10 +28,16 @@ ContPanel::ContPanel(QWidget *parent,
 			    (src->time()-(*src)(0).time)/10);
   connect(scrollbar,SIGNAL(moved(long long,long long)),
 	  raster,SLOT(move(long long,long long)));
-  zoombar = new QSlider(0,sizeof(zoom_s)/sizeof(float)-1,1,5,Qt::Horizontal,this);
+  zoombar = new QSlider(this);
+  zoombar->setRange(0, sizeof(zoom_s)/sizeof(float)-1);
+  zoombar->setPageStep(1);
+  zoombar->setValue(5);
+  zoombar->setOrientation(Qt::Horizontal);
   connect(zoombar,SIGNAL(valueChanged(int)),this,SLOT(rezoom(int)));
   zoominfo = new QLabel(this);
-  zoominfo->setPaletteBackgroundColor(QColor(255,255,128));
+  QPalette p = zoominfo->palette();
+  p.setColor(QPalette::Window, QColor(255,255,128));
+  zoominfo->setPalette(p);
   zoominfo->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   zoominfo->setAlignment(Qt::AlignRight);
   
@@ -75,10 +82,10 @@ void ContPanel::rezoom(int n) {
 void ContPanel::updateData() {
   long long t0 = (*src)(0).time;
   long long t1 = src->time();
-  bool atend = scrollbar->value() >= scrollbar->maxValue();
+  bool atend = scrollbar->value() >= scrollbar->maximum();
   raster->limitUpdate(true);
   scrollbar->setRange(t0,t1);
   if (atend)
-    scrollbar->setValue(scrollbar->maxValue());
+    scrollbar->setValue(scrollbar->maximum());
   raster->limitUpdate(false);
 }

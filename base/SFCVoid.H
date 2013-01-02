@@ -137,7 +137,7 @@ public:
   SFHeader const *gettoheader() const { return hdr_; } // for SFSrv only
   char const *gettodata() const { return data_; } // for SFSrv only
 protected:
-  SFCVoid(SFHeader *prelim) { //:c
+  SFCVoid(SFHeader */*prelim*/) { //:c
     /*:D This protected constructor is useful for descendents that use
          something other than a ShmCli as a data source.
       .  Always call setpointers before allowing calls to any other fns. */

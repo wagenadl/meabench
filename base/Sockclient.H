@@ -38,7 +38,7 @@ public:
   bool select4read() throw(Error); // returns true if ok, false if EINTR
 protected:
   int getfd() const { return fd; }
-  Sockclient(int dummy) { fd=-1; }
+  Sockclient(int /*dummy*/) { fd=-1; }
 private:
   template <class E> void closeandthrow(E const &e) throw(E);
 private:

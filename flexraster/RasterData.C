@@ -5,6 +5,7 @@
 #include "ControlInfo.H"
 #include <base/dbx.H>
 #include "ControlInfo.H"
+#include <stdio.h>
 
 RasterData::RasterData(QObject *parent, class Storage const *src0,
 		       class ControlInfo const *info0,
@@ -19,7 +20,7 @@ RasterData::RasterData(QObject *parent, class Storage const *src0,
 void RasterData::extend() {
   unsigned int capacity0 = 2*capacity;
   RasterPoint *newpts = new RasterPoint[capacity0];
-  for (int i=0; i<npts_; i++)
+  for (unsigned int i=0; i<npts_; i++)
     newpts[i] = points[i];
   delete [] points;
   points = newpts;
@@ -69,7 +70,7 @@ void RasterData::dump() const {
   fprintf(stderr,"Last trial: %i\n",lasttri);
   fprintf(stderr,"maxy: %i\n",maxy_);
   int y=-2, n=0, x;
-  for (int i=0; i<npts_; i++) {
+  for (unsigned int i=0; i<npts_; i++) {
     if (points[i].y==y && n>10)
       continue;
     if (points[i].y==y)

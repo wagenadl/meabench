@@ -4,16 +4,17 @@
 
 #define CONTROLPAN_H
 
-#include <qobject.h>
-#include <qsocketnotifier.h>
+#include <QObject>
+#include <QSocketNotifier>
 #include <spikesrv/Defs.H>
 
 #include "ControlInfo.H"
+#include <QWidget>
 
-class ControlPanel: public QObject {
+class ControlPanel: public QWidget {
   Q_OBJECT;
 public:
-  ControlPanel(class Storage *src, class QApplication *qap=0);
+  ControlPanel(class Storage *src);
   ~ControlPanel();
   ControlInfo const *controlinfo() const { return &info; }
 public slots:
@@ -35,7 +36,7 @@ signals:
   void updateinfo(); // signals that SimpleRasters should be redrawn
   void newsource(); // same, but requires rebuild of RasterData
 private:
-  class controlpanel *ctrlp;
+  class Ui_controlpanel *ctrlp;
   Storage *storage;
   ControlInfo info;
   SpikeSFCli *spksrc;

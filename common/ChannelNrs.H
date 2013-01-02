@@ -397,7 +397,7 @@ inline int string2hw(string const &cr) { //:f string2hw
    */
   if (cr.size() != 2)
     return -1;
-  if (cr.c_str()[0] | 32 == 'a') {
+  if ((cr.c_str()[0] | 32) == 'a') {
     int An = atoi(cr.c_str()+1);
     if (An>0 && An<5)
       return ANALOG_BASE + An - 1;

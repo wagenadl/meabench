@@ -1,7 +1,7 @@
 // LinePanel.C
 
 #include "LinePanel.H"
-#include <qpainter.h>
+#include <QPainter>
 #include "Storage.H"
 #include "RD_Stim.H"
 #include "ControlPanel.H"
@@ -21,7 +21,9 @@ LinePanel::LinePanel(QWidget *parent, Storage *src, ControlPanel *ctrlp0,
     pos[hw]=0;
   }
   dbx("LinePanel OK");
-  setPaletteBackgroundColor(QColor("black"));
+  QPalette p = palette();
+  p.setColor(QPalette::Window, QColor("black"));
+  setPalette(p);
   setMinimumSize(100,100);
 }
 

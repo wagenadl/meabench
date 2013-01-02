@@ -8,6 +8,8 @@
 #include "RD_Stim.H"
 #include "SimpleRaster.H"
 
+#include <QResizeEvent>
+
 OnePanel::OnePanel(QWidget *parent, Storage *src, ControlPanel *ctrlp):
   QWidget(parent) {
   data = new RD_Stim(this,src,ctrlp->controlinfo(),MAXSPIKES_SPONT);

@@ -23,6 +23,7 @@
 #define CORRELDATA_H
 
 #include <base/Timeref.H>
+#include <base/CyclBuf.H>
 
 class CorrelData {
 public:
@@ -34,7 +35,7 @@ public:
   void setBins(int n);
   int bins() const { return nbins; }
   void setRange(int maxtime);
-  void range() const { return maxtime; }
+  int range() const { return maxtime; }
   void decay(float factor);
   void reset();
   float value(int bin) const { return data[bin]; }
@@ -61,7 +62,7 @@ public:
   void setBins(int n);
   int bins() const { return data[0].bins(); }
   void setRange(int maxtime);
-  void range() const { return data[0].range(); }
+  int range() const { return data[0].range(); }
   void add_xcor(int where, timeref_t when) {
     for (int n=0; n<nobjs; n++) 
       data[where+nobjs*n].add_xcor(when,&data[n+nobjs*where]);
