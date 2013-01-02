@@ -22,21 +22,24 @@
 
 #include "tern.H"
 #include <string>
+#include <QTimerEvent>
+
 using namespace std;
 #include <base/Timeref.H>
-#include <qtable.h>
+#include <QTableWidget>
 
 enum Progs { RAWSRV=0, RERAW, RESPIKE, EXTRACTWINDOW, SALPA, P60HZ, SPIKESRV, SPRAWSRV, RMS, NPROGS };
 
-class MeaMon: public QTable  {
+class MeaMon: public QTableWidget  {
   Q_OBJECT
 public:
-  MeaMon(QWidget *parent=0, const char *title=0, WFlags w=0);
+  MeaMon(QWidget *parent=0);
   ~MeaMon();
 public slots:
-  void polish();
   void refresh();
   void setAutoRefresh(int ms);
+protected:
+  void showEvent(QShowEvent *);
   void timerEvent(QTimerEvent *e);
 private:
   void check(enum Progs p);
@@ -56,6 +59,7 @@ private:
   int runcount[NPROGS];
   int trigcount[NPROGS];
 private:
+  int timerId;
 };
 
 #endif

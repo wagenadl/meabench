@@ -19,6 +19,7 @@
 
 #include "MeaMon.H"
 
+#include <QHeaderView>
 #include <base/WakeupCli.H>
 #include <base/SFCVoid.H>
 #include <base/Sprintf.H>
@@ -28,11 +29,12 @@
 #include <spikesrv/Defs.H>
 
 #include <unistd.h>
+#include <QTimerEvent>
+
 
 // Columns are: Program State Run# Time(s) Index
 
-MeaMon::MeaMon(QWidget *parent, const char *title, WFlags w):
-  QTable(parent,title) {
+MeaMon::MeaMon(QWidget *parent): QTableWidget(parent) {
   
   dbx("MeaMon");
   for (int r=0; r<NPROGS; r++) {
@@ -42,51 +44,50 @@ MeaMon::MeaMon(QWidget *parent, const char *title, WFlags w):
     runcount[r]=0;
     trigcount[r]=0;
   }
+  timerId = 0;
 
-  setNumCols(5);
-  QHeader *h = horizontalHeader();
-  //  h->setLabel(0,"Program");
-  h->setLabel(0,"State");
-  h->setLabel(1,"Run # / Trig #");
-  h->setLabel(2,"Time (s)");
-  h->setLabel(3,"Count");
-  h->setLabel(4,"Index");
-
-  setNumRows(NPROGS);
+  setColumnCount(5);
+  QStringList lbls;
+  lbls << "State" << "Run #/ Trig #" << "Time (s)"
+       << "Count" << "Index";
+  setHorizontalHeaderLabels(lbls);
+  setRowCount(NPROGS);
+  lbls.clear();
   for (int r=0; r<NPROGS; r++) {
     enum Progs p = (enum Progs)(r);
-    QHeader *h = verticalHeader();
-    h->setLabel(r,progname(p));
-    hideRow(r);
+    lbls << progname(p);
   }
+  setVerticalHeaderLabels(lbls);
+  for (int r=0; r<NPROGS; r++)   
+    hideRow(r);
   hideColumn(4); // don't bother with index
 
-  setSelectionMode(QTable::NoSelection);
-  setVScrollBarMode(QScrollView::AlwaysOff);
-  setHScrollBarMode(QScrollView::AlwaysOff);
-  setLeftMargin(100); // arbitrary - bad policy
-  setFrameShape(QFrame::NoFrame);
-  QPalette p(palette());
-  p.setColor(QColorGroup::ColorRole(QColorGroup::Base),backgroundColor());
-  setPalette(p);
-  setFocusPolicy(QWidget::NoFocus);
+  for (int r=0; r<NPROGS; r++)
+    for (int c=0; c<5; c++)
+      setItem(r, c, new QTableWidgetItem(QString("")));
+
+  setSelectionMode(NoSelection);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  //  setLeftMargin(100); // arbitrary - bad policy
+  setFrameShape(NoFrame);
+  setFocusPolicy(Qt::NoFocus);
   dbx("MeaMon OK");
 
-  char host[1000]; 
-  string hostn = gethostname(host,999)==0 ? host : "";
+  char host[1000];
+  bool hasHost = gethostname(host, 999) == 0;
   char const *user = getenv("USER");
-  string usern = user?user:"";
-  string caption = "MeaMon";
-  if (user || host)
+  bool hasUser = user != 0;
+  QString caption = "MeaMon";
+  if (hasUser || hasHost)
     caption+=": ";
-  if (user)
-    caption+=usern;
-  if (host) {
-    caption+="@";
-    caption+=hostn;
+  if (hasUser)
+    caption += user;
+  if (hasHost) {
+    caption += "@";
+    caption += host;
   }
-  //  fprintf(stderr,"user: %p=%s host: %p=%s\n",user,usern.c_str(),host,hostn.c_str());
-  setCaption(caption.c_str());
+  setWindowTitle(caption);
 }
 
 MeaMon::~MeaMon() {
@@ -151,30 +152,14 @@ char const *MeaMon::shmname(enum Progs p) {
   }
 }
 
-// int MeaMon::pidof(enum Progs p) {
-//   int res=-1;
-//   string cmd = "pidof -s "; cmd+=progname(p);
-//   FILE *pidof = popen(cmd.c_str(),"r");
-//   if (pidof) {
-//     char buf[1000];
-//     if (fgets(buf,1000,pidof)==buf) {
-//       char *x = strchr(buf,'\n');
-//       if (x)
-// 	*x=0;
-//       res = atoi(buf);
-//     }
-//     if (pclose(pidof))
-//       res = -1;
-//   }
-//   return res;
-// }
-
 static void beep_stop() {
-  system("beep -r2 -f750 -l150 -d25");
+  if (system("beep -r2 -f750 -l150 -d25")) {
+  }
 }
 
 static void beep_start() {
-  system("beep -r1 -f900 -l100 -d25");
+  if (system("beep -r1 -f900 -l100 -d25")) {
+  }
 }
 
 void MeaMon::check(enum Progs p) {
@@ -231,11 +216,11 @@ void MeaMon::check(enum Progs p) {
       resizeme();
     }
 
-    setText(p,1,
+    setText(p, 0,
 	    running[p].istrue() ? "Running"
 	    : running[p].isfalse() ? "Stopped"
 	    : "Unknown");
-    setText(p,2,Sprintf("%i / %i",runcount[p],trigcount[p]));
+    setText(p,1,Sprintf("%i / %i",runcount[p],trigcount[p]));
   }
 
   if (sfcli[p]) {
@@ -246,11 +231,11 @@ void MeaMon::check(enum Progs p) {
   	  float frq = cli->aux()->sourceinfo.freqhz;
   	  timeref_t dt = cli->latest()-cli->first();
   	  if (frq>0 || dt==0)
-  	    setText(p,3,Sprintf("%.3f s",dt/(frq?frq:1)));
+  	    setText(p,2,Sprintf("%.3f s",dt/(frq?frq:1)));
   	  else
-  	    setText(p,3,Sprintf("%Li sams",dt));
+  	    setText(p,2,Sprintf("%Li sams",dt));
   	} else {
-  	  setText(p,3,"Unknown");
+  	  setText(p,2,"Unknown");
   	}
       } else if (isspike(p)) {
   	SpikeSFCli *cli = dynamic_cast<SpikeSFCli*>(sfcli[p]);
@@ -259,15 +244,15 @@ void MeaMon::check(enum Progs p) {
   	  timeref_t dt = si.time;
   	  float frq = cli->aux()->sourceinfo.freqhz;
   	  if (frq>0 || dt==0)
-  	    setText(p,3,Sprintf("%.3f s",dt/(frq?frq:1)));
+  	    setText(p,2,Sprintf("%.3f s",dt/(frq?frq:1)));
   	  else
-  	    setText(p,3,Sprintf("%Li sams",dt));
+  	    setText(p,2,Sprintf("%Li sams",dt));
   	} else {
-  	  setText(p,3,"Unknown");
+  	  setText(p,2,"Unknown");
   	}
       }
-      setText(p,4,nicethousands(sfcli[p]->latest()-sfcli[p]->first()));
-      setText(p,5,nicethousands(sfcli[p]->latest()));
+      setText(p,3,nicethousands(sfcli[p]->latest()-sfcli[p]->first()));
+      setText(p,4,nicethousands(sfcli[p]->latest()));
     } catch (Error const &e) {
       e.report("MeaMon::check-sfcli");
     }
@@ -277,15 +262,17 @@ void MeaMon::check(enum Progs p) {
 void MeaMon::resizeme() {
   int h=horizontalHeader()->height();
   int w=verticalHeader()->width();
-  for (int r=0; r<NPROGS; r++)
+  for (int r=0; r<NPROGS; r++) {
     h+=rowHeight(r);
-  for (int c=0; c<5; c++)
+  }
+  for (int c=0; c<5; c++) {
     w+=columnWidth(c);
+  }
   setFixedWidth(w);
   setFixedHeight(h);
 }
 
-void MeaMon::polish() {
+void MeaMon::showEvent(QShowEvent *) {
   refresh();
   resizeme();
 }
@@ -298,15 +285,27 @@ void MeaMon::refresh() {
 }
 
 void MeaMon::setAutoRefresh(int ms) {
-  killTimers();
-  startTimer(ms);
+  if (timerId)
+    killTimer(timerId);
+  timerId = startTimer(ms);
+  fprintf(stderr,"%i\n", timerId);
 }
 
-void MeaMon::timerEvent(QTimerEvent *) {
-  refresh();
+void MeaMon::timerEvent(QTimerEvent *e) {
+  sdbx("meamon::timerevent %i", e->timerId());
+  if (e->timerId()==timerId) {
+    refresh();
+    resizeme();
+  } else {
+    killTimer(e->timerId()); // WTF?
+  }
 }
 
 void MeaMon::setText(int r, int c, string const &s) {
   string ss = " "; ss+=s; ss+=" ";
-  QTable::setText(r,c-1,ss.c_str());
+  if (item(r, c)) {
+    item(r, c)->setText(ss.c_str());
+  } else {
+    fprintf(stderr, "meamon: no item at %i,%i\n",r,c);
+  }
 }

@@ -23,20 +23,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef HAVE_SYS_TIME_H
+//#ifdef HAVE_SYS_TIME_H
 #define DBX_PRINTTIME
 #define TIMEFMT "%03li.%04li"
 #include <sys/time.h>
-#else
-#define TIMEFMT ""
-#endif
-#ifdef HAVE_UNISTD_H
+//#else
+//#define TIMEFMT ""
+//#endif
+//#ifdef HAVE_UNISTD_H
 #define DBX_PRINTPID
 #define PIDFMT "%05i"
 #include <unistd.h>
-#else
-#define PIDFMT ""
-#endif
+//#else
+//#define PIDFMT ""
+//#endif
 
 static bool dbx_disabled = true;
 

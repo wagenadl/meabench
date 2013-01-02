@@ -25,13 +25,13 @@
 #include <base/dbx.H>
 
 int main(int argc, char **argv) {
+  switchdbx(true);
   try {
     QApplication qapp(argc,argv);
     MeaMon monitor;
-    qapp.setMainWidget(&monitor);
     monitor.show();
     monitor.setAutoRefresh(1000);
-    //    monitor.resize(monitor.sizeHint());
+    monitor.resize(monitor.sizeHint());
     qapp.exec();
     return 0;
   } catch (Error const &e) {

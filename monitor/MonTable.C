@@ -27,8 +27,8 @@
 #include <common/CommonPath.H>
 #include <base/SFHeader.H>
 
-MonTable::MonTable(QWidget *parent, const char *title, WFlags w):
-  QTable(parent,title) {
+MonTable::MonTable(QWidget *parent):
+  QTableWidget(parent) {
   // prepare sleeper pointers
   for (int r=0; r<NPROGS; r++)
     sleepers[r]=0;
@@ -37,35 +37,37 @@ MonTable::MonTable(QWidget *parent, const char *title, WFlags w):
     pollcnt[r]=trigcnt[r]=0;
   
   // set number of columns
-  setNumCols(Prop::NPROPS);
+  setColumnCount(Prop::NPROPS);
 
   // create header
-  QHeader *h = horizontalHeader();
+  QStringList hh;
   for (int c=0; c<Prop::NPROPS; c++)
-    h->setLabel(c,Prop::props(Prop::Props(c)).c_str());
+    hh << Prop::props(Prop::Props(c)).c_str();
+  setHorizontalHeaderLabels(hh);
 
   // set number of rows
-  setNumRows(NPROGS);
+  setRowCount(NPROGS);
 
-  // create rows
-  QHeader *v = verticalHeader();
+  // create v. header
+  QStringList vv;
+  for (int r=0; r<NPROGS; r++) 
+    vv << Prog(Progs(r)).label.c_str();
+  setVerticalHeaderLabels(vv);
+
+  // fill table 
   for (int r=0; r<NPROGS; r++) {
-    v->setLabel(r,Prog(Progs(r)).label.c_str());
-    setItem(r,Prop::PID,new QTableItem(this,QTableItem::Never,"-"));
-    setItem(r,Prop::SHM,new QTableItem(this,QTableItem::Never,"-"));
-    setItem(r,Prop::FIRST,new QTableItem(this,QTableItem::Never,"-"));
-    setItem(r,Prop::LATEST,new QTableItem(this,QTableItem::Never,"-"));
-    setItem(r,Prop::STATE,new QTableItem(this,QTableItem::Never,"-"));
+    setItem(r,Prop::PID,new QTableWidgetItem("-"));
+    setItem(r,Prop::SHM,new QTableWidgetItem("-"));
+    setItem(r,Prop::FIRST,new QTableWidgetItem("-"));
+    setItem(r,Prop::LATEST,new QTableWidgetItem("-"));
+    setItem(r,Prop::STATE,new QTableWidgetItem("-"));
   }
 
+
   // pretty up
-  setSelectionMode(QTable::NoSelection);
-  setLeftMargin(100); // arbitrary - bad policy
-  setFrameShape(QFrame::NoFrame);
-  QPalette p(palette());
-  p.setColor(QColorGroup::ColorRole(QColorGroup::Base),backgroundColor());
-  setPalette(p);
-  setFocusPolicy(QWidget::NoFocus);
+  setSelectionMode(NoSelection);
+  setFrameShape(NoFrame);
+  setFocusPolicy(Qt::NoFocus);
 }
 
 MonTable::~MonTable() {
@@ -182,5 +184,9 @@ void MonTable::refresh() {
 
 void MonTable::setText(int r, int c, string const &s) {
   string ss = " "; ss+=s; ss+=" ";
-  QTable::setText(r,c,ss.c_str());
+  if (item(r, c)) {
+    item(r, c)->setText(ss.c_str());
+  } else {
+    fprintf(stderr, "No item at %i,%i\n", r,c);
+  }
 }

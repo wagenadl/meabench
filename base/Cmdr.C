@@ -80,7 +80,7 @@ namespace Cmdr {
     throw Error("Cmdr",string("Unknown command: ")+cmd);
   }
 
-  void quit(int argc, char **argv) {
+  void quit(int, char **) {
     letsquit = true;
   }
 

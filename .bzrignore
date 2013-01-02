@@ -1,8 +1,9 @@
+meabench
 Makefile
-Makefile.in
-configure
+Makefile.*
 .moc
 .obj
+.ui
 *.so
 *.so.*
 *.moc

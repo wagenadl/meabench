@@ -19,51 +19,56 @@
 // Monitor.C - generated bui uic, but modified
 
 #include "Monitor.H"
+#include ".ui/ui_Monitor.h"
 
-#include <qcheckbox.h>
-#include <qspinbox.h>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <QTimerEvent>
 #include "MonTable.H"
-
+#include ".ui/ui_Monitor.h"
 #include <base/dbx.H>
 
-/* 
- *  Constructs a MonitorI which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
- */
-MonitorI::MonitorI( QWidget* parent,  const char* name, WFlags fl )
-    : Monitor( parent, name, fl )
-{
+Monitor::Monitor(QWidget* parent): QWidget(parent) {
+  ui = new Ui_Monitor();
+  ui->setupUi(this);
   lighton = false;
+  timerId = 0;
 }
 
-/*  
- *  Destroys the object and frees any allocated resources
- */
-MonitorI::~MonitorI()
-{
-    // no need to delete child widgets, Qt does it all for us
+Monitor::~Monitor() {
+  delete ui;
 }
 
-void MonitorI::setAutoRefresh() {
+void Monitor::setAutoRefresh() {
   dbx("setAutoRefresh");
-  killTimers();
+  if (timerId)
+    killTimer(timerId);
   dbx("sAR: timers killed");
-  if (autorefresh->isChecked()) {
-    startTimer(100*window->value());
+  if (ui->autorefresh->isChecked()) {
+    timerId = startTimer(100*ui->window->value());
+    ui->autolight->setAutoFillBackground(true);
     dbx("sAR: timer started");
+  } else {
+    ui->autolight->setAutoFillBackground(false);
   }
   dbx("sAR: done");
 }
 
 #include <stdio.h>
 
-void MonitorI::timerEvent(QTimerEvent *e) {
-  monitor->refresh();
-  lighton=!lighton;
-  autolight->setBackgroundColor(QColor(0,lighton?255:128,0));
+void Monitor::timerEvent(QTimerEvent *e) {
+  if (e->timerId()==timerId) {
+    ui->monitor->refresh();
+    lighton=!lighton;
+    QPalette p = ui->autolight->palette();
+    p.setColor(QPalette::Window, QColor(0,lighton?255:128,0));
+    ui->autolight->setPalette(p);
+  } else {
+    killTimer(e->timerId());
+  }
 }
 
-void MonitorI::polish() {
-  monitor->refresh();
+void Monitor::showEvent(QShowEvent *) {
+  ui->monitor->refresh();
   setAutoRefresh();
 }

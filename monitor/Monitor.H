@@ -16,23 +16,26 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// Monitor.H - generated bui uic, but modified
 
-#ifndef MONITORI_H
-#define MONITORI_H
-#include "MonitorD.H"
+#ifndef MONITOR_H
+#define MONITOR_H
 
-class MonitorI : public Monitor { 
+#include <QTimerEvent>
+#include <QWidget>
+
+class Monitor : public QWidget { 
   Q_OBJECT
 public:
-  MonitorI( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
-  ~MonitorI();
+  Monitor(QWidget *parent=0);
+  ~Monitor();
 public slots:
-  void polish();
+  void showEvent(QShowEvent *);
   void setAutoRefresh();
   void timerEvent(QTimerEvent *e);
 private:
   bool lighton;
+  class Ui_Monitor *ui;
+  int timerId;
 };
 
-#endif // MONITORI_H
+#endif // MONITOR_H

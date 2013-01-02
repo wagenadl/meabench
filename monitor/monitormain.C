@@ -19,16 +19,14 @@
 // monitor.C
 
 #include "Monitor.H"
-#include <qapplication.h>
+#include <QApplication>
 #include <base/Error.H>
 #include <stdio.h>
 
 int main(int argc, char **argv) {  try {
     QApplication qapp(argc,argv);
-    MonitorI monitor;
-    qapp.setMainWidget(&monitor);
+    Monitor monitor;
     monitor.show();
-    //    monitor.resize(monitor.sizeHint());
     qapp.exec();
     return 0;
   } catch (Error const &e) {

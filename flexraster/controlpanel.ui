@@ -21,7 +21,7 @@
     <number>7</number>
    </property>
    <item>
-    <widget class="Q3Frame" name="frame15">
+    <widget class="QFrame" name="frame15">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -184,15 +184,12 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3Frame" name="frame16">
+    <widget class="QFrame" name="frame16">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
-     </property>
-     <property name="margin">
-      <number>0</number>
      </property>
      <layout class="QHBoxLayout">
       <property name="spacing">
@@ -326,7 +323,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3Frame" name="frame17">
+    <widget class="QFrame" name="frame17">
      <property name="frameShape">
       <enum>QFrame::HLine</enum>
      </property>
@@ -339,7 +336,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3Frame" name="frame18">
+    <widget class="QFrame" name="frame18">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -410,7 +407,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Q3Frame" name="frame7">
+       <widget class="QFrame" name="frame7">
         <property name="frameShape">
          <enum>QFrame::VLine</enum>
         </property>
@@ -449,46 +446,8 @@
  <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends>QFrame</extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>use_down</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>controlpanel</receiver>
-   <slot>checkUp(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>use_up</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>controlpanel</receiver>
-   <slot>checkDown(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

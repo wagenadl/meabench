@@ -23,13 +23,13 @@
 #define MONTABLE_H
 
 #include <base/Timeref.H>
-#include <qtable.h>
+#include <QTableWidget>
 #include "Progs.H"
 
-class MonTable: public QTable {
+class MonTable: public QTableWidget {
   Q_OBJECT
 public:
-  MonTable(QWidget *parent=0, const char *title=0, WFlags w=0);
+  MonTable(QWidget *parent=0);
   ~MonTable();
 public slots:
 //  void polish();

@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
     QApplication qapp(argc,argv);
     ControlPanel ctrlp(&storage);
     ctrlp.update_source("spike");
+    ctrlp.show();
     qapp.exec();
     return 0;
   } catch (Error const &e) {
