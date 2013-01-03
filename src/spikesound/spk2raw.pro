@@ -1,4 +1,4 @@
-# spikesound/spikesound.pro - part of MEABench, an MEA recording and analysis tool
+# spikesound/spk2raw.pro - part of MEABench, an MEA recording and analysis tool
 # Copyright (C) 2000-2013 Daniel Wagenaar (daw@caltech.edu)
 #
 # MEABench comes with ABSOLUTELY NO WARRANTY; for details see the
@@ -6,9 +6,10 @@
 # redistribute it under certain conditions; again, see the file
 # "COPYING" for details.
 
-TEMPLATE = subdirs
-SUBDIRS = spikesound_gui spk2wav spk2raw
+TEMPLATE = app
+TARGET = spk2raw
+include(../common/meabench.pri)
 
-spikesound_gui.file = spikesound_gui.pro
-spk2wav.file = spk2wav.pro
-spk2raw.file = spk2raw.pro
+HEADERS = FrqStSound.H
+SOURCES = FrqStSound.C spk2raw.C
+

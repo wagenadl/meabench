@@ -40,7 +40,7 @@ void usage() {
 
 void error(char const *x=0) {
   string y = PROGNAME;
-  if (x && x!="") {
+  if (x && *x) {
     y+= ": "; y+=x;
   }
   perror(y.c_str());
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 	throw Error("Raw server still not running. Aborting.");
     }
     fprintf(stderr,"Running...\n");
-    timeref_t firstspk = spkcli->first();
+    //    timeref_t firstspk = spkcli->first();
     timeref_t t0 = rawcli->first();
     timeref_t lastspk = spkcli->first();
     int nspikes = 0;

@@ -82,7 +82,7 @@ void Audio::open() throw(Error) {
 }
 
 void Audio::write() throw(Error) {
-  int n=::write(audio_fd,buffer,frag_length*sizeof(sample));
+  ssize_t n = ::write(audio_fd,buffer,frag_length*sizeof(sample));
   if (n!=frag_length*sizeof(sample))
     throw SysErr("Audio","write failed");
 }

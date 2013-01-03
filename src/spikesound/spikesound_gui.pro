@@ -6,9 +6,11 @@
 # redistribute it under certain conditions; again, see the file
 # "COPYING" for details.
 
-TEMPLATE = subdirs
-SUBDIRS = spikesound_gui spk2wav spk2raw
+TEMPLATE = app
+TARGET = spikesound
+include(../gui/gui.pri)
 
-spikesound_gui.file = spikesound_gui.pro
-spk2wav.file = spk2wav.pro
-spk2raw.file = spk2raw.pro
+HEADERS = Audio.H Spikesound.H
+SOURCES = Audio.C Spikesound.C  spikesoundmain.C 
+FORMS = Spikesound.ui
+

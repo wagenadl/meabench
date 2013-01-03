@@ -19,17 +19,18 @@
 
 #ifndef SPIKESOUNDI_H
 #define SPIKESOUNDI_H
-#include "SpikesoundD.H"
+
 #include <spikesrv/Defs.H>
-#include <qsocketnotifier.h>
-#include <qobject.h>
+#include <QSocketNotifier>
+#include <QObject>
 #include "Audio.H"
 #include <spikesrv/Filters.H>
+#include <QWidget>
 
-class Spikesound: public spikesound { 
-  Q_OBJECT
+class Spikesound: public QWidget { 
+  Q_OBJECT;
 public:
-  Spikesound(QWidget* parent = 0, const char* name = 0, WFlags fl = 0);
+  Spikesound(QWidget *parent=0);
   ~Spikesound();
 
 public slots:
@@ -40,11 +41,9 @@ public slots:
   void setSource(const QString &);
   void setVolume(int);
   void canWrite();
-  void polish();
   void setA1(bool);
   void setA2(bool);
   void setA3(bool);
-
 private:
   Audio audio;
   QSocketNotifier *sn;
@@ -56,6 +55,8 @@ private:
   int multiplier;
   bool useanalog[3];
   Bandpass fl,fr;
+private:
+  class Ui_spikesound *ui;
 };
 
 #endif // SPIKESOUNDI_H

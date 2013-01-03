@@ -27,10 +27,10 @@
 template <class Value, class Compare=less<Value> > class SortingQueue:
   public std::set<Value,Compare> {
 public:
-  void enqueue(Value const &v) { insert(std::set<Value,Compare>::end(), v); }
+  void enqueue(Value const &v) { this->insert(std::set<Value,Compare>::end(), v); }
   bool nonempty() { return !std::set<Value,Compare>::empty(); }
   Value const &first() const { return *std::set<Value,Compare>::begin(); }
-  void shift() { erase(std::set<Value,Compare>::begin()); }
+  void shift() { this->erase(std::set<Value,Compare>::begin()); }
 };
 
 #endif

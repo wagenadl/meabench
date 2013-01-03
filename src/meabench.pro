@@ -10,7 +10,9 @@ TEMPLATE = subdirs
 SUBDIRS = base
 SUBDIRS += 60hz artifilt extractwindow rawsrv record replay rms
 SUBDIRS += gui
-SUBDIRS += flexraster raster scope
+SUBDIRS += flexraster raster scope spikesound spikesrv
 SUBDIRS += neurosock
+SUBDIRS += tools
+SUBDIRS += utils
 CONFIG += ordered
 # More to be added in a little bit

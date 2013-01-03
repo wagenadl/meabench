@@ -102,7 +102,7 @@ public:
 private:
   int nbins;
   int dt;
-  int tbase;
+  unsigned int tbase;
   int linbins;
   float logbase;
   unsigned int maxt;

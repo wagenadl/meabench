@@ -116,7 +116,8 @@ public:
    *:N Detectors can choose how to interpret the variables "thresh" and
        "thresh2" (see below). Additionally, they may re-implemted this fn.
    */
-  virtual void detectrows(timeref_t start, timeref_t end) {} //:f detectrows
+  virtual void detectrows(timeref_t /*start*/, timeref_t /*end*/) {}
+  //:f detectrows
   /*:D detectrows(start, end) should make the detector examine the
        data from start to end, looking for spikes. Some detectors may use a
        built-in delay, in which case they'll read from (start-delay) to
@@ -137,7 +138,7 @@ public:
    *:R -
    *:N This method may be left unimplemented
    */
-  virtual void skiprows(timeref_t start, timeref_t end) {} //:f skiprows
+  virtual void skiprows(timeref_t /*start*/, timeref_t /*end*/) {} //:f skiprows
   /*:D skiprows(start, end) should make the detector examine the
        data from start to end. Spikes found in the data should be ignored
        though. This function serves to keep filters &c up-to-date during
@@ -154,7 +155,7 @@ public:
    *:N This method needn't be implemented if the detector requires no
        training. Implementors should call the base class' method.
    */
-  virtual bool train(timeref_t start, timeref_t end) { //:f train
+  virtual bool train(timeref_t /*start*/, timeref_t /*end*/) { //:f train
     /*:D This call should use the data in [start,end) to (partially) train
          the spike detector. When training is completed to satisfaction,
 	 return true.
@@ -231,7 +232,7 @@ public:
    */
   void train_analog(Sample const &s);
   void post_train_analog();
-  virtual float reportthreshold(int c) const { return 0; }
+  virtual float reportthreshold(int /*c*/) const { return 0; }
   virtual char const *thresholdunit() const { return "-"; }
   void dump_training_info();
   void post_training_info();

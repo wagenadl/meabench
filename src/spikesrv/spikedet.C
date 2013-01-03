@@ -486,7 +486,7 @@ bool dorun(bool dontwait = false) { // true if interrupted
   return false;
 }
 
-void train(int argc, char **args) {
+void train(int, char **) {
   try {
     am_i_ok("train");
     detector->setthresh(thresh);
@@ -557,7 +557,7 @@ void cont(int argc, char **args) {
   fprintf(stderr,"cont/end\n");
 }
 
-void report(int argc, char **args) {
+void report(int, char **) {
   fprintf(stderr,"Spike stream clients\n");
   if (waker)
     waker->report();
@@ -577,7 +577,7 @@ void setshowpostfilt(int argc, char **args) {
 	  showpostfilter?"on":"off");
 }
 
-void traininfo(int argc, char **args) {
+void traininfo(int, char **) {
   am_i_ok("traininfo");
   if (!detector || !trained) 
     throw Error("info","No trained detector");
@@ -587,7 +587,7 @@ void traininfo(int argc, char **args) {
   noise.report();
 }	
 
-void alias(int argc, char **args) {
+void alias(int, char **) {
   throw Expectable("alias","Aliasing is only possible at start up using `-alias name'");
 }
 
@@ -613,7 +613,7 @@ Cmdr::Cmap cmds[] = {
   { setshowpostfilt, "outputfilt", 0, 1, "[0/1]", },
   { setclean, "clean", 0,1,"[0/1]", },
   { alias, "alias", 0, 0, "", },
-  0,
+  { 0, "", 0, 0, "", },
 };
 
 void deletem() {

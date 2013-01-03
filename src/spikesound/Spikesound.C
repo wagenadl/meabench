@@ -17,51 +17,38 @@
 */
 
 #include "Spikesound.H"
-#include <qmessagebox.h>
-#include <qradiobutton.h>
-#include <qspinbox.h>
-#include <qlabel.h>
+#include <QMessageBox>
+#include <QRadioButton>
+#include <QSpinBox>
+#include <QLabel>
 #include <common/CommonPath.H>
 #include <common/ChannelNrs.H>
 #include <math.h>
-
+#include ".ui/ui_Spikesound.h"
 
 /* 
  *  Constructs a Spikesound which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
  */
-Spikesound::Spikesound(QWidget* parent,  const char* name, WFlags fl):
-  spikesound(parent, name, fl) {
+Spikesound::Spikesound(QWidget *parent): QWidget(parent) {
+  ui = new Ui_spikesound();
+  ui->setupUi(this);
   sn = 0;
   source = 0;
   for (int i=0; i<3; i++)
     useanalog[i]=false;
-}
-
-/*  
- *  Destroys the object and frees any allocated resources
- */
-Spikesound::~Spikesound() {
-  // no need to delete child widgets, Qt does it all for us
-}
-
-void Spikesound::polish() {
-  spikesound::polish();
-  dbx("polish");
   setSource("spike");
-  setVolume(volume->value());
+  setVolume(ui->volume->value());
 }
 
-/* 
- * public slot
- */
+Spikesound::~Spikesound() {
+  delete ui;
+}
+
 void Spikesound::setNegativeOnly(bool on) {
   negvonly = on;
 }
 
-/* 
- * public slot
- */
 void Spikesound::setPlay(bool on) {
   dbx(Sprintf("setplay: %c",on?'y':'n'));
   try {
@@ -133,15 +120,12 @@ void Spikesound::canWrite() {
     audio.write();
     dbx("wrote");
   } else {
-    playbutton->setChecked(false);
+    ui->playbutton->setChecked(false);
   }
 }
 
-/* 
- * public slot
- */
 void Spikesound::useRethresh(bool on) {
-  setRethresh(threshold->value());
+  setRethresh(ui->threshold->value());
   rethresh = on;
   sdbx("usethresh %c",on?'y':'n');
 }
@@ -151,30 +135,24 @@ void Spikesound::setRethresh(int v) {
   sdbx("setrethresh %g",rethresh_at);
 }
 
-/* 
- * public slot
- */
 void Spikesound::setSource(const QString &s) {
-  dbx(Sprintf("setsource: %s",s.ascii()));
+  dbx(Sprintf("setsource: %s",s.toAscii().constData()));
   if (source)
     delete source;
   source=0;
   try {
-    source = new SpikeSFCli(CommonPath(s.ascii(),SFSUFFIX).c_str());
+    source = new SpikeSFCli(CommonPath(s.toAscii().constData(),SFSUFFIX).c_str());
     last = source->latest();
-    status->setText("OK");
-    playbutton->setEnabled(true);
+    ui->status->setText("OK");
+    ui->playbutton->setEnabled(true);
   } catch (Error const &e) {
     e.report();
-    status->setText("Not found");
-    playbutton->setEnabled(false);
-    playbutton->setChecked(false);
+    ui->status->setText("Not found");
+    ui->playbutton->setEnabled(false);
+    ui->playbutton->setChecked(false);
   }
 }
 
-/* 
- * public slot
- */
 void Spikesound::setVolume(int v) {
   multiplier = int(32000*pow(10,v/10.0));
 }

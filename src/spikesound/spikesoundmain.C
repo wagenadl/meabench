@@ -33,7 +33,6 @@ int main(int argc, char **argv) {
   try {
     QApplication qapp(argc,argv);
     Spikesound spikesnd;
-    qapp.setMainWidget(&spikesnd);
     spikesnd.show();
     qapp.exec();
     return 0;

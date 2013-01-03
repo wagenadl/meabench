@@ -11,4 +11,5 @@ CONFIG += qt
 LIBS += -lmeagui
 UI_DIR = .ui
 DEPENDPATH += ../gui
+DEPENDPATH += gui
 DEPENDPATH += .ui

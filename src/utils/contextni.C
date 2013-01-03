@@ -78,14 +78,14 @@ int main(int argc, char **argv) {
     }
 
   
-    int prectxt = atoi(arg.get(argPRECTXT).c_str());
-    int postctxt = atoi(arg.get(argPOSTCTXT).c_str());
+    unsigned int prectxt = atoi(arg.get(argPRECTXT).c_str());
+    unsigned int postctxt = atoi(arg.get(argPOSTCTXT).c_str());
     if (arg.get(argNCHANS)=="")
       throw Error("contextni", "Channel count is not optional");
     int nchans = atoi(arg.get(argNCHANS).c_str());
     if (nchans<=0)
       throw Error("contextni", "Channel count is not optional");
-    int ctxt = prectxt + postctxt;
+    unsigned int ctxt = prectxt + postctxt;
 
     FILE *bin = fopen(argv[arg0], "r");
     if (!bin) {
@@ -128,7 +128,7 @@ int main(int argc, char **argv) {
     if (times.size()>0) {
       int minc = channels[0].size();
       int maxc = channels[0].size();
-      for (int k=1; k<channels.size(); k++) {
+      for (unsigned int k=1; k<channels.size(); k++) {
 	int c = channels[k].size();
 	if (c<minc)
 	  minc = c;
@@ -142,19 +142,19 @@ int main(int argc, char **argv) {
     }
 
     short *buffer = new short[ctxt];
-    for (int k=0; k<times.size(); k++) {
-      if (k>0 & k%1000==0)
+    for (unsigned int k=0; k<times.size(); k++) {
+      if (k>0 && k%1000==0)
 	fprintf(stderr, "Done %i/%lu events\r", k, times.size());
       timeref_t t = times[k];
       std::vector<char> const &hww = channels[k];
-      if (t==~0) {
-         for (int i=0; i<ctxt; i++)
+      if (t==timeref_t(~0)) {
+         for (unsigned int i=0; i<ctxt; i++)
            buffer[i]=0;
-         for (int c=0; c<hww.size(); c++) 
+         for (unsigned int c=0; c<hww.size(); c++) 
 	   if (fwrite(buffer, sizeof(short), ctxt, out)<ctxt)
              throw SysErr("fwrite");
       } else {
-        for (int c=0; c<hww.size(); c++) {
+        for (unsigned int c=0; c<hww.size(); c++) {
     	  int hw = hww[c];
 	  timeref_t off = (t + hw*t_end)*sizeof(short);
 	  //fprintf(stderr, "Seeking for %Li:%i=%Li   \n", t, hw, off);
