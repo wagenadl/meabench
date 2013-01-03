@@ -7,7 +7,7 @@
 # "COPYING" for details.
 
 TEMPLATE = app
-TARGET = spikesrv
+TARGET = spikedet
 include(../common/meabench.pri)
 
 HEADERS = \

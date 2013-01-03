@@ -330,16 +330,13 @@ void QScope::init_satellite(QGraph *sat) {
 }
 
 void QScope::addSpike(Spikeinfo const &si) {
-  int x = time2x(si.time+qss.sf->first());
-  QPainter qpai(this);
-  qpai.setPen(aux_pen); qpai.setBrush(aux_pen.color());
-  qpai.drawEllipse(x-2, coffset+(si.height>0?-1:1)*halfhei*7/8-2,4,4);
   if (nspikes>=spikes.size()) 
     spikes.push_back(si);
   else 
     spikes[nspikes] = si;
   nspikes++;
   forall(&QScope::addSpike,si);
+  update();
 }
 
 void QScope::dumpme() {
