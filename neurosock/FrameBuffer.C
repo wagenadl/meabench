@@ -10,7 +10,7 @@ FrameBuffer::FrameBuffer(int logn, srvMeata *src0) {
   mask=(1<<logn)-1;
   maxahead=mask;
 
-  for (int m=0; m<=src->getCHN(); m++) {
+  for (int m=0; m<src->getNumMEAs(); m++) {
     frames[m] = new raw_t* [1<<logn];
     for (int n=0; n<=mask; n++)
       frames[m][n] = new raw_t[src->frameSize_rawt()];
@@ -65,9 +65,9 @@ void FrameBuffer::start() throw(Error) {
   }
 }
 
-raw_t *FrameBuffer::read(int chn_setting) throw(Error) {
+raw_t *FrameBuffer::read(int iMEA) throw(Error) {
   //  fprintf(stderr,"[dbg] Framebuffer::read(%i) ...\n",chn_setting);
-  if (!hasthread || (chn_setting>src->getCHN())) {
+  if (!hasthread || (iMEA>=src->getNumMEAs())) {
     // fprintf(stderr,"[dbg]   Framebuffer::read -> 0\n");
     return 0;
   }
@@ -75,7 +75,7 @@ raw_t *FrameBuffer::read(int chn_setting) throw(Error) {
     int inidx_, outidx_;
     { MLock ml(lock);
       inidx_ = inidx;
-      outidx_ = outidx[chn_setting];
+      outidx_ = outidx[iMEA];
     }
     if (inidx_ != outidx_)
       break;
@@ -86,8 +86,8 @@ raw_t *FrameBuffer::read(int chn_setting) throw(Error) {
 
   raw_t *retval;
   { MLock ml(lock);
-    retval = frames[chn_setting][outidx[chn_setting] & mask];
-    outidx[chn_setting]++;
+    retval = frames[iMEA][outidx[iMEA] & mask];
+    outidx[iMEA]++;
   }
   //  fprintf(stderr,"\n[dbg]   Framebuffer::read -> %p\n",retval);
   return retval;
@@ -125,7 +125,7 @@ void FrameBuffer::threadcode() throw(Error) {
 
   while (!terminate) {
     // Drop frames on slow clients
-    int nusers = src->getCHN()==MC128 ? 2 : 1;
+    int nusers = src->getNumMEAs();
     for (int k=0; k<nusers; k++) {
       MLock ml(lock);
       if (inidx > outidx[k]+maxahead) {
@@ -137,7 +137,7 @@ void FrameBuffer::threadcode() throw(Error) {
     }
 
     // Let's read new frame!
-    if (src->getCHN()==MC128) {
+    if (src->getNumMEAs()==2) {
       //Bifurcate the data stream
       src->nextFramePlease(buffer);
       for (int seg=0; seg<256; seg++) {

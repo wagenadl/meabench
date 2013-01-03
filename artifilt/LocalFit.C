@@ -188,7 +188,9 @@ LocalFit::State LocalFit::statemachine(timeref_t t_limit, State s) {
       negv =  source[t_stream] < raw_t(alpha0 + alpha1*dt + alpha2*dt2 + alpha3*dt3);
 #endif
 
+#ifdef TEST
       int_t x0=X0,x1=X1,x2=X2,x3=X3;
+#endif
       calc_X012(); calc_X3(); // for numerical stability problem!
 #ifdef TEST
       if (x0!=X0 || x1!=X1 || x2!=X2 || x3!=X3)
@@ -230,7 +232,9 @@ LocalFit::State LocalFit::statemachine(timeref_t t_limit, State s) {
       goto l_FORCEPEG;
     }
     update_X0123();
+#ifdef TEST
       int_t x0=X0,x1=X1,x2=X2,x3=X3;
+#endif
       calc_X012(); calc_X3(); // for numerical stability problem!
 #ifdef TEST
       if (x0!=X0 || x1!=X1 || x2!=X2 || x3!=X3)

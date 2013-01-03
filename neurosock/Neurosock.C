@@ -2,7 +2,6 @@
 
 // socktest/server.C - test server for a tcp domain socket
 
-#include <MCCard.h>
 
 #include "Error.H"
 #include "FrameBuffer.H"

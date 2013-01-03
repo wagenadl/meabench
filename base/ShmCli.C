@@ -45,7 +45,7 @@ ShmACli::ShmACli(char const *mountpt, int mode) throw (Error) {
     throw Error("ShmCli","shmctl");
   size_ = buf.shm_segsz;
   data_ = shmat(shmid, 0, 0);
-  if (data_<0)
+  if (data_==(void*)(-1))
     throw Error("ShmCli","shmat");
 }
   

@@ -7,6 +7,7 @@
 # "COPYING" for details.
 
 TEMPLATE = subdirs
-SUBDIRS = meamon monitor_gui
+SUBDIRS = meamon monitor_gui climon
 meamon.file = meamon.pro
+climon.file = climon.pro
 monitor_gui.file = monitor_gui.pro

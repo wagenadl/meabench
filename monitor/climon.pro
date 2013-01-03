@@ -1,4 +1,4 @@
-# meabench.pro - part of MEABench, an MEA recording and analysis tool
+# climon/climon.pro - part of MEABench, an MEA recording and analysis tool
 # Copyright (C) 2000-2013 Daniel Wagenaar (daw@caltech.edu)
 #
 # MEABench comes with ABSOLUTELY NO WARRANTY; for details see the
@@ -6,10 +6,9 @@
 # redistribute it under certain conditions; again, see the file
 # "COPYING" for details.
 
-TEMPLATE = subdirs
-SUBDIRS = base
-SUBDIRS += 60hz artifilt extractwindow
-SUBDIRS += gui
-SUBDIRS += neurosock
-CONFIG += ordered
-# More to be added in a little bit
+TEMPLATE = app
+TARGET = climon
+include(../common/meabench.pri)
+
+HEADERS = tern.H Progs.H
+SOURCES = climon.C tern.C Progs.C

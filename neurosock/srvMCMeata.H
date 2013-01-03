@@ -16,13 +16,13 @@ public:
   virtual void start();
   virtual void stop();
   virtual void setGain(int n);
-  virtual void setCHN(int n); // MC64 or MC128
+  virtual void setNumMEAs(int n); // 2 for MC128, otherwise 1
   virtual void fillInfo(NS_Info &);
   virtual raw_t *nextFramePlease(raw_t *dst=0);
-  virtual int getCHN() const { return chn; }
+  virtual int getNumMEAs() const { return nMEAs; }
 private:
   int mcc_fd;
-  int chn;
+  int nMEAs;
   bool isrunning;
   raw_t *buf;
 };

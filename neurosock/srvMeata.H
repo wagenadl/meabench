@@ -9,7 +9,6 @@
 
 
 #include "Defs.H"
-#include <MCCard.h>
 #include <stdio.h>
 
 class srvMeata {
@@ -19,12 +18,12 @@ public:
   virtual void start()=0;
   virtual void stop()=0;
   virtual void setGain(int n) { gain=n; }
-  virtual void setCHN(int n) { }
-  virtual void setFreq(int f_hz) { }
-  virtual int getCHN() const { return 0; }
+  virtual void setNumMEAs(int /*n*/) { }
+  virtual void setFreq(int /*f_hz*/) { }
+  virtual int getNumMEAs() const { return 1; }
   int getGain() const { return gain; }
-  virtual void setChannelList(long long excludeChannels,
-			      long long doubleChannels) {
+  virtual void setChannelList(long long /*excludeChannels*/,
+			      long long /*doubleChannels*/) {
     fprintf(stderr,"srvMeata: Warning: channel list ignored\n");
   }
   virtual void fillInfo(NS_Info &)=0;

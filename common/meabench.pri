@@ -6,6 +6,8 @@
 # redistribute it under certain conditions; again, see the file
 # "COPYING" for details.
 
+include("../config.pri")
+
 CONFIG += debug
 INCLUDEPATH += ..
 MOC_DIR = .moc
@@ -16,3 +18,24 @@ DESTDIR = $$DESTBASE/bin
 LIBS += -L$$DESTBASE/lib
 LIBS += -lmeabase
 LIBS += -lpthread
+DEFINES += VERSION=$$VERSION
+
+mcshardware {
+  message("MultiChannel Systems Hardware")
+  DEFINES += MCSHARDWARE
+}
+
+nihardware {
+  message("National Instruments PCI6259 Hardware")
+  DEFINES += NIHARDWARE
+}
+
+ueihardware {
+  message("United Electronic Industries PowerDAQ Hardware")
+  DEFINES += PDHARDWARE
+}
+
+ultrafast {
+  message("Ultrafast")
+  DEFINES += MEA_ULTRAFAST
+}

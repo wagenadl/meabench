@@ -243,7 +243,7 @@ void dorun() {
     copyaux(MEAB::rawout->sfsrv.aux(),MEAB::rawin->sfcli.aux());
     getrails();
     MEAB::rawout->sfsrv.startrun();
-    timeref_t dt = MEAB::rawout->sfsrv.first() - MEAB::rawin->sfcli.first();
+    //    timeref_t dt = MEAB::rawout->sfsrv.first() - MEAB::rawin->sfcli.first();
     MEAB::rawout->waker.start(); // send a start command to our clients
 
     timeref_t last = waitstart ? MEAB::rawin->sfcli.first()

@@ -23,7 +23,6 @@
 #define CONFIG_H
 
 #include <common/Types.H>
-#include <config.h>
 
 #define SFSUFFIX ".sf"
 #define WAKESUFFIX ".wake"

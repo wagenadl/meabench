@@ -19,7 +19,7 @@ srvMCMeata::srvMCMeata(bool use128) throw(Error) {
   if (mcc_fd<0)
     throw SysErr("neurosock/mcmeata: Cannot open device");
 
-  setCHN(use128 ? MC128 : MC64);
+  setNumMEAs(use128 ? 2 : 1);
   setGain(3);
   stop();
   isrunning = false;
@@ -55,10 +55,10 @@ void srvMCMeata::setGain(int n) {
     throw SysErr("MCMeata","Cannot set gain.");
 }
 
-void srvMCMeata::setCHN(int n) {
-  chn = n;
-  if (ioctl(mcc_fd, MCCARD_IOSETCHANNELS,&chn)<0)
-    throw SysErr("MCMeata","Cannot set CHN. Invalid CHN index or not enough memory for DMA Buffers.");
+void srvMCMeata::setNumMEAs(int n) {
+  nDevs = n;
+  if (ioctl(mcc_fd, MCCARD_IOSETCHANNELS,&nDevs)<0)
+    throw SysErr("MCMeata","Cannot set number of devices. Invalid value or not enough memory for DMA Buffers.");
 }
 
 void srvMCMeata::fillInfo(NS_Info &i) {
@@ -89,7 +89,7 @@ void srvMCMeata::fillInfo(NS_Info &i) {
   i.other_errors = stats.Hardware_errors;
   i.total_errors = i.neurosock_overruns + i.meata_overruns + i.other_errors;
   i.last_error_frame = i_lastsoftoverrun;
-  i.card_setting = chn;
+  i.mea_count = nDevs;
   fprintf(stderr,"gain: %i. nframes: %i. isrunning: %c\n",
 	  gain,
 	  i.frames_transmitted,
@@ -105,7 +105,7 @@ raw_t *srvMCMeata::nextFramePlease(raw_t *dst) {
   if (dst==0)
     dst=buf;
 
-  int readSize = chn==MC128 ? 2*MCC_FILLBYTES : MCC_FILLBYTES;
+  int readSize = nDevs * MCC_FILLBYTES;
 
   int len = ::read(mcc_fd, dst, readSize);
   if (len<0) 
