@@ -16,3 +16,9 @@ SUBDIRS += tools
 SUBDIRS += utils
 CONFIG += ordered
 # More to be added in a little bit
+
+include(../config.pri)
+
+QMAKE_EXTRA_TARGETS =  inst
+inst.commands = ../buildscripts/install.sh $$PREFIX
+

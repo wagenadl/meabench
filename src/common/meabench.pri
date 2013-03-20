@@ -10,17 +10,17 @@ include("../../config.pri")
 
 CONFIG += debug
 INCLUDEPATH += ..
-INCLUDEPATH += ../../driver
+INCLUDEPATH += ../driver
 DEPENDPATH += ../common
 DEPENDPATH += ../base
 DEPENDPATH += common
 DEPENDPATH += base
-DEPENDPATH += ../../driver
+DEPENDPATH += ../driver
 DEPENDPATH += driver
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
 CONFIG -= qt
-DESTBASE = ../../meabench
+DESTBASE = ../../build
 DESTDIR = $$DESTBASE/bin
 LIBS += -L$$DESTBASE/lib
 LIBS += -lmeabase

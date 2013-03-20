@@ -13,3 +13,5 @@ CONFIG += mcshardware
 # CONFIG += ueihardware
 
 # CONFIG += ultrafast
+
+PREFIX = /tmp/usr/local
