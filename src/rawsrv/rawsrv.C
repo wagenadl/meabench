@@ -383,7 +383,7 @@ struct Cmdr::Cmap cmds[] = {
   { gain, "gain", 0,1, "[gain step]", },
   { setblankout, "blankout", 0,1, "[period-in-ms or 0]", },
   { trackshift, "trackshift", 0,1, "[1/2/3 or -]", },
-  { printrms, "rms", 0, 0, "", },
+  { printrms, "listrms", 0, 0, "", },
   { setdbx, "dbx", 0, 1, "[0/1]", },
   { report, "clients", 0, 0, "", },
 #if NSSRV
