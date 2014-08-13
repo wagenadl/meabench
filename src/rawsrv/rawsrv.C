@@ -49,6 +49,7 @@ bool dotrig = false;
 int trigch = TRIG_CHANNEL;
 raw_t trigthresh = TRIG_THRESHOLD;
 int shifttrackch = -1; 
+int shifttrackthr = -1;
 int raw_gain; // set in main
 	
 void setblankout(int argc=0, char **args=0) {
@@ -130,7 +131,7 @@ void dostart(RawSource &src) {
   sfsrv->aux()->hwstat = SFAux::HWStat();
 
   if (shifttrackch>=0)
-    src.enableShiftTracking(shifttrackch);
+    src.enableShiftTracking(shifttrackch, shifttrackthr);
   else
     src.disableShiftTracking();
 
@@ -155,22 +156,83 @@ void dostop(RawSource &src) {
   sfsrv->endrun(); waker->stop();
 }
 
+void printrms(int, char **) {
+  if (!sfsrv)
+    return;
+  timeref_t t0a = sfsrv->first();
+  timeref_t t0b = sfsrv->latest() - sfsrv->bufsize();
+  timeref_t t1 = sfsrv->latest();
+  timeref_t t0 = t1 - 25000; // one second worth
+  if (t0 < t0a)
+    t0 = t0a;
+  if (t0 < t0b)
+    t0 = t0b;
+  int n = t1 - t0;
+  long long sumx[TOTALCHANS];
+  for (int c=0; c<TOTALCHANS; c++)
+    sumx[c] = 0;
+  for (int k=0; k<n; k++) {
+    for (int c=0; c<TOTALCHANS; c++) {
+      Sample const &s = (*sfsrv)[t0+k];
+      int x = s[c];
+      sumx[c] += x;
+    }
+  }
+  double avg[TOTALCHANS];
+  for (int c=0; c<TOTALCHANS; c++) 
+    avg[c] = sumx[c] / (0.0 + n);
+
+  double sumxx[TOTALCHANS];
+  for (int c=0; c<TOTALCHANS; c++)
+    sumxx[c] = 0;
+  for (int k=0; k<n; k++) {
+    for (int c=0; c<TOTALCHANS; c++) {
+      int x = (*sfsrv)[t0+k][c];
+      double dx = x - avg[c];
+      sumxx[c] += dx*dx;
+    }
+  }
+  double stddev[TOTALCHANS];
+  for (int c=0; c<TOTALCHANS; c++) 
+    stddev[c] = sqrt(sumxx[c] / (0.0 + n));
+
+  for (int c=0; c<TOTALCHANS; c++) {
+    if (c%10==0) 
+      printf("%2i: ", c);
+    printf("%6.1f ", stddev[c]);
+    if (c%10==9)
+      printf("\n");
+  }
+  printf("\n");
+}
+
 void trackshift(int argc, char **args) {
-  if (argc) {
+  if (argc>=1) {
     int c = atoi(args[0]);
     if (c)
       shifttrackch = NCHANS + c-1;
     else
       shifttrackch = -1;
   }
+  if (argc>=2) {
+    int thr = atoi(args[1]);
+    if (thr>0)
+      shifttrackthr = thr;
+    else
+      shifttrackthr = -1;
+  }
   if (shifttrackch>=NCHANS) 
-    fprintf(stderr,"Shift tracking enabled on auxiliary channel A%i",
+    fprintf(stderr,"Shift tracking enabled on auxiliary channel A%i\n",
 	    1 + shifttrackch-NCHANS);
   else if (shifttrackch>=0) 
-    fprintf(stderr,"Shift tracking enabled on electrode #%i",
+    fprintf(stderr,"Shift tracking enabled on electrode #%i\n",
 	    shifttrackch);
   else
-    fprintf(stderr,"Shift tracking disabled");
+    fprintf(stderr,"Shift tracking disabled\n");
+  if (shifttrackthr>0)
+    fprintf(stderr, "  Threshold is zero + %i digi\n", shifttrackthr);
+  else
+    fprintf(stderr, "  Threshold is automatic\n");
 }    
 
 void autothresh(int argc, char **args) {
@@ -321,6 +383,7 @@ struct Cmdr::Cmap cmds[] = {
   { gain, "gain", 0,1, "[gain step]", },
   { setblankout, "blankout", 0,1, "[period-in-ms or 0]", },
   { trackshift, "trackshift", 0,1, "[1/2/3 or -]", },
+  { printrms, "rms", 0, 0, "", },
   { setdbx, "dbx", 0, 1, "[0/1]", },
   { report, "clients", 0, 0, "", },
 #if NSSRV

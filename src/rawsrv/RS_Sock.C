@@ -347,10 +347,12 @@ void RS_Sock::disableShiftTracking() {
   trackshift = false;
 }
 
-void RS_Sock::enableShiftTracking(int ch) {
+void RS_Sock::enableShiftTracking(int ch, int thr) {
+  if (thr<0)
+    thr = info.digital_half_range/8;
   trackshift = true;
   cs.setChannel(ch);
   cs.setDZero(info.digital_zero);
-  cs.setThresh(info.digital_half_range/4);
+  cs.setThresh(thr);
   currentshift = 0;
 }

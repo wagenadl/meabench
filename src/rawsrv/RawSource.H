@@ -64,7 +64,7 @@ public:
   virtual SFAux::HWStat status() throw(Error) { return SFAux::HWStat(); }
   virtual void start() throw(Error) {}
   virtual void stop() {}
-  virtual void enableShiftTracking(int /*ch*/) {
+  virtual void enableShiftTracking(int /*ch*/, int /*thr*/) {
     throw Error("RawSource","Shift tracking not available for this source");
   }
   virtual void disableShiftTracking() {}

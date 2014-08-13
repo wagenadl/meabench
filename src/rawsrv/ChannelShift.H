@@ -14,7 +14,7 @@ class ChannelShift {
        contains a rail-to-rail 60 Hz signal.
   */
 public:
-  ChannelShift(int channel=NCHANS+1, raw_t dzero=2048, raw_t thresh=512);
+  ChannelShift(int channel=NCHANS+1, raw_t dzero=2048, raw_t thresh=256);
   /*:F constructor
    *:D Does not do anything except to optionally specify the channel to track
        and to fix digital zero and the acceptance threshold (see check()).
