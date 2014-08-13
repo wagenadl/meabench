@@ -22,9 +22,8 @@
 
 #define MEAB_H
 
+#include <../version.h>
 #include <common/MEABDefs.H>
-
-#define STRINGVERSION(v) #v
 
 namespace MEAB {
   //----------------------------------------------------------------------
@@ -50,12 +49,12 @@ namespace MEAB {
       progname=progn;
 #ifdef MEA_ULTRAFAST
     fprintf(stderr,
-	    "This is %s, part of meabench " STRINGVERSION(VERSION) "-ll, (C) Daniel Wagenaar 2000-2013\n\n",
-	    progname.c_str());
+	    "This is %s, part of meabench %s-ll, (C) Daniel Wagenaar 2000-%s\n\n",
+	    progname.c_str(), VERSION, LASTYEAR);
 #else
     fprintf(stderr,
-	    "This is %s, part of meabench " STRINGVERSION(VERSION) ", (C) Daniel Wagenaar 2000-2013\n\n",
-	    progname.c_str());
+	    "This is %s, part of meabench %s, (C) Daniel Wagenaar 2000-%s\n\n",
+	    progname.c_str(), VERSION, LASTYEAR);
 #endif
     char *term = getenv("TERM");
     if (term && !strcmp(term,"xterm")) {
