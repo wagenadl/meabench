@@ -4,7 +4,7 @@
 #include <base/dbx.H>
 #include <base/Sprintf.H>
 
-#define THRFRAC 0.90
+#define THRFRAC 0.80
 
 ChannelShift::ChannelShift(int channel, raw_t dzero, raw_t thresh):
   channel(channel),
@@ -53,17 +53,18 @@ int ChannelShift::whereIs(Sample const *data, int nSamples) const {
 
   sdbx("ChannelShift::whereIs(%p,%i)",data,nSamples);
   for (int k=0; k<TOTALCHANS; k++) 
-    sdbx("  data[0,10,20,30][%i] = %i %i %i %i. nabove=%i",k,
+    sdbx("  data[0,10,20,30][%i] = %i %i %i %i. nabove=%i/%i",k,
 	 data[0][k],data[10][k],data[20][k],data[30][k],
-	 nabove[k]);
+	 nabove[k],nSamples);
   
   int iabove=-1;
+  int maxabove=0;
   for (int k=0; k<TOTALCHANS; k++) {
     if (double(nabove[k])>=THRFRAC*double(nSamples)) {
-      if (iabove>=0)
-	return -1; // ambiguous
-      else
-	iabove=k;
+      if (nabove[k]>maxabove) {
+	iabove = k;
+	maxabove = nabove[k];
+      }
     }
   }
   return iabove;
