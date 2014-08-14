@@ -51,7 +51,7 @@ public:
   string const &hostAddress() { return hostaddress; }
   int hostPort()  { return port; }
   NS_Info const &getInfo() const { return info; }
-  virtual void enableShiftTracking(int ch);
+  virtual void enableShiftTracking(int ch, int thr=-1);
   virtual void disableShiftTracking();
 public:
   inline static int quantum() { return RSS_QUANTUM; }
