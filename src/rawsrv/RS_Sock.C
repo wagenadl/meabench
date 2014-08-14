@@ -159,10 +159,12 @@ void RS_Sock::readFrame(Sample *dst) throw(Error) {
     WARN_PARTIAL;
   }
   if (shifted) {
-    if (frameIsInfo(shiftbuffer))
+    if (frameIsInfo(shiftbuffer)) {
       memcpy(dst, shiftbuffer, RSS_QUANTUM*sizeof(Sample));
-    else
-    memcpy((char*)dst + shiftbytes, shiftbuffer, restbytes);
+      return;
+    } else {
+      memcpy((char*)dst + shiftbytes, shiftbuffer, restbytes);
+    }
   }
 
   if (trackshift) {
