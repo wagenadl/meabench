@@ -382,7 +382,7 @@ struct Cmdr::Cmap cmds[] = {
   { autothresh, "autothresh", 0,1, "[multiplier]", },
   { gain, "gain", 0,1, "[gain step]", },
   { setblankout, "blankout", 0,1, "[period-in-ms or 0]", },
-  { trackshift, "trackshift", 0,1, "[1/2/3 or -]", },
+  { trackshift, "trackshift", 0, 2, "[1/2/3 or -] [threshold or -]", },
   { printrms, "listrms", 0, 0, "", },
   { setdbx, "dbx", 0, 1, "[0/1]", },
   { report, "clients", 0, 0, "", },
