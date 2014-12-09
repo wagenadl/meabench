@@ -1,0 +1,17 @@
+#!/bin/sh
+
+DEST=$1
+BIN=$2
+
+cat > $BIN/mea <<EOF
+#!/bin/sh
+LD_LIBRARY_PATH=$DEST/lib:\$LD_LIBRARY_PATH
+PERL5LIB=$DEST/perl:\$PERL5LIB
+export LD_LIBRARY_PATH
+export PERL5LIB
+PROG=\$1
+shift
+exec $DEST/bin/\$PROG \$*
+EOF
+chmod a+x $BIN/mea
+
