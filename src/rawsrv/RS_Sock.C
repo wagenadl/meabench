@@ -54,6 +54,7 @@ RS_Sock::RS_Sock(int gainsetting) throw(Error): RS_Base(gainsetting) {
   port = NEUROSOCK_PORT0;
   trackshift = false;
   shiftbuffer = new Sample[RSS_QUANTUM];
+  stopping = false;
 };
 
 void RS_Sock::connect() {
@@ -167,7 +168,7 @@ void RS_Sock::readFrame(Sample *dst) throw(Error) {
     }
   }
 
-  if (trackshift) {
+  if (trackshift && !stopping) {
     if (!cs.check(dst,RSS_QUANTUM)) {
       fprintf(stderr,"Warning: Channel shift detected... ");
       int where = cs.whereIs(dst,RSS_QUANTUM);
@@ -281,11 +282,13 @@ void RS_Sock::setChannels(long long excludeChannels,
 
 
 void RS_Sock::start() throw(Error) {
+  stopping = false;
   if (!connected) connect();
   sendCommand(NS_Command::START);
 }
 
 void RS_Sock::stop() {
+  stopping = true;
   sendCommand(NS_Command::STOP);
   while (readUntilInfo() != NS_Info::STOP_RESPONSE)
     fprintf(stderr,

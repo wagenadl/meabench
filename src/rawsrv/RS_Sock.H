@@ -75,6 +75,7 @@ private:
   bool trackshift;
   Sample *shiftbuffer;
   int currentshift;
+  bool stopping;
 private:
 #ifdef NIHARDWARE
   static const int RANGES=7;

@@ -358,7 +358,9 @@ void run(int argc, char **args) {
 	waker->send(Wakeup::Trig);
     }
   } catch (...) {
+    fprintf(stderr,"Caught -> stopping\n");
     dostop(src);
+    fprintf(stderr,"Stopped...\n");
     throw;
   }
 
