@@ -51,7 +51,7 @@ public:
   // end() and all iterator stuff
   // aux()
 public:
-  EasyClient(string const &streamname) throw(Error): //:c
+  EasyClient(string const &streamname) : //:c
     /*:D Construct a client based on a stream. 
      *:A streamname. The streamname must be
          specified without extensions and directory.
@@ -82,7 +82,7 @@ public:
   }
   string bufuse() { return SFCli<Data,Aux>::bufuse_deepreport(); } //:f bufuse
   /*:D Returns the buffer usage of the stream as a string. */
-  bool block() throw(Error) { //:f block
+  bool block()  { //:f block
     /*:D block() puts the caller to sleep until a message is received from
          the server.
      *:A -
@@ -92,7 +92,7 @@ public:
       return false;
     return true;
   }
-  bool blockuntil(timeref_t t) throw(Error) { //:f blockuntil
+  bool blockuntil(timeref_t t)  { //:f blockuntil
     /*:D blockuntil(t) blocks until timeref t is available on the fifo,
          or until a Stop code is received.
      *:A timestamp
@@ -104,7 +104,7 @@ public:
 	return false;
     return true;
   }
-  bool trig(int dt) throw(Error) { //:f trig
+  bool trig(int dt)  { //:f trig
     /*:D trig(dt) blocks until dt samples after a trigger.
      *:A dt: time to wait post trigger (samples)
      *:R True unless a `Stop' code is received.
@@ -118,7 +118,7 @@ public:
     return block(SFCli<Data,Aux>::aux()->trig.t_latest +
 		 SFCli<Data,Aux>::first() + dt);
   }
-  void waitstart() throw(Error) { //:f waitstart
+  void waitstart()  { //:f waitstart
     /*:D waitstart() blocks until a `Start' code is received.
      *:A -
      *:R -
@@ -127,7 +127,7 @@ public:
     while (waker.block()!=Wakeup::Start)
       ;
   }
-  bool read(Data *dest, timeref_t start, int length) throw(Error) { //:f read
+  bool read(Data *dest, timeref_t start, int length)  { //:f read
     /*:D read(dst, t, l) reads l records into the destination buffer starting
          from timeref t.
      *:A dest: destination pointer for data
@@ -143,7 +143,7 @@ public:
       *dest++ = (*this)[start++];
     return true;
   }
-  int readn(Data *dest, timeref_t start, int length) throw(Error) { //:f readn
+  int readn(Data *dest, timeref_t start, int length)  { //:f readn
     /*:D readn(dst, t, l) reads l records into the destination buffer starting
          from timeref t.
      *:A dest: destination pointer for data
@@ -172,7 +172,7 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
    *:N This is a class template. Convenient instantiations for `raw' and
        `spike' streams are provided below. */
  public:
-  StreamClient(string const &streamname, bool waitforstart) throw(Error) { //:c
+  StreamClient(string const &streamname, bool waitforstart)  { //:c
     /*:D StreamClient(sn, wfs) constructs a StreamClient connected to
          a meabench stream.
      *:A streamname. The streamname must be
@@ -193,7 +193,7 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
     }
     mf = 0;
   }
-  StreamClient(string const &fn) throw(Error) { //:c
+  StreamClient(string const &fn)  { //:c
     /*:D StreamClient(fn) constructs a StreamClient that reads from a file.
      *:A fn: filename to open, including suffixes.
      *:N If the file is of typical meabench construction, then continuation
@@ -209,7 +209,7 @@ template <class Data, class Aux> class StreamClient { //:C StreamClient
     if (mf)
       delete mf;
   }
-  StreamClient(FILE *fh) throw(Error) { //:c
+  StreamClient(FILE *fh)  { //:c
     /*:D StreamClient(fh) constructs a StreamClient that reads from an already
          opened file. Typical use is to read from stdin.
      *:A fh: filehandle to read from.
@@ -301,9 +301,9 @@ typedef EasyClient<Spikeinfo,SpikeAux> FullSpike;
 typedef StreamClient<Sample,RawAux> StreamRaw; //:C StreamRaw
 class StreamSpike: public StreamClient<Spikeinfo,SpikeAux> { //:C StreamSpike
 public:
-  StreamSpike(string const &streamname, bool waitforstart) throw(Error):
+  StreamSpike(string const &streamname, bool waitforstart) :
     StreamClient<Spikeinfo,SpikeAux>(streamname,waitforstart) { }
-  StreamSpike(FILE *fh) throw(Error): StreamClient<Spikeinfo,SpikeAux>(fh) {
+  StreamSpike(FILE *fh) : StreamClient<Spikeinfo,SpikeAux>(fh) {
     setdisksize(164);
   }
 };

@@ -41,7 +41,7 @@ public:
   }
   int count(int c0) const { return totals[c0]; }
   timeref_t totaltime() const { return t_end - t_begin; }
-  void build(FILE *fh) throw(Error);
+  void build(FILE *fh) ;
   double cov(int c0, int c1, int bin) const; // returns covariance * time
   double subtractor(int c0, int c1) const;
   double normalizer(int c0, int c1) const;

@@ -35,17 +35,17 @@ private:
 #endif
   static const int RSS_FREQKHZ = 25;
 public:
-  RS_Sock(int gainsetting) throw(Error);
+  RS_Sock(int gainsetting) ;
   ~RS_Sock();
-  virtual unsigned int read(Sample *dst, unsigned int amount) throw(Error);
-  virtual SFAux::HWStat status() throw(Error);
-  virtual void start() throw(Error);
+  virtual unsigned int read(Sample *dst, unsigned int amount) ;
+  virtual SFAux::HWStat status() ;
+  virtual void start() ;
   virtual void stop();
-  void reportInfo(bool live=false) throw(Error);
-  void refreshInfo() throw(Error);
+  void reportInfo(bool live=false) ;
+  void refreshInfo() ;
   void connect();
   virtual void setChannels(long long excludeChannels,
-			   long long doubleChannels) throw(Error);
+			   long long doubleChannels) ;
   virtual SFAux::SourceInfo sourceInfo();
   void setHost(string const &ipadr, int port);
   string const &hostAddress() { return hostaddress; }
@@ -59,10 +59,10 @@ public:
   static real_t range(int gain) { return (gain>=0 && gain<RANGES) ? RANGE[gain] : 0; }
   static char const *identify();
 private:
-  void readHeader() throw(Error);
-  void sendCommand(NS_Command::NS_Cmd cmd, long long arg=0) throw(Error);
-  NS_Info::NS_Reason readUntilInfo() throw(Error);
-  void readFrame(Sample *dst) throw(Error);
+  void readHeader() ;
+  void sendCommand(NS_Command::NS_Cmd cmd, long long arg=0) ;
+  NS_Info::NS_Reason readUntilInfo() ;
+  void readFrame(Sample *dst) ;
   inline bool frameIsInfo(Sample *frame);
 private:
   NS_Info info;

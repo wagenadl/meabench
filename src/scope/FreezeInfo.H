@@ -40,7 +40,7 @@ public:
 	     QLabel *timereport, int width_ms0,
 	     RawSFCli *rawsrc,
 	     SpikeSFCli *spikesrc,
-	     QWidget *hideme) throw(Error);
+	     QWidget *hideme) ;
   ~FreezeInfo();
   void die() { dead=true; }
   int valueMS();

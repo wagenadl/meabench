@@ -23,7 +23,7 @@
 
 real_t const RS_MCS::RANGE[RANGES] = { 3410.0,1205.0,683.0,341.0 };
 
-RS_MCS::RS_MCS(int gainsetting) throw(Error): RS_Base(gainsetting) {
+RS_MCS::RS_MCS(int gainsetting) : RS_Base(gainsetting) {
   if (gain>=RANGES)
     throw Error("RawSource","Gain setting out of range");
 
@@ -48,7 +48,7 @@ SFAux::SourceInfo RS_MCS::sourceInfo() {
   return si;
 }
 
-void RS_MCS::start() throw(Error) {
+void RS_MCS::start()  {
   int CHN = MC64;
   if (ioctl(fd, MCCARD_IOSETCHANNELS,&CHN)<0)
     throw SysErr("MCMeata","Cannot set CHN. Invalid channel index or not enough memory for DMA Buffers.");
@@ -66,7 +66,7 @@ RS_MCS::~RS_MCS() {
 }
 
 unsigned int RS_MCS::read(Sample *dst, unsigned int amount)
-  throw(Error) {
+   {
   if (amount % MCC_FILLSAMS)
     throw Error("RawSource","Bad amount requested");
   while (amount>0) {
@@ -86,7 +86,7 @@ unsigned int RS_MCS::read(Sample *dst, unsigned int amount)
   return 0;
 }
 
-SFAux::HWStat RS_MCS::status() throw(Error)  {
+SFAux::HWStat RS_MCS::status()   {
   struct MCCard_stats stats;
   int r = ioctl(fd,MCCARD_IOQSTATS,&stats);
   if (r)

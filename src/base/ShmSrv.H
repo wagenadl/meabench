@@ -26,7 +26,7 @@
 
 class ShmSrv {
 public:
-  ShmSrv(char const *mountpt, int size, int mode=0660) throw(Error);
+  ShmSrv(char const *mountpt, int size, int mode=0660) ;
   ~ShmSrv();
   void *data() { return data_; }
   static void setgid(int gid0) { gid=gid0; }

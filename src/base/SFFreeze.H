@@ -32,7 +32,7 @@ template <class Data_, class Aux> class SFFreeze: //:+
      . It is initialized from a normal SFCli.
   */
 public:
-  SFFreeze(SFCli<Data_,Aux> const &src) throw(Error):
+  SFFreeze(SFCli<Data_,Aux> const &src) :
     SFCli<Data_,Aux>((SFHeader*)0),
     realhdr(*src.gettoheader()), realaux(*src.aux()) {
     realdata = new Data_[src.bufsize()];

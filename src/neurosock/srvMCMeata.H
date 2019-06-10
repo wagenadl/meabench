@@ -11,7 +11,7 @@ const int MCC_FREQHZ = FREQKHZ * 1000;
 
 class srvMCMeata: public srvMeata {
 public:
-  srvMCMeata(bool use128) throw(Error);
+  srvMCMeata(bool use128) ;
   virtual ~srvMCMeata();
   virtual void start();
   virtual void stop();

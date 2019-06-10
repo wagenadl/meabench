@@ -20,7 +20,7 @@
 
 #include "TriggerFile.H"
 
-TriggerFile::TriggerFile(string const &fn) throw(Error) {
+TriggerFile::TriggerFile(string const &fn)  {
   fh = fopen(fn.c_str(),"r");
   if (!fh)
     throw SysErr("TriggerFile","Cannot open");

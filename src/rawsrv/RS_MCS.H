@@ -27,11 +27,11 @@
 
 class RS_MCS: public RS_Base {
 public:
-  RS_MCS(int gainsetting) throw(Error);
+  RS_MCS(int gainsetting) ;
   ~RS_MCS();
-  virtual unsigned int read(Sample *dst, unsigned int amount) throw(Error);
-  virtual SFAux::HWStat status() throw(Error);
-  virtual void start() throw(Error);
+  virtual unsigned int read(Sample *dst, unsigned int amount) ;
+  virtual SFAux::HWStat status() ;
+  virtual void start() ;
   virtual void stop();
   virtual SFAux::SourceInfo sourceInfo();
 public:

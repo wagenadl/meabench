@@ -51,7 +51,7 @@ void ETA::allocdata(int nbins0, int nevents) {
 void ETA::build(timeref_t *eventlist, int nevents,
 		int reso_sam, int bin_reso,
 		int start_sam, int nbins,
-		FILE *fh) throw(Error) {
+		FILE *fh)  {
   //  fprintf(stderr,"Allocating data\n");
   allocdata(nbins, nevents);
   //  fprintf(stderr,"Alloc'ed OK\n");

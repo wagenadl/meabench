@@ -30,11 +30,11 @@
 
 class Stdin2Sock {
 public:
-  Stdin2Sock(char const *prompt) throw(Error);
+  Stdin2Sock(char const *prompt) ;
   ~Stdin2Sock();
   int getfd() const { return main_fd; }
 private:
-  void thread_code() throw(Error);
+  void thread_code() ;
   friend void *s2s_thread(void *);
 private:
   pthread_t thread;

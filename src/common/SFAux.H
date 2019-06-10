@@ -30,7 +30,7 @@ public:
   static const int PARACCUMLEN = 10000;
 public:
   SFAux(): paraccumlen(0) { }
-  void addpar(string const &key, string const &val) throw(Error) {
+  void addpar(string const &key, string const &val)  {
     string s = Sprintf("\n  %s: %s", key.c_str(), val.c_str());
     int len = s.size();
     if (paraccumlen+len >= PARACCUMLEN)

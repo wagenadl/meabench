@@ -36,16 +36,16 @@ bool SourceSet::needsstream() const {
   return false;
 }
 
-void SourceSet::add(string const &stream) throw(Error) {
+void SourceSet::add(string const &stream)  {
   add(stream,autotype(stream));
 }
 
-void SourceSet::reset() throw(Error) {
+void SourceSet::reset()  {
 //  close();
   erase(begin(),end());
 }
 
-//SFCVoid const *SourceSet::source(string const &streamname) const throw(Error) {
+//SFCVoid const *SourceSet::source(string const &streamname) const  {
 //  int n=0;
 //  for (const_iterator i=begin(); i!=end(); ++i) 
 //    if ((*i).stream == streamname)
@@ -56,7 +56,7 @@ void SourceSet::reset() throw(Error) {
 //}
 
 
-//void SourceSet::open(string const &basefn) throw(Error) {
+//void SourceSet::open(string const &basefn)  {
 //  if (opened)
 //    throw Error("SourceSet","Already opened");
 //  bool usestream = needsstream();
@@ -112,7 +112,7 @@ void SourceSet::reset() throw(Error) {
 //  }
 //}
 //
-//void SourceSet::close() throw(Error) {
+//void SourceSet::close()  {
 //  for (vector<SFCVoid *>::iterator i=srcs.begin(); i!=srcs.end(); ++i)
 //    delete (*i);
 //  for (vector<Recorder *>::iterator i=recs.begin(); i!=recs.end(); ++i)

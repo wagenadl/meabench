@@ -43,7 +43,7 @@ SpikeXCorrel:: ~SpikeXCorrel() {
 
 #define DROPIVAL 20
 
-void SpikeXCorrel::build(FILE *fh) throw(Error) {
+void SpikeXCorrel::build(FILE *fh)  {
   MultiTimeQueue mtq;
   Spikeinfo si;
   int waiti=DROPIVAL;

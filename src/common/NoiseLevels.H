@@ -39,7 +39,7 @@ public:
   float var(int hw) const { return vars[hw]; }
   float std(int hw) const { return stds[hw]; }
   float operator[](int hw) const { return stds[hw]; }
-  void load(string const &fnb) throw(Error) {
+  void load(string const &fnb)  {
     string fn(fnb); fn+=NL_SUFFIX;
     ifstream file(fn.c_str());
     if (!file) throw SysErr("NoiseLevels","Cannot load");
@@ -54,7 +54,7 @@ public:
     }
     ready=true;
   }
-  void save(string const &fnb) throw(Error) {
+  void save(string const &fnb)  {
     if (!ready)
       makeready();
     string fn(fnb); fn+=NL_SUFFIX;
@@ -81,7 +81,7 @@ public:
       for (int hw=0; hw<TOTALCHANS; hw++)
 	mv[hw].addexample(src[i][hw]);
   }
-  void makeready() throw(Error) {
+  void makeready()  {
     if (chunks() < MINCHUNKS)
       throw Error("NoiseLevels","Too few chunks to compute meaningful estimates");
     for (int hw=0; hw<TOTALCHANS; hw++) {

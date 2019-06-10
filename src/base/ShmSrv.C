@@ -35,7 +35,7 @@
 
 int ShmSrv::gid = -1;
 
-ShmSrv::ShmSrv(char const *mountpt, int size, int mode) throw(Error) {
+ShmSrv::ShmSrv(char const *mountpt, int size, int mode)  {
   ensuredir(mountpt);
   unlink(mountpt); // get rid of old mount pt, if exists
   int fd = creat(mountpt,mode);
@@ -67,7 +67,7 @@ ShmSrv::ShmSrv(char const *mountpt, int size, int mode) throw(Error) {
     }
   }
   data_ = shmat(shmid,0,0);
-  if (data_<0)
+  if ((void*)data_==(void*)(-1))
     throw SysErr("ShmSrv","Cannot attach to shared memory segment");
 }
 

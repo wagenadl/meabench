@@ -48,7 +48,7 @@ public:
     timeref_t t;
   };
 public:
-  SFCli(char const *mountpt) throw(Error): SFCVoid(mountpt) { //:c
+  SFCli(char const *mountpt) : SFCVoid(mountpt) { //:c
     /*:D This is the normal constructor */
     aux1_ = (Aux const *)(aux_);
     data1_ = (Data_ const*)(data_);
@@ -81,14 +81,14 @@ protected:
     data1_=0;
     aux1_=0;
   }
-  void setpointers(SFHeader *hdr, Aux *aux, Data_ *data) throw(Error) {
+  void setpointers(SFHeader *hdr, Aux *aux, Data_ *data)  {
     SFCVoid::setpointers(hdr, (char const *)(aux),(char const *)(data));
     aux1_ = aux;
     data1_ = data;
     postsetup();
   }
 private:
-  void postsetup() throw(Error) {
+  void postsetup()  {
     mask = (1<<hdr_->logsize)-1;
     bufsiz = (1<<hdr_->logsize);
     if (hdr_->typesize != sizeof(Data))

@@ -42,7 +42,7 @@
 
 template <class SFSRV> class TemplOut {
 public:
-  TemplOut(string const &name, int loglength) throw(Error):
+  TemplOut(string const &name, int loglength) :
     sfsrv(CommonPath(name,SFSUFFIX).c_str(),loglength),
     waker(CommonPath(name,WAKESUFFIX).c_str()) {
     waker.postinit();
@@ -64,7 +64,7 @@ typedef TemplOut<EventSFSrv> EventOut;
 
 template <class SFCLI> class TemplIn {
 public:
-  TemplIn(string const &srcname, string const &progname, int ival=1) throw(Error):
+  TemplIn(string const &srcname, string const &progname, int ival=1) :
     sfcli(CommonPath(srcname,SFSUFFIX).c_str()),
     sleeper(progname.c_str(),CommonPath(srcname,WAKESUFFIX).c_str()),
     name(srcname) {

@@ -42,7 +42,7 @@
 
 static float AUX_RANGE_MV[] = PDMEATA_RANGE_ARRAY_MV;
 
-srvPdMeata::srvPdMeata() throw(Error)
+srvPdMeata::srvPdMeata() 
 #ifdef MEDIANFLT
   : medianflt(NCHANNELS)
 #endif

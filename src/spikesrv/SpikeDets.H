@@ -69,7 +69,7 @@ public:
    */
   static SpkDet *construct(RawSFCli const &src, //:+
 			   SpikeSFSrv &dst, //:+
-			   SpkDet::Type type) throw(Error); //:f construct
+			   SpkDet::Type type) ; //:f construct
   /*:D Constructs a spike detector according to type.
    *:A src, dst: as specified in the class description
        type: spike detector type

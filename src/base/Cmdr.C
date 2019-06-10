@@ -64,7 +64,7 @@ namespace Cmdr {
     return tokens;
   }
 
-  Cmap *parse(char *cmd, Cmap *cmds) throw(Error) {
+  Cmap *parse(char *cmd, Cmap *cmds)  {
     Cmap *f=0;
     while (cmds->foo) {
       if (isprefix(cmd,cmds->cmd)) {
@@ -112,7 +112,7 @@ namespace Cmdr {
     }
   }
   
-  bool exec(char *cmdwargs, Cmap *cmds, bool coloncomma) throw(Error) {
+  bool exec(char *cmdwargs, Cmap *cmds, bool coloncomma)  {
     letsquit = false;
     while (*cmdwargs==' ')
       cmdwargs++; // skip initial spaces
@@ -136,7 +136,7 @@ namespace Cmdr {
     return letsquit;
   }
 
-  bool exec(int argc, char **argv, Cmap *cmds) throw(Error) {
+  bool exec(int argc, char **argv, Cmap *cmds)  {
     for (int i=1; i<argc; i++)
       if (exec(argv[i],cmds,true))
 	return true;

@@ -42,13 +42,13 @@
 
 class RS_Base {
 public:
-  RS_Base(int gainsetting) throw(Error) {
+  RS_Base(int gainsetting)  {
     gain=gainsetting;
   }
   virtual ~RS_Base() { }
   virtual SFAux::SourceInfo sourceInfo() { return SFAux::SourceInfo(); }
   virtual unsigned int read(Sample */*dst*/, unsigned int /*amount*/)
-    throw(Error) {
+     {
     throw Error("RawSource","Dummy cannot give data");
   }
   /* New read() semantics: the call will block until the specified AMOUNT is
@@ -61,8 +61,8 @@ public:
      next request. If non-zero is returned, the implementation GUARANTEES it
      will not block if the next call requests that number of samples or less.
   */
-  virtual SFAux::HWStat status() throw(Error) { return SFAux::HWStat(); }
-  virtual void start() throw(Error) {}
+  virtual SFAux::HWStat status()  { return SFAux::HWStat(); }
+  virtual void start()  {}
   virtual void stop() {}
   virtual void enableShiftTracking(int /*ch*/, int /*thr*/) {
     throw Error("RawSource","Shift tracking not available for this source");

@@ -28,7 +28,7 @@
 #include <fcntl.h>
 #include <sys/soundcard.h>
 
-Audio::Audio(char const *dev) throw(Error) {
+Audio::Audio(char const *dev)  {
    audio_dev=dev;
    audio_fd=-1;
    buffer=0;
@@ -43,7 +43,7 @@ void Audio::close() {
   buffer=0;
 }
 
-void Audio::open() throw(Error) {
+void Audio::open()  {
   close();
   audio_fd = ::open(audio_dev.c_str(),O_WRONLY,0);
 
@@ -81,7 +81,7 @@ void Audio::open() throw(Error) {
   buffer = new sample[frag_length];
 }
 
-void Audio::write() throw(Error) {
+void Audio::write()  {
   ssize_t n = ::write(audio_fd,buffer,frag_length*sizeof(sample));
   if (n!=frag_length*sizeof(sample))
     throw SysErr("Audio","write failed");

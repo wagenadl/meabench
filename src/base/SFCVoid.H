@@ -36,7 +36,7 @@
 
 class SFCVoid {
 public:
-  SFCVoid(char const *mountpt) throw(Error) { //:c
+  SFCVoid(char const *mountpt)  { //:c
     /*:D This is the normal constructor */
     cli = new ShmCli(mountpt);
     hdr_ = (SFHeader*)(cli->data());
@@ -147,7 +147,7 @@ protected:
     aux_=0;
   }
   void setpointers(SFHeader *hdr, char const *aux, char const *data)
-    throw(Error) {
+     {
     cli=0;
     hdr_ = hdr;
     aux_ = aux;
@@ -155,7 +155,7 @@ protected:
     postsetup();
   }
 private:
-  void postsetup() throw(Error) {
+  void postsetup()  {
     mask = (1<<hdr_->logsize)-1;
     bufsiz = (1<<hdr_->logsize);
     datasiz = hdr_->typesize;

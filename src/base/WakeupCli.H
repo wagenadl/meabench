@@ -29,15 +29,15 @@
 
 class WakeupCli: private Sockclient {
 public:
-  WakeupCli(char const *identity, char const *mountpt) throw(Error);
+  WakeupCli(char const *identity, char const *mountpt) ;
   virtual ~WakeupCli() {}
-  void setival(timeref_t dt) throw(Error);
+  void setival(timeref_t dt) ;
   timeref_t getival() const { return ival; }
-  void identify(char const *identity) throw(Error);
-  virtual void sendmsg(WakeUpstreamMsg const &msg) throw(Error);
-  void report_bufuse(timeref_t last) throw(Error);
-  void report_nobufuse() throw(Error);
-  void report_yesbufuse() throw(Error);
+  void identify(char const *identity) ;
+  virtual void sendmsg(WakeUpstreamMsg const &msg) ;
+  void report_bufuse(timeref_t last) ;
+  void report_nobufuse() ;
+  void report_yesbufuse() ;
   /* Here's how the CanSlow/BufUse protocol works:
    * A client that may want to slow down a source will send a YesBufUse
      message to that source.
@@ -51,10 +51,10 @@ public:
    * Whenever a client stops sending BufUse messages, e.g. when it stops
      running, it *must* send a NoBufUse message, or the server may block.
   */
-  virtual int poll() throw(Error); // returns the latest non-zero item in the queue,
+  virtual int poll() ; // returns the latest non-zero item in the queue,
   // or zero if only zero-valued items in the queue, or -1 if queue empty,
   // exc on eof
-  virtual int block() throw(Error); // block until queue non empty, othw as poll
+  virtual int block() ; // block until queue non empty, othw as poll
   int fd() const { return getfd(); }
 protected:
   WakeupCli(int dummy): Sockclient(dummy) { }

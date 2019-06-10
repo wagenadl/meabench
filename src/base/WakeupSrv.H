@@ -29,16 +29,16 @@
 
 class WakeupSrv: private Sockserver {
 public:
-  WakeupSrv(char const *mountpt, int mode=0660) throw(Error);
+  WakeupSrv(char const *mountpt, int mode=0660) ;
   ~WakeupSrv();
-  //  bool poll() throw(Error); // in future vsns, this will be able to return
+  //  bool poll() ; // in future vsns, this will be able to return
   // .. commands passed up from clients. Now it just returns 1 if something
   // .. happened
   void send(char code);
   void wakeup(unsigned int dt);
   void start();
   void stop() { send(Wakeup::Stop); }
-  void postinit() throw(Error) {
+  void postinit()  {
     setblocking(false); autowelcome();
     opensockpair(); autothread();
   }
@@ -60,7 +60,7 @@ protected:
   void client_thread(int clientno);
   virtual void reportoverrun(int client);
 private:
-  void opensockpair() throw(Error) ;
+  void opensockpair()  ;
   void unsupport(int cli);
   void support(int cli);
 private:

@@ -39,9 +39,9 @@ public:
        can be changed subsequently by setfn().
   */
   void setChannelShift(int n);
-  void open() throw(Error); //:f open
-  void skip(timeref_t amount_s) throw(Error);
-  void fillmeup(Sample *dst, size_t amount) throw(Error); //:f fillmeup
+  void open() ; //:f open
+  void skip(timeref_t amount_s) ;
+  void fillmeup(Sample *dst, size_t amount) ; //:f fillmeup
   /*:D As per DataSrc.
    *:N This version uses usleep(3) to simulate real-time replay.
    *:E An exception is thrown at the end of the file.

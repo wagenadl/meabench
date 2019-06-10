@@ -412,7 +412,7 @@ inline int string2hw(string const &cr) { //:f string2hw
   }
 }
 
-inline int String2hw(string const &cr) throw(Error) { //:f String2hw
+inline int String2hw(string const &cr)  { //:f String2hw
   /*:D String2hw(cr) behaves as string2hw(cr), except that an exception
        is thrown for illegal channel numbers.
   */

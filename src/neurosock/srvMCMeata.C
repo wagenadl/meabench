@@ -12,7 +12,7 @@
 
 static float AUX_RANGE_MV[] = { 4092, 1446, 819.6, 409.2 };
 
-srvMCMeata::srvMCMeata(bool use128) throw(Error) {
+srvMCMeata::srvMCMeata(bool use128)  {
   frame_size_rawt = MCC_FILLBYTES/sizeof(raw_t);
   buf = new raw_t[frame_size_rawt];
   

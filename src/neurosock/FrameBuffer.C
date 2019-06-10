@@ -31,7 +31,7 @@ FrameBuffer::~FrameBuffer() {
   }
 }
 
-void FrameBuffer::stop() throw(Error) {
+void FrameBuffer::stop()  {
   if (hasthread) {
     terminate=true;    
     void *retval;
@@ -55,7 +55,7 @@ static void *start_routine(void *me) {
   return 0;
 }
 
-void FrameBuffer::start() throw(Error) {
+void FrameBuffer::start()  {
   if (!hasthread) {
     terminate=false;
     int r=pthread_create(&thread,0, &start_routine, (void*)this);
@@ -65,7 +65,7 @@ void FrameBuffer::start() throw(Error) {
   }
 }
 
-raw_t *FrameBuffer::read(int iMEA) throw(Error) {
+raw_t *FrameBuffer::read(int iMEA)  {
   //  fprintf(stderr,"[dbg] Framebuffer::read(%i) ...\n",chn_setting);
   if (!hasthread || (iMEA>=src->getNumMEAs())) {
     // fprintf(stderr,"[dbg]   Framebuffer::read -> 0\n");
@@ -114,7 +114,7 @@ void FrameBuffer::resetsoftover(int k) {
   i_lastsoftover[k]=-1;
 } 
 
-void FrameBuffer::threadcode() throw(Error) {
+void FrameBuffer::threadcode()  {
   { MLock ml(lock);
     n_softover[0] = n_softover[1]=0;
     i_lastsoftover[0] = i_lastsoftover[1]=-1;

@@ -33,7 +33,7 @@
 #include <fcntl.h>
 #include <signal.h>
 
-WakeupSrv::WakeupSrv(char const *mountpt, int mode) throw(Error):
+WakeupSrv::WakeupSrv(char const *mountpt, int mode) :
   Sockserver(mountpt,mode), fd_many(-1), fd_one(-1) {
   for (int i=0; i<MAXCLIENTS; i++) {
     wakeival[i] = timeref_t(25*1000)*86400*365; // wakeup once a year by default, ie never
@@ -51,7 +51,7 @@ WakeupSrv::~WakeupSrv() {
     close(fd_one);
 }
 
-void WakeupSrv::opensockpair() throw(Error) {
+void WakeupSrv::opensockpair()  {
   int fds[2];
   int r = socketpair(AF_UNIX,SOCK_STREAM, 0,fds);
   if (r)

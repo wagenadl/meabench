@@ -33,7 +33,7 @@ public:
 public:
   ReplayBase(string const &fn);
   virtual ~ReplayBase();
-  virtual void open() throw(Error);
+  virtual void open() ;
   /*:D open() opens the previously specified file for replay.
    *:A -
    *:R -
@@ -47,7 +47,7 @@ public:
    *:R -
    *:E Errors should be reported by throwing a descriptive string exception.
    */
-  virtual void skip(timeref_t amount_s) throw(Error) {
+  virtual void skip(timeref_t amount_s)  {
     if (amount_s)
       fprintf(stderr,"Warning: Skipping impossible for this stream type.\nRequest ignored.\n");
   }
@@ -56,7 +56,7 @@ public:
    *:A fn: filename
    *:R -
    */
-  virtual void close() throw(Error); //:f close
+  virtual void close() ; //:f close
   /*:D As per DataSrc. */
   /*-- From qmeagraph: DataSrc:
    *:D The close() function should close the device.
@@ -67,7 +67,7 @@ public:
   */
   void setspeed(float s) { spd=s; }
 protected:
-  void gettimingright(timeref_t amount) throw(Error);
+  void gettimingright(timeref_t amount) ;
   virtual bool nextfile();
 protected:
   string fn;

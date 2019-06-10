@@ -46,7 +46,7 @@ private:
     SomeChannels parts[NCHANNELS];
   };
 public:
-  srvPdMeata() throw(Error);
+  srvPdMeata() ;
   ~srvPdMeata();
   void start();
   void stop();

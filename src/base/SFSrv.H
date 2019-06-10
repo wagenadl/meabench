@@ -28,7 +28,7 @@
 
 template <class Data, class Aux> class SFSrv: public SFSVoid {
 public:
-  SFSrv(char const *mountpt, int logsiz, int mode=0660) throw(Error):
+  SFSrv(char const *mountpt, int logsiz, int mode=0660) :
     SFSVoid(mountpt, sizeof(Data), logsiz, sizeof(Aux), mode) {
     aux_ = (Aux*)(SFSVoid::aux_);
     data_ = (Data*)(SFSVoid::data_);

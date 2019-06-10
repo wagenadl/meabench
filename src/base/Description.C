@@ -22,7 +22,7 @@
 #include <base/dbx.H>
 #include <base/Error.H>
 
-ReadDescription::ReadDescription(string const &fn) throw(Error) {
+ReadDescription::ReadDescription(string const &fn)  {
   FILE *fh = fopen(fn.c_str(),"r");
   sdbx("ReadDescription: fn=%s fh=%p",fn.c_str(),fh);
   if (!fh)
@@ -70,7 +70,7 @@ void ReadDescription::dump() {
     fprintf(stderr,"[%s] -> [%s]\n",(*i).first.c_str(),(*i).second.c_str());
 }
 
-WriteDescription::WriteDescription(string const &fn, int spc0) throw(Error) {
+WriteDescription::WriteDescription(string const &fn, int spc0)  {
   spc=spc0;
   fh = fopen(fn.c_str(),"w");
   if (!fh)

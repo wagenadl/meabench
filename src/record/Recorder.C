@@ -24,7 +24,7 @@
 #include <common/Config.H>
 
 Recorder::Recorder(SFCVoid *source0,
-		   string const &fn0) throw(Error): fn(fn0) {
+		   string const &fn0) : fn(fn0) {
   source = source0;
   disksize = source->datasize();
   fh = fopen(fn.c_str(),"wb");
@@ -42,7 +42,7 @@ Recorder::~Recorder() {
   }
 }
 
-void Recorder::newfile() throw(Error) {
+void Recorder::newfile()  {
   fclose(fh);
   fh=0;
   file_seq_no++;
@@ -53,7 +53,7 @@ void Recorder::newfile() throw(Error) {
   current_file_length = 0;
 }  
 
-timeref_t Recorder::save_some(timeref_t upto) throw(Error) {
+timeref_t Recorder::save_some(timeref_t upto)  {
   if (last<savefrom)
     last = savefrom;
   timeref_t end = min(min(saveto, upto), source->latest());
@@ -76,7 +76,7 @@ timeref_t Recorder::save_some(timeref_t upto) throw(Error) {
   return oldest;
 }
 
-void Recorder::set_bounds(timeref_t t0, timeref_t t1) throw(Error) {
+void Recorder::set_bounds(timeref_t t0, timeref_t t1)  {
   sdbx("Recorder::set_bounds %g - %g",t0/(FREQKHZ*1000.0),t1/(FREQKHZ*1000.0));
   savefrom = t0 + source->first();
   saveto = t1 + source->first();

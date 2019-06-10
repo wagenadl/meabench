@@ -30,19 +30,19 @@
 
 class SpikeReplay: public ReplayBase {
 public:
-  SpikeReplay(string const &fn) throw(Error);
+  SpikeReplay(string const &fn) ;
   ~SpikeReplay();
-  void open() throw(Error);
-  //  void skip(timeref_t amount_s) throw(Error);
-  void fillmeup(Sample *dst, size_t amount) throw(Error);
-  void forcereadahead(timeref_t sourcetime) throw(Error);
-  int writespikes(SpikeSFSrv &dest) throw(Error);
+  void open() ;
+  //  void skip(timeref_t amount_s) ;
+  void fillmeup(Sample *dst, size_t amount) ;
+  void forcereadahead(timeref_t sourcetime) ;
+  int writespikes(SpikeSFSrv &dest) ;
   void fakeNoise(float fac, float const *threshs=0);
   void setBase(raw_t b) { base=b; }
 private:
-  void loadsomespikes() throw(Error);
-  void findnextspikes(timeref_t maxtime) throw(Error);
-  void findnextspike(int ch, timeref_t maxtime) throw(Error);
+  void loadsomespikes() ;
+  void findnextspikes(timeref_t maxtime) ;
+  void findnextspike(int ch, timeref_t maxtime) ;
 private:
   CyclBuf<Spikeinfo> inbuf;
   timeref_t source_start; // first timeref mentioned in input Spikeinfo stream

@@ -45,7 +45,7 @@ ReplayBase::~ReplayBase() {
   }
 }
 
-void ReplayBase::open() throw(Error) {
+void ReplayBase::open()  {
   if (fn=="")
     throw Error("RawReplay","No filename specified");
   close();
@@ -63,7 +63,7 @@ void ReplayBase::open() throw(Error) {
   start_usec = tv0.tv_usec;
 }
 
-void ReplayBase::close() throw(Error) {
+void ReplayBase::close()  {
   if (fh) {
     ::fclose(fh);
   }
@@ -86,7 +86,7 @@ bool ReplayBase::nextfile() {
     
     
 
-void ReplayBase::gettimingright(timeref_t amount) throw(Error) {
+void ReplayBase::gettimingright(timeref_t amount)  {
   // and now get the timing right (relative to start of run)
   struct timeval tv;
   gettimeofday(&tv,0);

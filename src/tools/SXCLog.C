@@ -56,7 +56,7 @@ SXCLog::~SXCLog() {
 
 #define DROPIVAL 20
 
-void SXCLog::build(FILE *fh) throw(Error) {
+void SXCLog::build(FILE *fh)  {
   MultiTimeIdQueue mtq;
   Spikeinfo si;
   int waiti=DROPIVAL;

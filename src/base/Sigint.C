@@ -35,7 +35,7 @@ void (*Sigint::oldh)(int);
 void (*Sigint::foo)(void);
 pid_t Sigint::pid;
 
-Sigint::Sigint(void (*foo0)(void)) throw (Error) {
+Sigint::Sigint(void (*foo0)(void))  {
   ////  printf("Sigint\n");
   if (exist) 
     throw Error("Sigint","Cannot have two Sigint handlers!");

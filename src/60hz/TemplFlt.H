@@ -31,7 +31,7 @@ public:
   static const unsigned int MAXTEMPLSIZE = 1024;
   static const unsigned int LOG2MULT = 16, MULT=65536;
   TemplFlt(float realperiod, int log2templsize, int adaperiods0=100) //:+
-    throw(Error) { //:c
+     { //:c
     /*:D TemplFlt(realperiod, log2templsize, adaperiods) constructs a new
          template with source periodicity realperiod (in samples),
 	 template storage size 2^log2templsize, and adaptation time

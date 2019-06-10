@@ -28,7 +28,7 @@
 
 class TriggerFile {
 public:
-  TriggerFile(string const &fn) throw(Error);
+  TriggerFile(string const &fn) ;
   timeref_t nexttrig();
   ~TriggerFile();
   static timeref_t atot(char const *str);

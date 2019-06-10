@@ -46,7 +46,7 @@
 #define MSG_NOSIGNAL      0x2000  /* don't raise SIGPIPE */
 #endif
 
-Sockclient::Sockclient(char const *mountpt) throw(Error) {
+Sockclient::Sockclient(char const *mountpt)  {
   int fnlen = strlen(mountpt);
   
   if (fnlen >= UNIX_PATH_MAX)
@@ -74,7 +74,7 @@ Sockclient::~Sockclient() {
       perror("Sockclient: error closing");
 }
 
-template <class E> void Sockclient::closeandthrow(E const &e) throw(E) {
+template <class E> void Sockclient::closeandthrow(E const &e)  {
   if (fd>=0)
     close(fd);
   throw(e);
@@ -104,7 +104,7 @@ void Sockclient::setblocking(bool block) {
     fcntl(fd,F_SETFL,flags);
 }
 
-bool Sockclient::send(void const *data, int length) throw(Error) {
+bool Sockclient::send(void const *data, int length)  {
   int r = ::send(fd, data, length, sendopts);
   if (r==length)
     return true;
@@ -119,7 +119,7 @@ bool Sockclient::send(void const *data, int length) throw(Error) {
 				   r,length)));
 }
 
-int Sockclient::recv(void *data, int length) throw(Error) {
+int Sockclient::recv(void *data, int length)  {
   //  sdbx("Sockclient::recv(%i) [opts=%i]",length,recvopts);
   int r = ::recv(fd,data,length,recvopts);
   //  sdbx("Sockclient::recv done -> %i [%i]",r,int(*(char*)(data)));
@@ -138,7 +138,7 @@ int Sockclient::recv(void *data, int length) throw(Error) {
   return r;
 }
 
-bool Sockclient::select4read() throw(Error) {
+bool Sockclient::select4read()  {
   fd_set rfs;
   FD_ZERO(&rfs); FD_SET(fd,&rfs);
   //  sdbx("Sockclient select");

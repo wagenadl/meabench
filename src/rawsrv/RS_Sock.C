@@ -45,7 +45,7 @@ real_t const RS_Sock::RANGE[RANGES] = { 100.0, 200.0, 500.0, 1000.0, 2000.0, 500
 real_t const RS_Sock::RANGE[RANGES] = { 3410.0,1205.0,683.0,341.0 };
 #endif
 
-RS_Sock::RS_Sock(int gainsetting) throw(Error): RS_Base(gainsetting) {
+RS_Sock::RS_Sock(int gainsetting) : RS_Base(gainsetting) {
   dbx("RS_Sock: constructor\n");
   if (gain>=RANGES)
     throw Error("RawSource","Gain setting out of range");
@@ -98,7 +98,7 @@ RS_Sock::~RS_Sock() {
   close(fd);
 }
 
-void RS_Sock::readHeader() throw(Error) {
+void RS_Sock::readHeader()  {
   sdbx("RS_Sock: Waiting for header... [%i bytes]\n",sizeof(NS_Header));
   NS_Header header;
   char *ptr = (char*)&header;
@@ -134,7 +134,7 @@ inline bool RS_Sock::frameIsInfo(Sample *frame) {
   return frame[0][0] == NEUROSOCK_FRAME_IS_INFO;
 }
 
-void RS_Sock::readFrame(Sample *dst) throw(Error) {
+void RS_Sock::readFrame(Sample *dst)  {
   sdbx("RS_Sock::readFrame -> %p",dst);
   char *ptr;
   int shiftbytes;
@@ -190,7 +190,7 @@ void RS_Sock::readFrame(Sample *dst) throw(Error) {
   sdbx("  RS_Sock::readFrame done",dst);
 }
 
-NS_Info::NS_Reason RS_Sock::readUntilInfo() throw(Error) {
+NS_Info::NS_Reason RS_Sock::readUntilInfo()  {
   Sample *frame = new Sample[RSS_QUANTUM];
   do {
     readFrame(frame);
@@ -200,7 +200,7 @@ NS_Info::NS_Reason RS_Sock::readUntilInfo() throw(Error) {
   return info.reason;
 }    
 
-void RS_Sock::refreshInfo() throw(Error) {
+void RS_Sock::refreshInfo()  {
   sendCommand(NS_Command::GETINFO);
   while (readUntilInfo() != NS_Info::INFO_RESPONSE) 
     fprintf(stderr,
@@ -208,7 +208,7 @@ void RS_Sock::refreshInfo() throw(Error) {
 	    info.reasonText());
 }
 
-void RS_Sock::reportInfo(bool live) throw(Error) {
+void RS_Sock::reportInfo(bool live)  {
   if (live) {
     fprintf(stderr,"Requesting INFO from neurosock host...\n");
     refreshInfo();
@@ -240,7 +240,7 @@ void RS_Sock::reportInfo(bool live) throw(Error) {
   fprintf(stderr,"\n");
 }
 
-void RS_Sock::sendCommand(NS_Command::NS_Cmd cmd, long long arg) throw(Error) {
+void RS_Sock::sendCommand(NS_Command::NS_Cmd cmd, long long arg)  {
   NS_Command c;
   c.cmd=cmd;
   c.arg=arg;
@@ -274,14 +274,14 @@ SFAux::SourceInfo RS_Sock::sourceInfo() {
 }
 
 void RS_Sock::setChannels(long long excludeChannels,
-			  long long doubleChannels) throw(Error) {
+			  long long doubleChannels)  {
   if (!connected) connect();
   sendCommand(NS_Command::EXCLUDECHANNELS,excludeChannels);
   sendCommand(NS_Command::DOUBLECHANNELS,doubleChannels);
 }
 
 
-void RS_Sock::start() throw(Error) {
+void RS_Sock::start()  {
   stopping = false;
   if (!connected) connect();
   sendCommand(NS_Command::START);
@@ -307,7 +307,7 @@ void RS_Sock::stop() {
   }
 }
 
-unsigned int RS_Sock::read(Sample *dst, unsigned int amount) throw(Error) {
+unsigned int RS_Sock::read(Sample *dst, unsigned int amount)  {
   if (amount % info.scans_per_frame)
     throw Error("RawSource","Bad amount requested");
   while (amount>0) {
@@ -320,7 +320,7 @@ unsigned int RS_Sock::read(Sample *dst, unsigned int amount) throw(Error) {
   return 0;
 }
 
-SFAux::HWStat RS_Sock::status() throw(Error) {
+SFAux::HWStat RS_Sock::status()  {
   // This vsn reports the cached INFO.
   SFAux::HWStat s;
   s.errors = info.other_errors;

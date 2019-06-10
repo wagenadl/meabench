@@ -33,7 +33,7 @@
 const int SR_LOGBUFSIZE = 12; // size of input spike fifo is 2^N spikeinfos
 const int SR_LOGLOADSIZE = 4; // load spikes in per 2<<N spikeinfos
 
-SpikeReplay::SpikeReplay(string const &fn) throw(Error):
+SpikeReplay::SpikeReplay(string const &fn) :
   ReplayBase(fn), inbuf(SR_LOGBUFSIZE) {
   dbx("Constructing SpikeReplay");
   source_start=0;
@@ -48,12 +48,12 @@ SpikeReplay::SpikeReplay(string const &fn) throw(Error):
   base=0;
 }
 
-void SpikeReplay::forcereadahead(timeref_t sourcetime) throw(Error) {
+void SpikeReplay::forcereadahead(timeref_t sourcetime)  {
   while (inbuf[inbuf.latest()-1].time < sourcetime)
     loadsomespikes();
 }
 
-void SpikeReplay::loadsomespikes() throw(Error) { //:f loadsomespikes
+void SpikeReplay::loadsomespikes()  { //:f loadsomespikes
   /*:D Load a couple of spikes from the input stream into the inbuf. This
        function is guaranteed to read at least some spikes, or it will
        throw an exception.
@@ -83,7 +83,7 @@ void SpikeReplay::loadsomespikes() throw(Error) { //:f loadsomespikes
   }
 }
 
-void SpikeReplay::findnextspike(int c, timeref_t maxtime) throw(Error) {
+void SpikeReplay::findnextspike(int c, timeref_t maxtime)  {
   /*:D Finds the info of the next spike on channel c, though not if that
        lies beyond maxtime (measured in source units) */
   timeref_t nr = current_or_next_spike_nr[c]+1;
@@ -113,7 +113,7 @@ void SpikeReplay::findnextspike(int c, timeref_t maxtime) throw(Error) {
   }
 }  
 
-void SpikeReplay::findnextspikes(timeref_t maxtime) throw(Error) {
+void SpikeReplay::findnextspikes(timeref_t maxtime)  {
   //  dbx("DSRS:fnspikes");
   for (int c=0; c<TOTALCHANS; c++)
     if (!current_or_next_spike_p[c])
@@ -121,7 +121,7 @@ void SpikeReplay::findnextspikes(timeref_t maxtime) throw(Error) {
   //  dbx("DSRS:fnspikes done");
 }    
 
-void SpikeReplay::open() throw(Error) {
+void SpikeReplay::open()  {
   ReplayBase::open();
 
   last_reported_spike = inbuf.latest();
@@ -135,7 +135,7 @@ void SpikeReplay::open() throw(Error) {
   findnextspikes(last_written + 100*FREQKHZ); // get 100 ms worth of data now
 }
 
-void SpikeReplay::fillmeup(Sample *dst, size_t amount) throw(Error) {
+void SpikeReplay::fillmeup(Sample *dst, size_t amount)  {
   // This function could do with some optimization! At least, I could flip the
   // loop order, or reduce the impact of findnextspike calls by remembering
   // the location of last failure.
@@ -194,7 +194,7 @@ void SpikeReplay::fillmeup(Sample *dst, size_t amount) throw(Error) {
   gettimingright(amount);
 }
 
-int SpikeReplay::writespikes(SpikeSFSrv &dest) throw(Error) {
+int SpikeReplay::writespikes(SpikeSFSrv &dest)  {
   int cnt = 0;
   while (last_reported_spike < inbuf.latest()) {
     Spikeinfo const &si = inbuf[last_reported_spike];

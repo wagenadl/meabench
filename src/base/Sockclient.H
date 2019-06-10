@@ -27,20 +27,20 @@
 
 class Sockclient {
 public:
-  Sockclient(char const *mountpt) throw(Error);
+  Sockclient(char const *mountpt) ;
   ~Sockclient();
   void setblocking(bool block);
   void setfixedrecv(bool fixedrecv);
   bool getblocking() const { return blocking; }
   bool getfixedrecv() const { return fixedrecving; }
-  bool send(void const *data, int length) throw(Error); // true if OK
-  int recv(void *data, int length) throw(Error); // returns -1 on eof
-  bool select4read() throw(Error); // returns true if ok, false if EINTR
+  bool send(void const *data, int length) ; // true if OK
+  int recv(void *data, int length) ; // returns -1 on eof
+  bool select4read() ; // returns true if ok, false if EINTR
 protected:
   int getfd() const { return fd; }
   Sockclient(int /*dummy*/) { fd=-1; }
 private:
-  template <class E> void closeandthrow(E const &e) throw(E);
+  template <class E> void closeandthrow(E const &e) ;
 private:
   bool blocking;
   bool fixedrecving;

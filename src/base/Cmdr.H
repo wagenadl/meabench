@@ -55,7 +55,7 @@ namespace Cmdr {
    *:R true/false
    *:N If the first arg is the empty string, true is returned always.
    */
-  extern Cmap *parse(char *cmd, Cmap *cmds) throw(Error); //:f parse
+  extern Cmap *parse(char *cmd, Cmap *cmds) ; //:f parse
   /*:D parse(cmd, cmds) tries to look up cmd in the list of commands cmds, and
        if it can be found (potentially as an abbreviation), the corresponding
        Cmap pointer is returned.
@@ -78,7 +78,7 @@ namespace Cmdr {
        reported on stderr, other exceptions are passed on.
   */
   extern bool exec(char *cmdwargs, Cmap *cmds, bool coloncomma=false) //:+
-    throw(Error); //:f exec
+    ; //:f exec
   /*:D exec(cmdwargs, cmds) executes the given command, with arguments
        optionally following it. Returns true
        if the command caused the quit() function to be called.
@@ -90,7 +90,7 @@ namespace Cmdr {
    *:E Exceptions are thrown if the command is unknown or ambiguous, or
        if the command throws an exception.
    */
-  extern bool exec(int argc, char **argv, Cmap *cmds) throw(Error); //:f exec
+  extern bool exec(int argc, char **argv, Cmap *cmds) ; //:f exec
   /*:D exec(argc, argv, cmds) runs exec on all command line arguments in order.
    *:A argc, argv: as passed to main
     .  cmds: as before

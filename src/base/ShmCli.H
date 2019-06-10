@@ -29,7 +29,7 @@
 
 class ShmACli {
 public:
-  ShmACli(char const *mountpt, int mode=0600) throw(Error);
+  ShmACli(char const *mountpt, int mode=0600) ;
   ~ShmACli();
   void *data() { return data_; }
   void const *const_data() const { return data_; }
@@ -43,7 +43,7 @@ private:
 
 class ShmCli: public ShmACli {
 public:
-  ShmCli(char const *mountpt) throw(Error): ShmACli(mountpt,0400) { }
+  ShmCli(char const *mountpt) : ShmACli(mountpt,0400) { }
   void const *data() const { return const_data(); } // hide dangerous data() fn
 };
 

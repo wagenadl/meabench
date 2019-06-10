@@ -29,7 +29,7 @@ FreezeInfo::FreezeInfo(QObject *parent,
 		       QMultiScope *backend0, QScrollBar *frontend0,
 		       QLabel *timereport0, int width_ms0,
 		       RawSFCli *rawsrc, SpikeSFCli *spikesrc,
-		       QWidget *hideme0) throw(Error):
+		       QWidget *hideme0) :
   QObject(parent) {
   origrawsf = rawsrc;
   origspikesf = spikesrc;

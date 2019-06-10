@@ -34,7 +34,7 @@ public:
   void build(timeref_t *eventlist, int nevents,
 	     int reso_sam, int bin_reso,
 	     int start_sam, int nbins,
-	     FILE *spikefile) throw(Error);
+	     FILE *spikefile) ;
   int read(int channel, int bin, int event) const {
     return data[channel][bin+event*nbins];
   }

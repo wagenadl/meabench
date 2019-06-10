@@ -39,18 +39,18 @@ public:
   void add(string const &stream, string const &type) {
     push_back(SourceID(stream,type));
   }
-  void add(string const &stream) throw(Error);
-//  void open(string const &basefn) throw(Error);
-  void reset() throw(Error);
+  void add(string const &stream) ;
+//  void open(string const &basefn) ;
+  void reset() ;
   bool needsstream() const;
-//  void close() throw(Error);
+//  void close() ;
 //  SFCVoid *source(int n) const {
 //    if (opened)
 //	return srcs[n];
 //    else
 //	throw Error("SourceSet","Not opened");
 //  }
-//  //  SFCVoid const *source(string const &streamname) const throw(Error);
+//  //  SFCVoid const *source(string const &streamname) const ;
 //  Recorder *recorder(int n) {
 //    if (opened)
 //	return recs[n];

@@ -34,12 +34,12 @@ public:
 public:
   Linebuf(int firstfd=-1);
   void setfds(int maxfd0, fd_set const *sel0) { maxfd=maxfd0; sel=*sel0; }
-  char const *readline() throw(Error);
+  char const *readline() ;
   char const *currentcontents();
   Linebuf &operator<<(int fd) { addfd(fd); return *this; }
   void addfd(int fd);
   void remfd(int fd);
-  virtual char const *read_data_from(int fd) throw(Error);
+  virtual char const *read_data_from(int fd) ;
 private:
   char buffer[MAXLINELENGTH];
   int curlen;

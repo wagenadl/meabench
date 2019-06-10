@@ -32,27 +32,27 @@ class Sockserver {
 public:
   static const int MAXCLIENTS = 16;
 public:
-  Sockserver(char const *mountpt, int access=0660) throw(Error);
+  Sockserver(char const *mountpt, int access=0660) ;
   virtual ~Sockserver();
   void setblocking(bool block); // best not call this after initial setup
   bool getblocking() const { return blocking; }
-  void autowelcome() throw(Error);
-  void autothread() throw(Error); // best not call this after initial setup
+  void autowelcome() ;
+  void autothread() ; // best not call this after initial setup
   /* Normal initialization order is (1) setblocking(), (2) autothread(),
      (3) autowelcome(). */
-  int welcomenewclient() throw(Error); // returns client number, not fd
-  bool send(int clientno, void const *data, int length) throw(Error); // true if OK
-  int recv(int clientno, void *data, int length) throw(Error);
-  int poll() throw(Error);
+  int welcomenewclient() ; // returns client number, not fd
+  bool send(int clientno, void const *data, int length) ; // true if OK
+  int recv(int clientno, void *data, int length) ;
+  int poll() ;
   /* Returns client number of client from which input is available,
      or -2 if new client waiting to connect, or -1 if none of the above. */
-  void broadcast(void const *data, int length) throw(Error);
+  void broadcast(void const *data, int length) ;
   void report();
   int getfds(int maxfd0, fd_set *set);
 private:
-  template <class E> void closeandthrow(E const &e) throw(E);
+  template <class E> void closeandthrow(E const &e) ;
   void welcome_thread();
-  void new_client_thread(int clientno) throw(Error);
+  void new_client_thread(int clientno) ;
 protected:
   virtual void reportoverrun(int client);
   virtual void client_thread(int clientno); //:f client_thread

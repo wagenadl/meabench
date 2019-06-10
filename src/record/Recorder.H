@@ -32,20 +32,20 @@ public:
      the file is closed, and a new one is opened with numerical extension.
   */
 public:
-  Recorder(SFCVoid *source, string const &filename) throw(Error);
+  Recorder(SFCVoid *source, string const &filename) ;
   virtual ~Recorder();
   string const &filename() const { return fn; }
-  virtual void set_bounds(timeref_t t0, timeref_t t1) throw(Error);
+  virtual void set_bounds(timeref_t t0, timeref_t t1) ;
   /*:A t0, t1 refer to the stream's aux.trig, that is, they are relative
        to the raw stream's start.
   */
-  virtual timeref_t save_some(timeref_t upto=INFTY) throw(Error);
+  virtual timeref_t save_some(timeref_t upto=INFTY) ;
   //:A upto refers to the stream itself
   //:R oldest buffer contents written
   timeref_t latest() const { return last; }
   void skip_to(timeref_t t) { last=t; }
 private:
-  void newfile() throw(Error);
+  void newfile() ;
 protected:
   void setdisksize(int n); // used for Spikeinfos on 64-bit machines. See Types.H
 protected:

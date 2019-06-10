@@ -30,7 +30,7 @@ template <class Data_, class Aux> class SFACli {
 public:
   typedef Data_ Data;
 public:
-  SFACli(char const *mountpt) throw(Error) {
+  SFACli(char const *mountpt)  {
     cli = new ShmACli(mountpt);
     hdr_ = (SFHeader*)cli->data();
     aux_ = (Aux*)(hdr_+1);

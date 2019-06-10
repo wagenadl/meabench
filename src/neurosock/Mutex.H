@@ -9,7 +9,7 @@
 
 class Mutex {
 public:
-  Mutex() throw(Error) {
+  Mutex()  {
     if (pthread_mutex_init(&mutex,0))
          throw SysErr("Mutex","Cannot create mutex");
   }
@@ -27,7 +27,7 @@ private:
 
 class MLock {
 public:
-  MLock(Mutex &m0) throw(Error): m(m0) {
+  MLock(Mutex &m0) : m(m0) {
     if (m.lock())
       throw SysErr("MLock","Cannot lock mutex");
   }

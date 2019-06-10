@@ -47,7 +47,7 @@
 #endif
 
 
-Sockserver::Sockserver(char const *mountpt, int access) throw (Error) {
+Sockserver::Sockserver(char const *mountpt, int access)  {
   has_thread = false;
   autothr = false;
   lastcli = -1;
@@ -82,7 +82,7 @@ Sockserver::Sockserver(char const *mountpt, int access) throw (Error) {
   signal(SIGPIPE,SIG_IGN); // bad style!
 }
 
-template <class E> void Sockserver::closeandthrow(E const &e) throw(E) {
+template <class E> void Sockserver::closeandthrow(E const &e)  {
   close(fd);
   throw(e);
 }
@@ -116,7 +116,7 @@ void Sockserver::setblocking(bool block) {
       fcntl(clients[c],F_SETFL,flags);
 }
 
-int Sockserver::welcomenewclient() throw(Error) {
+int Sockserver::welcomenewclient()  {
   int c;
    for (c=0; c<MAXCLIENTS; c++)
     if (clients[c]<0) 
@@ -145,7 +145,7 @@ int Sockserver::welcomenewclient() throw(Error) {
   return c;
 }
 
-int Sockserver::recv(int clientno, void *data, int length) throw(Error) {
+int Sockserver::recv(int clientno, void *data, int length)  {
   if (clients[clientno]<0)
     throw(Error("Sockserver","Recv: unknown client"));
   int r = ::recv(clients[clientno],data,length,recvopts);
@@ -170,7 +170,7 @@ int Sockserver::recv(int clientno, void *data, int length) throw(Error) {
 }
 
 bool Sockserver::send(int clientno, void const *data, int length)
-  throw(Error) {
+   {
   //  sdbx("Sockserver: send %i -> %i=%i",length,clientno,clients[clientno]);
 //  for (int i=0; i<length; i++)
 //    sdbx("(send %i:%i)",i,int(((char*)data)[i]));
@@ -201,7 +201,7 @@ bool Sockserver::send(int clientno, void const *data, int length)
 				   r,length)));
 }
 
-void Sockserver::broadcast(void const *data, int length) throw(Error) {
+void Sockserver::broadcast(void const *data, int length)  {
   //  sdbx("Sockserver: broadcast %i",length);
 //  for (int i=0; i<length; i++)
 //    sdbx("(broadcast %i:%i)",i,int(((char*)data)[i]));
@@ -217,7 +217,7 @@ void Sockserver::broadcast(void const *data, int length) throw(Error) {
   }
 }
 
-int Sockserver::poll() throw(Error) {
+int Sockserver::poll()  {
   struct pollfd pf[MAXCLIENTS+1];
   int n=0;
   pf[n].fd = fd; pf[n].events = POLLIN | POLLPRI; n++;
@@ -312,7 +312,7 @@ void Sockserver::welcome_thread() {
   }   
 }
 
-void Sockserver::autowelcome() throw(Error) {
+void Sockserver::autowelcome()  {
   pthread_attr_init(&attr);
   int r = pthread_create(&thread,&attr,&ss_welcome_thread,(void*)this);
   if (r)
@@ -321,11 +321,11 @@ void Sockserver::autowelcome() throw(Error) {
   has_thread = true;
 }
 
-void Sockserver::autothread() throw(Error) {
+void Sockserver::autothread()  {
   autothr = true;
 }
 
-void Sockserver::new_client_thread(int clientno) throw(Error) {
+void Sockserver::new_client_thread(int clientno)  {
   while (lastcli>=0)
     ; // thread not yet initialized properly
   lastcli = clientno;

@@ -29,13 +29,13 @@
 
 class InputMUX: public Stdin2Sock {
 public:
-  InputMUX(char const *prompt) throw(Error);
+  InputMUX(char const *prompt) ;
   ~InputMUX();
   InputMUX &operator<<(int fd) { addfd(fd); return *this; }
   void addfd(int fd);
   void remfd(int fd);
-  char const *readline() throw(Error);
-  char *readline(char *) throw(Error);
+  char const *readline() ;
+  char *readline(char *) ;
 private:
   WakeUpstreamMsg msg;
   set<int> fds;

@@ -42,16 +42,16 @@ public:
   StreamRec(string const &stream, string const &type,
 	    string const &basefn,
 	    bool describe, bool usestream,
-	    bool evenifexists=false) throw(Error);
+	    bool evenifexists=false) ;
   StreamRec(string const &stream, string const &type,
 	    int pretrig, int posttrig,
 	    string const &basefn,
 	    bool describe, bool usestream,
-	    bool evenifexists=false) throw(Error);
+	    bool evenifexists=false) ;
   ~StreamRec();
   void setcomments(string const &c) { comments=c; }
-  void run(int limit_s=0) throw(Error);
-  TerminationCode wait() throw(Error); //:f wait
+  void run(int limit_s=0) ;
+  TerminationCode wait() ; //:f wait
   /*:R termination code, see enum.
    *:E Exc thrown only if thread fails.
   */
@@ -60,10 +60,10 @@ private:
   void construct(string const &stream, string const &type,
 		 string const &basefn,
 		 bool describe, bool usestream,
-		 bool evenifexists=false) throw(Error);
+		 bool evenifexists=false) ;
   void exec();
   static void *thread_code(void *);
-  static void ensurenonexistent(string const &fn) throw(Error);
+  static void ensurenonexistent(string const &fn) ;
 private:
   TerminationCode termination_code;
   bool hasthread;

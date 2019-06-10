@@ -41,7 +41,7 @@ void Linebuf::remfd(int fd) {
   FD_CLR(fd,&sel);
 }
 
-char const *Linebuf::readline() throw(Error) {
+char const *Linebuf::readline()  {
   while (true) {
     fd_set set = sel;
     FD_SET(0,&set); // add stdin
@@ -75,7 +75,7 @@ char const *Linebuf::readline() throw(Error) {
 #include <base/WakeupCodes.H>
 #include <base/Sprintf.H>
 
-char const *Linebuf::read_data_from(int fd) throw(Error) {
+char const *Linebuf::read_data_from(int fd)  {
   WakeUpstreamMsg msg;
   int r = read(fd,&msg,sizeof(msg));
   if (r==sizeof(msg) && msg.type == WakeUpstreamMsg::Command) {

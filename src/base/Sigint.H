@@ -31,7 +31,7 @@ class Sigint {
 public:
   static const time_t DOUBLEDELAY = 1;
 public:
-  Sigint(void (*foo)(void)=0) throw(Error);
+  Sigint(void (*foo)(void)=0) ;
   ~Sigint();
   static void clear() { last_intr=0; }
   static bool isset() { return last_intr !=0; }

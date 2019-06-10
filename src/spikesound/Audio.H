@@ -34,12 +34,12 @@ public:
   // that's log_2(16384) or 93 ms per fragment
   static const int AUDIO_FRAGS = 2; 
 public:
-  Audio(char const *dev="/dev/dsp") throw(Error);
+  Audio(char const *dev="/dev/dsp") ;
   ~Audio() { close(); }
-  void open() throw(Error);
+  void open() ;
   void close();
   bool isopen() const { return audio_fd >= 0; }
-  void write() throw(Error);
+  void write() ;
   sample *buffer;
   int frag_length; // in samples!
   int audio_fd;

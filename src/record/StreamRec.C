@@ -157,7 +157,7 @@ private:
 StreamRec::StreamRec(string const &stream, string const &type,
 		     string const &basefn,
 		     bool describe, bool usestream,
-		     bool evenifexists) throw(Error) {
+		     bool evenifexists)  {
   trig=false;
   construct(stream, type,basefn, describe, usestream, evenifexists);
 }
@@ -166,7 +166,7 @@ StreamRec::StreamRec(string const &stream, string const &type,
 		     int pretrig0, int posttrig0,
 		     string const &basefn,
 		     bool describe, bool usestream,
-		     bool evenifexists) throw(Error) {
+		     bool evenifexists)  {
   trig=true;
   construct(stream, type,basefn, describe, usestream, evenifexists);
   pretrig=pretrig0; posttrig=posttrig0;
@@ -176,7 +176,7 @@ StreamRec::StreamRec(string const &stream, string const &type,
 void StreamRec::construct(string const &stream, string const &type,
 			  string const &basefn,
 			  bool describe0, bool usestream,
-			  bool evenifexists) throw(Error) {
+			  bool evenifexists)  {
   sleeper=0;
   source=0;
   recorder=0;
@@ -250,7 +250,7 @@ StreamRec::~StreamRec() {
     fclose(trigfh);
 }
 
-void StreamRec::run(int lim_s) throw(Error) {
+void StreamRec::run(int lim_s)  {
   if (hasthread)
     throw Error("StreamRec","Already running");
 
@@ -263,7 +263,7 @@ void StreamRec::run(int lim_s) throw(Error) {
   hasthread=true;
 }
 
-StreamRec::TerminationCode StreamRec::wait() throw(Error) {
+StreamRec::TerminationCode StreamRec::wait()  {
   if (!hasthread)
     return NOTRUNNING;
   hasthread=false;
@@ -426,7 +426,7 @@ void StreamRec::exec() {
   }
 }
 
-void StreamRec::ensurenonexistent(string const &fn) throw(Error) {
+void StreamRec::ensurenonexistent(string const &fn)  {
   struct stat s;
   int r=stat(fn.c_str(),&s);
   if (r<0)

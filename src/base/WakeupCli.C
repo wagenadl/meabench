@@ -23,7 +23,7 @@
 #include <base/dbx.H>
 
 
-WakeupCli::WakeupCli(char const *identity, char const *mountpt) throw(Error):
+WakeupCli::WakeupCli(char const *identity, char const *mountpt) :
   Sockclient(mountpt) {
   setblocking(false);
   setfixedrecv(false);
@@ -32,18 +32,18 @@ WakeupCli::WakeupCli(char const *identity, char const *mountpt) throw(Error):
   ival=0;
 }
 
-void WakeupCli::sendmsg(WakeUpstreamMsg const &msg) throw(Error) {
+void WakeupCli::sendmsg(WakeUpstreamMsg const &msg)  {
   if (!send(&msg,sizeof(msg)))
     throw Error("WakeupCli","Cannot send message");
 }
 
-void WakeupCli::report_nobufuse() throw(Error) {
+void WakeupCli::report_nobufuse()  {
   WakeUpstreamMsg msg;
   msg.type = WakeUpstreamMsg::NoBufUse;
   sendmsg(msg);
 }
 
-void WakeupCli::report_yesbufuse() throw(Error) {
+void WakeupCli::report_yesbufuse()  {
   WakeUpstreamMsg msg;
   msg.type = WakeUpstreamMsg::YesBufUse;
   sendmsg(msg);
@@ -51,7 +51,7 @@ void WakeupCli::report_yesbufuse() throw(Error) {
 
  
 
-void  WakeupCli::report_bufuse(timeref_t last) throw(Error) {
+void  WakeupCli::report_bufuse(timeref_t last)  {
   sdbx("Report buffer use: %Li",last);
   WakeUpstreamMsg msg;
   msg.type = WakeUpstreamMsg::BufUse;
@@ -59,21 +59,21 @@ void  WakeupCli::report_bufuse(timeref_t last) throw(Error) {
   sendmsg(msg);
 }
 
-void WakeupCli::identify(char const *identity) throw(Error) {
+void WakeupCli::identify(char const *identity)  {
   WakeUpstreamMsg msg;
   msg.type = WakeUpstreamMsg::Identify;
   strncpy(msg.identity,identity,WakeUpstreamMsg::IDLEN);
   sendmsg(msg);
 }
 
-void WakeupCli::setival(timeref_t dt) throw(Error) {
+void WakeupCli::setival(timeref_t dt)  {
   WakeUpstreamMsg msg;
   msg.type = WakeUpstreamMsg::WakeIval;
   msg.wakeival = ival = dt;
   sendmsg(msg);
 }
 
-int WakeupCli::poll() throw(Error) {
+int WakeupCli::poll()  {
   int res=0;
   int len=16;
   do {
@@ -99,7 +99,7 @@ int WakeupCli::poll() throw(Error) {
   return res;
 }
 
-int WakeupCli::block() throw(Error) {
+int WakeupCli::block()  {
   int r;
   r = poll();
   if (r!=-1)

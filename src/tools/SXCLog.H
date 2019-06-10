@@ -97,7 +97,7 @@ public:
     return count(c0)*count(c1)*(bin2time(bin+1)-bin2time(bin))/totaltime();
   }
   timeref_t totaltime() const { return t_end - t_begin; }
-  void build(FILE *fh) throw(Error);
+  void build(FILE *fh) ;
   void report();
 private:
   int nbins;

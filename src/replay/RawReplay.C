@@ -31,7 +31,7 @@ RawReplay::RawReplay(string const &fn0): ReplayBase(fn0) {
   channelShift = 0;
 }
 
-void RawReplay::open() throw(Error) {
+void RawReplay::open()  {
   ReplayBase::open();
   if (channelShift)
     fseek(fh, channelShift*sizeof(raw_t),SEEK_CUR);
@@ -44,7 +44,7 @@ bool RawReplay::nextfile() {
   return ret;
 }
 
-void RawReplay::skip(timeref_t amount) throw(Error) {
+void RawReplay::skip(timeref_t amount)  {
   while (amount) {
     size_t now = ftell(fh) / sizeof(Sample);
     struct stat s;
@@ -66,7 +66,7 @@ void RawReplay::setChannelShift(int n) {
   channelShift = n;
 }
 
-void RawReplay::fillmeup(Sample *dst, size_t amount) throw(Error) {
+void RawReplay::fillmeup(Sample *dst, size_t amount)  {
   size_t len = fread(dst,sizeof(Sample), amount, fh);
   while (len<amount) {
     if (ferror(fh)) {

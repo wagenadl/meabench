@@ -46,7 +46,7 @@ void SpkDet::reset() {
 }
 
 SpkDet *SpkDet::construct(RawSFCli const &src, SpikeSFSrv &dst,
-			  SpkDet::Type type) throw(Error) {
+			  SpkDet::Type type)  {
   switch (type) {
   case SpkDet::None: return new SpkDet(src,dst);
   case SpkDet::BandFlt: return new SD_BandFlt(src,dst);

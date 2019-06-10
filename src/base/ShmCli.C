@@ -29,7 +29,7 @@
 
 #include <base/dbx.H>
 
-ShmACli::ShmACli(char const *mountpt, int mode) throw (Error) {
+ShmACli::ShmACli(char const *mountpt, int mode)  {
   sdbx("ShmACli: %s %x",mountpt,mode);
   key_t key = ftok(mountpt,'M');
   if (key<0)

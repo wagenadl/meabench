@@ -29,7 +29,7 @@
 
 class ReadDescription {
 public:
-  ReadDescription(string const &fn) throw(Error);
+  ReadDescription(string const &fn) ;
   string const &operator[](string const &) const;
   void dump();
 private:
@@ -38,7 +38,7 @@ private:
 
 class WriteDescription {
 public:
-  WriteDescription(string const &fn, int spc) throw(Error);
+  WriteDescription(string const &fn, int spc) ;
   ~WriteDescription();
   void print(string const &key, string const &val);
   void printnonl(string const &key, string const &val);

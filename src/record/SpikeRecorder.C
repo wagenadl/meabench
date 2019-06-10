@@ -23,14 +23,14 @@
 #include <spikesrv/Defs.H>
 
 SpikeRecorder::SpikeRecorder(SFCVoid *source,
-			     string const &filename) throw(Error):
+			     string const &filename) :
   Recorder(source, filename) {
   raw_savefrom = raw_saveto = 0;
   savefrom=0; saveto=INFTY; // -> do not let Recorder use these limits.
   setdisksize(SpikeinfoDISKSIZE);
 }
 
-void SpikeRecorder::set_bounds(timeref_t t0, timeref_t t1) throw(Error) {
+void SpikeRecorder::set_bounds(timeref_t t0, timeref_t t1)  {
   /* SpikeRecorder doesn't use Recorder's set_bounds mechanism. Rather,
      it advances the "last" timestamp by itself (see save_some() below). */
   sdbx("SpikeRecorder::set_bounds %g - %g",t0/(FREQKHZ*1000.0),t1/(FREQKHZ*1000.0));
@@ -38,7 +38,7 @@ void SpikeRecorder::set_bounds(timeref_t t0, timeref_t t1) throw(Error) {
   raw_saveto = t1;
 }
 
-timeref_t SpikeRecorder::save_some(timeref_t upto) throw(Error) {
+timeref_t SpikeRecorder::save_some(timeref_t upto)  {
   SpikeSFCli *src = dynamic_cast<SpikeSFCli*>(source);
   if (!src)
     throw Error("SpikeRecorder","Not a spike source");

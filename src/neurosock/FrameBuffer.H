@@ -13,10 +13,10 @@ class FrameBuffer {
 public:
   FrameBuffer(int logn, srvMeata *src);
   ~FrameBuffer();
-  void start() throw(Error);
-  void stop() throw(Error);
-  raw_t *read(int k) throw(Error);
-  void threadcode() throw(Error);
+  void start() ;
+  void stop() ;
+  raw_t *read(int k) ;
+  void threadcode() ;
   void resetsoftover(int k);
   void fillInfo(int k,NS_Info &info);
   bool isRunning() const { return hasthread; }

@@ -27,9 +27,9 @@
 class SpikeRecorder: public Recorder {
 public:
   SpikeRecorder(SFCVoid *source,
-		string const &filename) throw(Error);
-  virtual void set_bounds(timeref_t t0, timeref_t t1) throw(Error);
-  virtual timeref_t save_some(timeref_t upto=INFTY) throw(Error);
+		string const &filename) ;
+  virtual void set_bounds(timeref_t t0, timeref_t t1) ;
+  virtual timeref_t save_some(timeref_t upto=INFTY) ;
 protected:
   timeref_t raw_savefrom;
   timeref_t raw_saveto;
