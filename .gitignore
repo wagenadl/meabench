@@ -1,0 +1,6 @@
+Makefile
+Makefile.*
+.obj
+.ui
+.moc
+build
