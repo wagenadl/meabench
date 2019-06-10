@@ -177,7 +177,7 @@ int Argh::parse(int argc, char **argv) {
 	std::deque<std::string> kv; split(arg.substr(2), kv, "=");
 	std::string key = kv[0]; kv.pop_front();
 	std::string val; join(kv, val, "=");
-	if (!longopts.count(key)>0 || options[longopts[key]].type!=otARG) {
+	if (!(longopts.count(key)>0) || options[longopts[key]].type!=otARG) {
 	  unknownOption("--" + key);
 	  return -1;
 	}

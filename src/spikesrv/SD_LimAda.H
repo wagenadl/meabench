@@ -32,20 +32,20 @@ class SD_LimAda: public SpkDet {
        by DW on 8/20/04, and described in A24,pp3-7.
   */
 public:
-  static const timeref_t TRAINHALFTIME = 2*1000*FREQKHZ;
-  static const int CHUNKSAMS=512; // 512 ~ about 20 ms. This MUST be a pwr of 2
-  static const timeref_t CHUNKMASK=~(CHUNKSAMS-1L);
-  static const float TAU = FREQKHZ*1000.0/CHUNKSAMS;
-  static const int HIGHPERC=2;
-  static const int LOWPERC=30; // note: this MUST be on the <50 side for "vlo<=BLANKTHR" to work
-  static const float RATTHR=5.0;
-  static const float THRESHMUL = 0.494; // determined 8/20/04, DW
-  static const float BLANKTHR=-1.0; // to prevent blanked segment from influencing thr
-  static const int TRAINTIME = 5*1000*FREQKHZ; // i.e. CHUNKSAMS * TAU * 5;
-  static const int LOGBHLEN=12;
-  static const int BHLEN=1<<LOGBHLEN;
-  static const int LOWNTH = LOWPERC * CHUNKSAMS / 100;
-  static const int HIGHNTH = HIGHPERC * CHUNKSAMS / 100;
+  static constexpr timeref_t TRAINHALFTIME = 2*1000*FREQKHZ;
+  static constexpr int CHUNKSAMS=512; // 512 ~ about 20 ms. This MUST be a pwr of 2
+  static constexpr timeref_t CHUNKMASK=~(CHUNKSAMS-1L);
+  static constexpr float TAU = FREQKHZ*1000.0/CHUNKSAMS;
+  static constexpr int HIGHPERC=2;
+  static constexpr int LOWPERC=30; // note: this MUST be on the <50 side for "vlo<=BLANKTHR" to work
+  static constexpr float RATTHR=5.0;
+  static constexpr float THRESHMUL = 0.494; // determined 8/20/04, DW
+  static constexpr float BLANKTHR=-1.0; // to prevent blanked segment from influencing thr
+  static constexpr int TRAINTIME = 5*1000*FREQKHZ; // i.e. CHUNKSAMS * TAU * 5;
+  static constexpr int LOGBHLEN=12;
+  static constexpr int BHLEN=1<<LOGBHLEN;
+  static constexpr int LOWNTH = LOWPERC * CHUNKSAMS / 100;
+  static constexpr int HIGHNTH = HIGHPERC * CHUNKSAMS / 100;
 public:
   SD_LimAda(RawSFCli const &src, SpikeSFSrv &dst);
   virtual ~SD_LimAda();
