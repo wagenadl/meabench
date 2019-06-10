@@ -10,7 +10,7 @@ include("../../config.pri")
 
 CONFIG += debug
 INCLUDEPATH += ..
-INCLUDEPATH += ../driver
+INCLUDEPATH += ../../driver
 DEPENDPATH += ../common
 DEPENDPATH += ../base
 DEPENDPATH += common
