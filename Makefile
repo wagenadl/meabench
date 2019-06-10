@@ -1,6 +1,21 @@
-all:; +make -C src
+ALL: BUILD
 
 DEST=/usr/local/share/meabench
+
+ifeq (, $(shell which qmake-qt4))
+  QMAKE=qmake
+else
+  QMAKE=qmake-qt4
+endif
+SELECTQT=QT_SELECT=4
+
+BUILD:
+	mkdir -p build
+	( cd build; $(SELECTQT) $(QMAKE) ../src/meabench.pro )
+	+make -C build
+
+clean:
+	rm -rf build
 
 install:;
 	install -d $(DEST)/bin
@@ -14,3 +29,4 @@ install:;
 	buildscripts/makemea $(DEST) /usr/local/bin
 	ldconfig $(DEST)/lib/
 
+.PHONY: install BUILD PREP
