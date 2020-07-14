@@ -4,7 +4,7 @@
 
 #define ONEPANEL_H
 
-#include <qwidget.h>
+#include <QWidget>
 
 class OnePanel: public QWidget {
   Q_OBJECT;

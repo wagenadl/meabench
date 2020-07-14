@@ -59,7 +59,7 @@ RawSFCli *rawcli_as_used_by_det=0;
 
 unsigned int analog_disable = 0x0;
 
-void loadnoise(int argc, char **args) {
+void loadnoise(int, char **args) {
   noise.load(args[0]);
   if (detector) {
     detector->setnoise(noise);
@@ -67,7 +67,7 @@ void loadnoise(int argc, char **args) {
   }
 }
 
-void savenoise(int argc, char **args) {
+void savenoise(int, char **args) {
   if (detector)
     noise=detector->getnoise();
   if (noise.isready())

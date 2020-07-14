@@ -9,7 +9,7 @@
 TEMPLATE = app
 TARGET = autoraster
 include(../gui/gui.pri)
-
+QT+=widgets
 HEADERS =  AutoRaster.H \
     QAutoRaster.H QRaster.H QMultiRaster.H MultiRasterBase.H SpikeBuffer.H \
     QRDispInfo.H

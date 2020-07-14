@@ -152,9 +152,9 @@ void ControlPanel::update_source(QString const &s) {
   } else {
     try {
       sleeper = new WakeupCli("flexraster",
-			      CommonPath(s.toAscii().constData(),WAKESUFFIX).c_str());
+			      CommonPath(s.toUtf8().constData(),WAKESUFFIX).c_str());
       sleeper->setival(100); // hmm...
-      spksrc = new SpikeSFCli(CommonPath(s.toAscii().constData(),SFSUFFIX).c_str());
+      spksrc = new SpikeSFCli(CommonPath(s.toUtf8().constData(),SFSUFFIX).c_str());
       latestspk = spksrc->latest();
       socknotif = new QSocketNotifier(sleeper->fd(),QSocketNotifier::Read,this);
       connect(socknotif,SIGNAL(activated(int)),this,SLOT(wakeup()));

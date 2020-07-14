@@ -8,6 +8,7 @@
 
 TEMPLATE = app
 TARGET = flexraster
+QT += widgets
 include(../gui/gui.pri)
 
 HEADERS = \

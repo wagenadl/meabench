@@ -41,6 +41,11 @@ const int SPKDETUNITLEN = 16;
 
 class SpikeAux: public SFAux {
 public:
+  SpikeAux() {}
+  SpikeAux(SpikeAux const &saux) {
+    okis(saux);
+    fprintf(stderr,"Warning: SpikeAuxes must be copied with the copy() method\n");
+  }
   SpikeAux &operator=(SpikeAux const &saux) {
     okis(saux);
     fprintf(stderr,"Warning: SpikeAuxes must be copied with the copy() method\n");

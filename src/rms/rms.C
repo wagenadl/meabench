@@ -115,18 +115,18 @@ void am_i_ok() {
 }
   
 
-void run(int argc, char **args) {
+void run(int, char **) {
   am_i_ok();
   dorun();
 }
 
-void cont(int argc, char **args) {
+void cont(int, char **) {
   am_i_ok();
   while (1)
     dorun();
 }
   
-void report(int argc, char **args) {
+void report(int, char **) {
   if (rmsout)
     rmsout->waker.report();
 }
@@ -139,7 +139,7 @@ Cmdr::Cmap cmds[] = {
   { setperiod, "period",0,1,"[period-s]",  },
   { setdbx, "dbx", 0, 1, "[0/1]", },
   { report, "clients", 0, 0, "", },
-  0,
+  {0, "", 0, 0, "" }
 };
 
 void deletem() {

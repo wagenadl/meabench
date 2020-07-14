@@ -2,12 +2,7 @@ ALL: BUILD
 
 DEST=/usr/local/share/meabench
 
-ifeq (, $(shell which qmake-qt4))
-  QMAKE=qmake
-else
-  QMAKE=qmake-qt4
-endif
-SELECTQT=QT_SELECT=4
+QMAKE=qmake
 
 BUILD:
 	mkdir -p build

@@ -9,7 +9,7 @@
 TEMPLATE = app
 TARGET = raster
 include(../gui/gui.pri)
-
+QT+=widgets
 HEADERS = Raster.H \
     QRaster.H QMultiRaster.H MultiRasterBase.H SpikeBuffer.H \
     QRDispInfo.H

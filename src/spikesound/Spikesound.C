@@ -136,12 +136,12 @@ void Spikesound::setRethresh(int v) {
 }
 
 void Spikesound::setSource(const QString &s) {
-  dbx(Sprintf("setsource: %s",s.toAscii().constData()));
+  dbx(Sprintf("setsource: %s",s.toUtf8().constData()));
   if (source)
     delete source;
   source=0;
   try {
-    source = new SpikeSFCli(CommonPath(s.toAscii().constData(),SFSUFFIX).c_str());
+    source = new SpikeSFCli(CommonPath(s.toUtf8().constData(),SFSUFFIX).c_str());
     last = source->latest();
     ui->status->setText("OK");
     ui->playbutton->setEnabled(true);

@@ -50,11 +50,11 @@ namespace MEAB {
 #ifdef MEA_ULTRAFAST
     fprintf(stderr,
 	    "This is %s, part of meabench %s-ll, (C) Daniel Wagenaar 2000-%s\n\n",
-	    progname.c_str(), VERSION, LASTYEAR);
+	    progname.c_str(), MEABVERSION, MEABLASTYEAR);
 #else
     fprintf(stderr,
 	    "This is %s, part of meabench %s, (C) Daniel Wagenaar 2000-%s\n\n",
-	    progname.c_str(), VERSION, LASTYEAR);
+	    progname.c_str(), MEABVERSION, MEABLASTYEAR);
 #endif
     char *term = getenv("TERM");
     if (term && !strcmp(term,"xterm")) {

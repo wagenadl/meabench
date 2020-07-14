@@ -120,7 +120,7 @@ int FreezeInfo::valueMS() {
 }
 
 bool FreezeInfo::save(QString const &filename) {
-  FILE *dst=fopen(filename.toAscii().constData(),"wb");
+  FILE *dst=fopen(filename.toUtf8().constData(),"wb");
   if (!dst) {
     QString text = "Failed to write to `";
     text+=filename;

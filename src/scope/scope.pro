@@ -9,7 +9,7 @@
 TEMPLATE = app
 TARGET = scope
 include(../gui/gui.pri)
-
+QT += widgets
 HEADERS = Defs.H  FreezeInfo.H  QMultiScope.H  QScope.H  Scope.H    
 SOURCES = FreezeInfo.C  QMultiScope.C  QScope.C  Scope.C  scopemain.C
 

@@ -8,6 +8,7 @@
 
 include(../common/meabench.pri)
 CONFIG += qt
+QT += widgets
 LIBS += -lmeagui
 UI_DIR = .ui
 DEPENDPATH += ../gui

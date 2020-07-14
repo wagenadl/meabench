@@ -60,6 +60,7 @@ public:
     default:   return "???"; break;
     }
   }
+  virtual ~SpkDet() {}
   void setexclude(Exclude const &e) { exclude=e; } //:f setexclude
   /*:D setexclude(e) sets the list of electrode channels to be excluded
        from detection.

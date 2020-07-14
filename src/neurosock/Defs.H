@@ -108,13 +108,11 @@ struct NS_Command {
   uint32_t arg1;
 };
 
-#define STRVERSION(v) #v
-
 class NS_Info {
 public:
   NS_Info() {
     // static information
-    strncpy(progversion, STRVERSION(VERSION), 8);
+    strncpy(progversion, MEABVERSION, 8);
     bytes_per_sample = 0;
     samples_per_scan = 0;
     scans_per_frame = 0;

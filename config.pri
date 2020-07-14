@@ -6,7 +6,7 @@
 # redistribute it under certain conditions; again, see the file
 # "COPYING" for details.
 
-VERSION = 1.3.0
+MEABVERSION = '"\\"1.3.1\\""'
 
 CONFIG += mcshardware
 # CONFIG += nihardware

@@ -33,7 +33,7 @@ class QMultiRaster: public MultiRasterBase { //:C QMultiRaster
   /*:D QMultiRaster is a giant widget containing 8x8 QRasters. */
 public:
   QMultiRaster(QWidget *parent=0); //:c
-  ~QMultiRaster(); //:~
+  virtual ~QMultiRaster(); //:~
 public:
   void refresh(QRDispInfo const *q=0); //:f refresh
   /*:D refresh() refreshes all plots reading recent data from the
