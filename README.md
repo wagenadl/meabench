@@ -28,8 +28,8 @@ Dependencies:
 
 On recent linux systems, compilation should be as simple as:
 
-  make
-  sudo make install
+    make
+    sudo make install
 
 This would put the MEABench code in /usr/local/share/meabench, with a
 helper script in /usr/local/bin/mea.  Compiling the MCCard.ko driver
@@ -63,10 +63,10 @@ publications are of interest to me, so I'd love to receive any
 Feel free to contact me if you have any questions, suggestions or bug
 reports. I hope this program will be useful!
 
-  Daniel A. Wagenaar
-  Caltech 139-74
-  Pasadena CA 91125
-  USA
-
-  daw@caltech.edu
-  +1 (626) 395-8567
+    Daniel A. Wagenaar
+    Caltech 139-74
+    Pasadena CA 91125
+    USA
+  
+    daw@caltech.edu
+    +1 (626) 395-8567
