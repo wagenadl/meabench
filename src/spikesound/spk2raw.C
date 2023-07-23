@@ -9,7 +9,7 @@ void usage() {
   fprintf(stderr,"Usage: spk2raw < spikefile | sox -t raw -r 44100 -s -w -c 2 - -t wav > wavfile\n");
 }
 
-int main(int argc, char **) {
+int main(int argc, char **argv) {
 
   if (argc>1)
     usage();

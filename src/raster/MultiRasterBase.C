@@ -105,7 +105,7 @@ void MultiRasterBase::delsrc() {
 }
  
 void MultiRasterBase::setSpikeSource(const QString &qs) {
-  sourcename = qs.toUtf8().constData();
+  sourcename = qs.toAscii().constData();
   delsrc();
 
   reportTime("-");

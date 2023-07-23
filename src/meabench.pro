@@ -17,8 +17,6 @@ SUBDIRS += utils
 CONFIG += ordered
 # More to be added in a little bit
 
-QT += widgets gui
-
 include(../config.pri)
 
 QMAKE_EXTRA_TARGETS =  inst

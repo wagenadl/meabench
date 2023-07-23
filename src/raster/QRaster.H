@@ -44,7 +44,7 @@ class QRaster: public QGraph { //:C QRaster
   static const int QRBUFLEN=15; // 32K spikes/channel -> 30 MB
 public:
   QRaster(QWidget *parent=0, QGraph *controller=0); //:c
-  virtual ~QRaster(); //:~
+  ~QRaster(); //:~
   virtual void mouseDoubleClickEvent(QMouseEvent *);
   void setSource(QRDispInfo const *qrs); //:f setSource
   /*:D setSource(qrs) defines the data source for subsequent

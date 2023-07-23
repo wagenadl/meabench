@@ -9,7 +9,6 @@
 TEMPLATE = app
 TARGET = oneraster
 include(../gui/gui.pri)
-QT+=widgets
 
 HEADERS = OneRaster.H \
     QSingleRaster.H QRaster.H QMultiRaster.H MultiRasterBase.H SpikeBuffer.H \

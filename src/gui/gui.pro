@@ -11,7 +11,6 @@ TARGET = meagui
 CONFIG += dll
 include(../common/meabench.pri)
 CONFIG += qt
-QT += widgets
 DESTDIR = $$DESTBASE/lib
 
 HEADERS = HexMEA.H  JNMEA.H \
