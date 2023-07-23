@@ -23,7 +23,7 @@ Installation
 
 Dependencies:
 
-- Qt 5 [previous versions required Qt 4]
+- Qt 4
 - Any vaguely recent version of g++ and make
 
 On recent linux systems, compilation should be as simple as:

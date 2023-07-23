@@ -39,15 +39,15 @@ class SD_AdaPerc: public SpkDet {
      . THIS IS NOT QUITE THE ALG. AS IMPLEMENTED - SEE CODE FOR DETAILS
   */
 public:
-  static constexpr timeref_t TRAINHALFTIME = 2*1000*FREQKHZ;
-  static constexpr int CHUNKSAMS=2048; // 2048 ~ about 82 ms. This MUST be a pwr of 2
-  static constexpr timeref_t CHUNKMASK=~(CHUNKSAMS-1L);
-  static constexpr float TAU = FREQKHZ*1000.0/CHUNKSAMS;
-  static constexpr int PERCENTILE=98;
-  static constexpr float THRESHMUL = 1/2.32635;
-  static constexpr int TRAINTIME = 5*1000*FREQKHZ; // i.e.  CHUNKSAMS * TAU * 5;
-  static constexpr int LOGBHLEN=12;
-  static constexpr int BHLEN=1<<LOGBHLEN;
+  static const timeref_t TRAINHALFTIME = 2*1000*FREQKHZ;
+  static const int CHUNKSAMS=2048; // 2048 ~ about 82 ms. This MUST be a pwr of 2
+  static const timeref_t CHUNKMASK=~(CHUNKSAMS-1L);
+  static const float TAU = FREQKHZ*1000.0/CHUNKSAMS;
+  static const int PERCENTILE=98;
+  static const float THRESHMUL = 1/2.32635;
+  static const int TRAINTIME = 5*1000*FREQKHZ; // i.e.  CHUNKSAMS * TAU * 5;
+  static const int LOGBHLEN=12;
+  static const int BHLEN=1<<LOGBHLEN;
 public:
   SD_AdaPerc(RawSFCli const &src, SpikeSFSrv &dst);
   virtual ~SD_AdaPerc();

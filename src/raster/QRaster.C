@@ -73,7 +73,7 @@ void QRaster::mouseDoubleClickEvent(QMouseEvent *qme) {
     timeref_t latest = dots->latest();
     if (latest>0)
       latest = (*dots)[latest-1].time;
-    string s = Sprintf("Snapshot of %s at %.3f",myname.toUtf8().constData(),
+    string s = Sprintf("Snapshot of %s at %.3f",myname.toAscii().constData(),
 		       latest/(1000.0*FREQKHZ));
     qmr->setWindowTitle(s.c_str());
     qmr->postConstruct();

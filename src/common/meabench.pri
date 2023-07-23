@@ -25,7 +25,7 @@ DESTDIR = $$DESTBASE/bin
 LIBS += -L$$DESTBASE/lib
 LIBS += -lmeabase
 LIBS += -lpthread
-DEFINES += MEABVERSION=$$MEABVERSION
+DEFINES += VERSION=$$VERSION
 
 mcshardware {
   message("MultiChannel Systems Hardware")

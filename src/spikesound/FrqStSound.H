@@ -10,10 +10,10 @@
 
 class FrqStSound {
 public:
-  static constexpr float BASE = 220; // A below middle C
+  static const float BASE = 220; // A below middle C
   static const float FRQS[];
-  static constexpr float DECAY = 1 - 5e-4;
-  static constexpr float AMP = 200;
+  static const float DECAY = 1 - 5e-4;
+  static const float AMP = 200;
 public:
   typedef short sam[2];
 public:

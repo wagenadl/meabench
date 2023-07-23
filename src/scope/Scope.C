@@ -66,7 +66,7 @@ Scope::Scope(QWidget *parent): QWidget(parent) {
 
   QFont f( font() );
   f.setPixelSize( 14 );
-  f.setBold( true );
+  f.setBold( TRUE );
   setFont( f ); 
   
   ui->scrollback->hide();
@@ -205,7 +205,7 @@ void Scope::delspikesrc() {
 }
 
 void Scope::setRawSource(const QString &name) {
-  current_raw_name = name.toUtf8().constData();
+  current_raw_name = name.toAscii().constData();
   reopen_raw();
   freeze(false);
   ui->freezeflag->setChecked(false);
@@ -252,7 +252,7 @@ void Scope::reopen_raw() {
  * public slot
  */
 void Scope::setSpikeSource(const QString &name) {
-  current_spike_name = name.toUtf8().constData();
+  current_spike_name = name.toAscii().constData();
   reopen_spike();
 }
 
